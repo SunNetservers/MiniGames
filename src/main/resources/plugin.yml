@@ -1,0 +1,5 @@
+name: Dropper
+version: '${project.version}'
+main: net.knarcraft.dropper.Dropper
+api-version: 1.19
+description: A plugin for dropper mini-games
