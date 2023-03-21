@@ -3,3 +3,52 @@ version: '${project.version}'
 main: net.knarcraft.dropper.Dropper
 api-version: 1.19
 description: A plugin for dropper mini-games
+
+commands:
+  dropperlist:
+    permission: dropper.join
+    usage: /<command>
+    description: Used to list all current dropper arenas
+  dropperjoin:
+    permission: dropper.join
+    usage: |
+      /<command> <arena> [mode]
+      Mode can be used to select challenge modes which can be played after beating the arena.
+      deaths = A least-deaths competitive game-mode
+      time = A shortest-time competitive game-mode
+    description: Used to join a dropper arena
+  dropperleave:
+    permission: dropper.join
+    usage: /<command>
+    description: Used to leave the current dropper arena
+  droppercreate:
+    permission: dropper.create
+    usage: /<command> (Details not finalized)
+    description: Used to create a new dropper arena
+  dropperedit:
+    permission: dropper.edit
+    usage: /<command> (Details not finalized)
+    description: Used to edit an existing dropper arena
+  dropperremove:
+    permission: dropper.remove
+    usage: /<command> <arena>
+    description: Used to remove an existing dropper arena
+permissions:
+  dropper.admin:
+    children:
+      - dropper.join
+      - dropper.create
+      - dropper.edit
+      - dropper.remove
+  dropper.join:
+    description: Allows a player to participate in dropper arenas
+    default: true
+  dropper.create:
+    description: Allows a player to create a new dropper arena
+    default: op
+  dropper.edit:
+    description: Allows a player to edit an existing dropper arena
+    default: op
+  dropper.remove:
+    description: Allows a player to remove a dropper arena
+    default: op

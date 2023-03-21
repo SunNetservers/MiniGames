@@ -13,13 +13,23 @@ public final class Dropper extends JavaPlugin {
         // Remember to cancel the event so they don't die.
         //TODO: Make a listener for whether someone in an arena is about to hit a block (for cobwebs or similar). Use 
         // another check in the listener to check if a player is hitting water -> do whatever should be done when winning.
+
         //TODO: Arena settings: Spawn (where players are teleported to), Velocity (the downwards speed added to players.
         // Might need a scheduler to maintain the speed), Stage (a numeric integer. if set, only allow access if the 
-        // previous stage has been cleared), A configurable reward of some sort?
+        // previous stage has been cleared), A configurable reward of some sort?, A name (just for easy differentiation),
+        // possibly a leave location to make sure pressure plates won't create an infinite loop
+
         //TODO: Add a command for joining a specific arena. Only teleport if the stage check succeeds (The server can 
         // use something like https://www.spigotmc.org/resources/commandblocks.62720/ for immersion)
         //TODO: Store various information about players' performance, and hook into PlaceholderAPI
         //TODO: Implement optional time trial/least deaths game-mode somehow
+
+        //TODO: Possibly implement an optional queue mode, which only allows one player inside one dropper arena at any 
+        // time (to prevent players from pushing each-other)
+
+
+        //TODO: Register event listeners
+        //TODO: Register commands
     }
 
     @Override
