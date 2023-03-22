@@ -1,5 +1,7 @@
 package net.knarcraft.dropper.property;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * A representation of each key used for storing arena data
  */
@@ -12,14 +14,14 @@ public enum ArenaStorageKey {
     STAGE("arenaStage"),
     ;
 
-    private final String key;
+    private final @NotNull String key;
 
     /**
      * Instantiates a new arena storage key
      *
      * @param key <p>The string path of the configuration key this value represents.</p>
      */
-    ArenaStorageKey(String key) {
+    ArenaStorageKey(@NotNull String key) {
         this.key = key;
     }
 
@@ -28,7 +30,7 @@ public enum ArenaStorageKey {
      *
      * @return <p>The string key representation.</p>
      */
-    public String getKey() {
+    public @NotNull String getKey() {
         return this.key;
     }
 

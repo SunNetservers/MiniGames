@@ -84,7 +84,7 @@ public final class ArenaStorageHelper {
      * @param configurationSection <p>The configuration section containing arena data</p>
      * @return <p>The loaded arena, or null if invalid</p>
      */
-    private static @Nullable DropperArena loadArena(ConfigurationSection configurationSection) {
+    private static @Nullable DropperArena loadArena(@NotNull ConfigurationSection configurationSection) {
         String arenaName = configurationSection.getString(ArenaStorageKey.NAME.getKey());
         Location spawnLocation = (Location) configurationSection.get(ArenaStorageKey.SPAWN_LOCATION.getKey());
         Location exitLocation = (Location) configurationSection.get(ArenaStorageKey.EXIT_LOCATION.getKey());
@@ -104,7 +104,7 @@ public final class ArenaStorageHelper {
      * @param arenaName <p>The arena name to sanitize</p>
      * @return <p>The sanitized arena name</p>
      */
-    private static String sanitizeArenaName(String arenaName) {
+    public static @NotNull String sanitizeArenaName(@NotNull String arenaName) {
         return arenaName.toLowerCase().trim().replaceAll(" ", "_");
     }
 

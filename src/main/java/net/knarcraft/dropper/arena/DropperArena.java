@@ -4,23 +4,26 @@ import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * A representation of one dropper arena
+ */
 public class DropperArena {
 
     /**
      * A name used when listing and storing this arena.
      */
-    private final String arenaName;
+    private final @NotNull String arenaName;
 
     /**
      * The location players are teleported to when joining this arena.
      */
-    private final Location spawnLocation;
+    private final @NotNull Location spawnLocation;
 
     /**
      * The location players will be sent to when they win or lose the arena. If not set, their entry location should be
      * used instead.
      */
-    private final Location exitLocation;
+    private final @Nullable Location exitLocation;
 
     /**
      * The velocity in the y-direction to apply to all players in this arena.
@@ -30,7 +33,7 @@ public class DropperArena {
     /**
      * The stage number of this arena. If not null, the previous stage number must be cleared before access.
      */
-    private final Integer stage;
+    private final @Nullable Integer stage;
 
     /**
      * Instantiates a new dropper arena

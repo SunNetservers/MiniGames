@@ -1,11 +1,13 @@
 package net.knarcraft.dropper;
 
+import net.knarcraft.dropper.arena.DropperArenaHandler;
 import org.bukkit.plugin.java.JavaPlugin;
 
 @SuppressWarnings("unused")
 public final class Dropper extends JavaPlugin {
 
     private static Dropper instance;
+    private DropperArenaHandler arenaHandler;
 
     /**
      * Gets an instance of this plugin
@@ -20,6 +22,8 @@ public final class Dropper extends JavaPlugin {
     public void onEnable() {
         // Plugin startup logic
         instance = this;
+        this.arenaHandler = new DropperArenaHandler();
+        this.arenaHandler.loadArenas();
 
         //TODO: Keep track of whether players are in a dropper arena, and which arena they are in
         //TODO: Make an event listener that kicks players from an arena if they take damage (EntityDamageEvent).
@@ -47,6 +51,6 @@ public final class Dropper extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        // Plugin shutdown logic
+
     }
 }
