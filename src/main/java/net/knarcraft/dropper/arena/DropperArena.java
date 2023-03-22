@@ -1,34 +1,124 @@
 package net.knarcraft.dropper.arena;
 
 import org.bukkit.Location;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class DropperArena {
 
     /**
-     * A name used when listing this arena. Only used for differentiation.
+     * A name used when listing and storing this arena.
      */
-    private String arenaName;
+    private final String arenaName;
 
     /**
      * The location players are teleported to when joining this arena.
      */
-    private Location spawnLocation;
+    private final Location spawnLocation;
 
     /**
      * The location players will be sent to when they win or lose the arena. If not set, their entry location should be
      * used instead.
      */
-    private Location exitLocation;
+    private final Location exitLocation;
 
     /**
      * The velocity in the y-direction to apply to all players in this arena.
      */
-    private double playerVelocity;
+    private final double playerVelocity;
 
     /**
      * The stage number of this arena. If not null, the previous stage number must be cleared before access.
      */
-    private Integer stage;
+    private final Integer stage;
+
+    /**
+     * Instantiates a new dropper arena
+     *
+     * @param arenaName      <p>The name of the arena</p>
+     * @param spawnLocation  <p>The location players spawn in when entering the arena</p>
+     * @param exitLocation   <p>The location the players are teleported to when exiting the arena, or null</p>
+     * @param playerVelocity <p>The velocity multiplier to use for players' velocity</p>
+     * @param stage          <p>The stage number of this stage, or null if not limited to stages</p>
+     */
+    public DropperArena(@NotNull String arenaName, @NotNull Location spawnLocation, @Nullable Location exitLocation,
+                        double playerVelocity, @Nullable Integer stage) {
+        this.arenaName = arenaName;
+        this.spawnLocation = spawnLocation;
+        this.exitLocation = exitLocation;
+        this.playerVelocity = playerVelocity;
+        this.stage = stage;
+    }
+
+    /**
+     * Instantiates a new dropper arena
+     *
+     * <p>Note that this minimal constructor can be used to quickly create a new dropper arena at the player's given
+     * location, simply by them giving an arena name.</p>
+     *
+     * @param arenaName     <p>The name of the arena</p>
+     * @param spawnLocation <p>The location players spawn in when entering the arena</p>
+     */
+    public DropperArena(@NotNull String arenaName, @NotNull Location spawnLocation) {
+        this.arenaName = arenaName;
+        this.spawnLocation = spawnLocation;
+        this.exitLocation = null;
+        this.playerVelocity = 1;
+        this.stage = null;
+    }
+
+    /**
+     * Gets the name of this arena
+     *
+     * @return <p>The name of this arena.</p>
+     */
+    public @NotNull String getArenaName() {
+        return this.arenaName;
+    }
+
+    /**
+     * Gets this arena's spawn location
+     *
+     * <p>The spawn location is the location every player starts from when entering the dropper.</p>
+     *
+     * @return <p>This arena's spawn location.</p>
+     */
+    public @NotNull Location getSpawnLocation() {
+        return this.spawnLocation;
+    }
+
+    /**
+     * Gets this arena's exit location
+     *
+     * @return <p>This arena's exit location, or null if no such location is set.</p>
+     */
+    public @Nullable Location getExitLocation() {
+        return this.exitLocation;
+    }
+
+    /**
+     * Gets the velocity for players in this arena
+     *
+     * <p>The velocity is the multiplier used to define players' dropping speed in this dropper arena. 1.0 is the normal
+     * falling speed. 0.5 is half speed. 2 is double speed etc.</p>
+     *
+     * @return <p>Players' velocity in this arena</p>
+     */
+    public double getPlayerVelocity() {
+        return this.playerVelocity;
+    }
+
+    /**
+     * Gets the stage this arena belongs to
+     *
+     * <p>It's assumed that arena stages go from 1,2,3,4,... and upwards. If the stage number is set, this arena can
+     * only be played if all previous stages have been beaten. If not set, however, this arena can be used freely.</p>
+     *
+     * @return <p>This arena's stage number</p>
+     */
+    public @Nullable Integer getStage() {
+        return this.stage;
+    }
 
     //TODO: Add the appropriate getters/setters and other methods
 

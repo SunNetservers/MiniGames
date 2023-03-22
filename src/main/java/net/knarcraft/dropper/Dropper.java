@@ -5,9 +5,22 @@ import org.bukkit.plugin.java.JavaPlugin;
 @SuppressWarnings("unused")
 public final class Dropper extends JavaPlugin {
 
+    private static Dropper instance;
+
+    /**
+     * Gets an instance of this plugin
+     *
+     * @return <p>An instance of this plugin, or null if not initialized yet.</p>
+     */
+    public static Dropper getInstance() {
+        return instance;
+    }
+
     @Override
     public void onEnable() {
         // Plugin startup logic
+        instance = this;
+
         //TODO: Keep track of whether players are in a dropper arena, and which arena they are in
         //TODO: Make an event listener that kicks players from an arena if they take damage (EntityDamageEvent).
         // Remember to cancel the event so they don't die.
