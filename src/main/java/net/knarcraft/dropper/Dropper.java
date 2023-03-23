@@ -1,13 +1,18 @@
 package net.knarcraft.dropper;
 
 import net.knarcraft.dropper.arena.DropperArenaHandler;
+import net.knarcraft.dropper.arena.DropperArenaPlayerRegistry;
 import org.bukkit.plugin.java.JavaPlugin;
 
+/**
+ * The dropper plugin's main class
+ */
 @SuppressWarnings("unused")
 public final class Dropper extends JavaPlugin {
 
     private static Dropper instance;
     private DropperArenaHandler arenaHandler;
+    private DropperArenaPlayerRegistry playerRegistry;
 
     /**
      * Gets an instance of this plugin
@@ -18,10 +23,29 @@ public final class Dropper extends JavaPlugin {
         return instance;
     }
 
+    /**
+     * Gets the arena handler for this instance
+     *
+     * @return <p>A dropper arena handler</p>
+     */
+    public DropperArenaHandler getArenaHandler() {
+        return this.arenaHandler;
+    }
+
+    /**
+     * Gets the arena player registry for this instance
+     *
+     * @return <p>A dropper arena player registry</p>
+     */
+    public DropperArenaPlayerRegistry getPlayerRegistry() {
+        return this.playerRegistry;
+    }
+
     @Override
     public void onEnable() {
         // Plugin startup logic
         instance = this;
+        this.playerRegistry = new DropperArenaPlayerRegistry();
         this.arenaHandler = new DropperArenaHandler();
         this.arenaHandler.loadArenas();
 
@@ -43,6 +67,8 @@ public final class Dropper extends JavaPlugin {
 
         //TODO: Possibly implement an optional queue mode, which only allows one player inside one dropper arena at any 
         // time (to prevent players from pushing each-other)
+
+        //TODO: Set player.setAllowFlight to true while in the arena to avoid flight blocking for high velocities
 
 
         //TODO: Register event listeners

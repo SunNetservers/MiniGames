@@ -2,6 +2,7 @@ package net.knarcraft.dropper.util;
 
 import net.knarcraft.dropper.Dropper;
 import net.knarcraft.dropper.arena.DropperArena;
+import net.knarcraft.dropper.arena.DropperArenaRecordsRegistry;
 import net.knarcraft.dropper.property.ArenaStorageKey;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
@@ -21,6 +22,10 @@ import java.util.logging.Level;
 public final class ArenaStorageHelper {
 
     private final static String arenasConfigurationSection = "arenas";
+
+    private ArenaStorageHelper() {
+
+    }
 
     /**
      * Saves the given arenas to the given file
@@ -43,6 +48,7 @@ public final class ArenaStorageHelper {
             configSection.set(ArenaStorageKey.PLAYER_VELOCITY.getKey(), arena.getPlayerVelocity());
             configSection.set(ArenaStorageKey.STAGE.getKey(), arena.getStage());
         }
+        //TODO: Save records belonging to the arena
         configuration.save(arenaFile);
     }
 
@@ -95,7 +101,9 @@ public final class ArenaStorageHelper {
                     "section " + configurationSection.getName() + ". Please check the arenas storage file for issues.");
             return null;
         }
-        return new DropperArena(arenaName, spawnLocation, exitLocation, playerVelocity, stage);
+        //TODO: Load records for this arena
+        return new DropperArena(arenaName, spawnLocation, exitLocation, playerVelocity, stage,
+                new DropperArenaRecordsRegistry());
     }
 
     /**

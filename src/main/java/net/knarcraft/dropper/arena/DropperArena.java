@@ -36,21 +36,31 @@ public class DropperArena {
     private final @Nullable Integer stage;
 
     /**
+     * The registry used to save this arena's records
+     */
+    private final @NotNull DropperArenaRecordsRegistry recordsRegistry;
+
+    //TODO: Store records for this arena (maps with player->deaths/time). It should be possible to get those in sorted 
+    // order (smallest to largest)
+
+    /**
      * Instantiates a new dropper arena
      *
-     * @param arenaName      <p>The name of the arena</p>
-     * @param spawnLocation  <p>The location players spawn in when entering the arena</p>
-     * @param exitLocation   <p>The location the players are teleported to when exiting the arena, or null</p>
-     * @param playerVelocity <p>The velocity multiplier to use for players' velocity</p>
-     * @param stage          <p>The stage number of this stage, or null if not limited to stages</p>
+     * @param arenaName       <p>The name of the arena</p>
+     * @param spawnLocation   <p>The location players spawn in when entering the arena</p>
+     * @param exitLocation    <p>The location the players are teleported to when exiting the arena, or null</p>
+     * @param playerVelocity  <p>The velocity multiplier to use for players' velocity</p>
+     * @param stage           <p>The stage number of this stage, or null if not limited to stages</p>
+     * @param recordsRegistry <p>The registry keeping track of all of this arena's records</p>
      */
     public DropperArena(@NotNull String arenaName, @NotNull Location spawnLocation, @Nullable Location exitLocation,
-                        double playerVelocity, @Nullable Integer stage) {
+                        double playerVelocity, @Nullable Integer stage, @NotNull DropperArenaRecordsRegistry recordsRegistry) {
         this.arenaName = arenaName;
         this.spawnLocation = spawnLocation;
         this.exitLocation = exitLocation;
         this.playerVelocity = playerVelocity;
         this.stage = stage;
+        this.recordsRegistry = recordsRegistry;
     }
 
     /**
@@ -68,6 +78,7 @@ public class DropperArena {
         this.exitLocation = null;
         this.playerVelocity = 1;
         this.stage = null;
+        this.recordsRegistry = new DropperArenaRecordsRegistry();
     }
 
     /**
