@@ -2,12 +2,17 @@ package net.knarcraft.dropper.arena;
 
 import net.knarcraft.dropper.Dropper;
 import net.knarcraft.dropper.util.ArenaStorageHelper;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 
 /**
@@ -18,6 +23,44 @@ public class DropperArenaHandler {
     private static final File arenaFile = new File(Dropper.getInstance().getDataFolder(), "arenas.yml");
 
     private List<DropperArena> arenas = new ArrayList<>();
+    private final Set<DropperArenaSession> activeSessions = new HashSet<>();
+    private final Map<Player, Integer> stagesCleared = new HashMap<>();
+
+    /**
+     * Registers the given arena session to known active arena sessions
+     *
+     * @param session <p>The arena session to register</p>
+     */
+    public void registerArenaSession(@NotNull DropperArenaSession session) {
+        this.activeSessions.add(session);
+    }
+
+    /**
+     * Unregisters the given arena session from known active arena sessions
+     *
+     * @param session <p>The session to remove</p>
+     * @return <p>True if the session was removed</p>
+     */
+    public boolean unregisterArenaSession(@NotNull DropperArenaSession session) {
+        return this.activeSessions.remove(session);
+    }
+
+    /**
+     * Tries to register the given stage as cleared
+     *
+     * @param player <p>The player that cleared a stage</p>
+     * @param stage  <p>The stage the player cleared</p>
+     * @return <p>True if the player cleared a new stage</p>
+     */
+    public boolean registerStageCleared(@NotNull Player player, int stage) {
+        if ((!stagesCleared.containsKey(player) && stage == 1) || (stagesCleared.containsKey(player) &&
+                stage == stagesCleared.get(player) + 1)) {
+            stagesCleared.put(player, stage);
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     /**
      * Adds a new arena

@@ -82,6 +82,15 @@ public class DropperArena {
     }
 
     /**
+     * Gets the registry keeping track of this arena's records
+     *
+     * @return <p>This arena's record registry</p>
+     */
+    public @NotNull DropperArenaRecordsRegistry getRecordsRegistry() {
+        return this.recordsRegistry;
+    }
+
+    /**
      * Gets the name of this arena
      *
      * @return <p>The name of this arena.</p>

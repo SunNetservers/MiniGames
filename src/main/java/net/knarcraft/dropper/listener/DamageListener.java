@@ -1,6 +1,7 @@
 package net.knarcraft.dropper.listener;
 
 import net.knarcraft.dropper.Dropper;
+import net.knarcraft.dropper.arena.DropperArenaSession;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -22,15 +23,14 @@ public class DamageListener implements Listener {
         Player player = (Player) event.getEntity();
 
         // We don't care about damage outside arenas
-        if (!Dropper.getInstance().getPlayerRegistry().isInArena(player)) {
+        DropperArenaSession arenaSession = Dropper.getInstance().getPlayerRegistry().getArenaSession(player);
+        if (arenaSession == null) {
             return;
         }
 
         event.setCancelled(true);
 
-        //TODO: Kick the player from the arena
-        //TODO: Teleport the player to the location they entered the arena from, or to the spawn
-        //TODO: Do whatever else should be done for losing players (sending a message?)
+        arenaSession.triggerLoss();
     }
 
 }
