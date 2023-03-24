@@ -1,5 +1,7 @@
 package net.knarcraft.dropper.util;
 
+import net.knarcraft.dropper.Dropper;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -46,9 +48,14 @@ public final class PlayerTeleporter {
                 return false;
             }
         }
-        //Stop the player velocity to prevent unevenness between players
+        //Stop the existing player velocity to prevent unevenness between players
         player.setVelocity(new Vector(0, 0, 0));
+        player.setInvulnerable(true);
         player.teleport(location);
+        player.setVelocity(new Vector(0, 0, 0));
+        //When teleporting a player out of the arena, sometimes the move listener is slow to react, giving the player 
+        // lethal velocity, and causing damage. That's why the player is given 5 ticks of invulnerability
+        Bukkit.getScheduler().runTaskLater(Dropper.getInstance(), () -> player.setInvulnerable(false), 5);
         return true;
     }
 

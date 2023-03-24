@@ -1,8 +1,11 @@
 package net.knarcraft.dropper.command;
 
+import net.knarcraft.dropper.Dropper;
+import net.knarcraft.dropper.arena.DropperArenaSession;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -13,10 +16,19 @@ public class LeaveArenaCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s,
                              @NotNull String[] strings) {
-        //TODO: Make sure the console cannot run this
-        //TODO: If the player isn't currently in an arena, just display an error message
-        //TODO: Trigger the player's session's triggerQuit() method
-        return false;
+        if (!(commandSender instanceof Player player)) {
+            commandSender.sendMessage("This command must be used by a player");
+            return false;
+        }
+
+        DropperArenaSession existingSession = Dropper.getInstance().getPlayerRegistry().getArenaSession(player.getUniqueId());
+        if (existingSession == null) {
+            commandSender.sendMessage("You are not in a dropper arena!");
+            return false;
+        }
+
+        existingSession.triggerQuit();
+        return true;
     }
 
 }

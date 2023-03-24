@@ -65,6 +65,8 @@ public class DropperArenaSession {
             }
         }
 
+        player.sendMessage("You won!");
+
         // Teleport the player out of the arena
         teleportToExit();
     }
@@ -88,7 +90,7 @@ public class DropperArenaSession {
      */
     private void removeSession() {
         // Remove this session for game sessions to stop listeners from fiddling more with the player
-        boolean removedSession = Dropper.getInstance().getPlayerRegistry().removePlayer(player);
+        boolean removedSession = Dropper.getInstance().getPlayerRegistry().removePlayer(player.getUniqueId());
         if (!removedSession) {
             Dropper.getInstance().getLogger().log(Level.SEVERE, "Unable to remove dropper arena session for " +
                     player.getName() + ". This will have unintended consequences.");
@@ -134,6 +136,8 @@ public class DropperArenaSession {
         player.setAllowFlight(false);
         // Teleport the player out of the arena
         teleportToExit();
+
+        player.sendMessage("You quit the arena!");
     }
 
     /**

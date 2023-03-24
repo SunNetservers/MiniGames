@@ -58,12 +58,12 @@ public final class ArenaStorageHelper {
      * @param arenaFile <p>The file used to store the arenas</p>
      * @return <p>The loaded arenas, or null if the arenas configuration section is missing.</p>
      */
-    public static @Nullable List<DropperArena> loadArenas(@NotNull File arenaFile) {
+    public static @NotNull List<DropperArena> loadArenas(@NotNull File arenaFile) {
         YamlConfiguration configuration = YamlConfiguration.loadConfiguration(arenaFile);
         ConfigurationSection arenaSection = configuration.getConfigurationSection(arenasConfigurationSection);
         //If no such section exists, it must be the case that there is no data to load
         if (arenaSection == null) {
-            return null;
+            return new ArrayList<>();
         }
 
         List<DropperArena> loadedArenas = new ArrayList<>();

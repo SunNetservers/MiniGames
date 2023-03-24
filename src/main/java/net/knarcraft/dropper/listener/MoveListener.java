@@ -17,16 +17,11 @@ import org.bukkit.util.Vector;
  */
 public class MoveListener implements Listener {
 
-    /**
-     * The terminal velocity of a falling player, as defined by the WIKI
-     */
-    private static final double TERMINAL_VELOCITY = 78.4;
-
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
         Player player = event.getPlayer();
         DropperArenaPlayerRegistry playerRegistry = Dropper.getInstance().getPlayerRegistry();
-        DropperArenaSession arenaSession = playerRegistry.getArenaSession(player);
+        DropperArenaSession arenaSession = playerRegistry.getArenaSession(player.getUniqueId());
         if (arenaSession == null) {
             return;
         }
@@ -63,8 +58,7 @@ public class MoveListener implements Listener {
         Player player = session.getPlayer();
         Vector playerVelocity = player.getVelocity();
         double arenaVelocity = session.getArena().getPlayerVelocity();
-        double yVelocity = TERMINAL_VELOCITY * arenaVelocity;
-        Vector newVelocity = new Vector(playerVelocity.getX(), yVelocity, playerVelocity.getZ());
+        Vector newVelocity = new Vector(playerVelocity.getX(), -arenaVelocity, playerVelocity.getZ());
         player.setVelocity(newVelocity);
     }
 

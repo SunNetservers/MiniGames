@@ -23,14 +23,17 @@ public class DamageListener implements Listener {
         Player player = (Player) event.getEntity();
 
         // We don't care about damage outside arenas
-        DropperArenaSession arenaSession = Dropper.getInstance().getPlayerRegistry().getArenaSession(player);
+        DropperArenaSession arenaSession = Dropper.getInstance().getPlayerRegistry().getArenaSession(player.getUniqueId());
         if (arenaSession == null) {
             return;
         }
 
         event.setCancelled(true);
 
-        arenaSession.triggerLoss();
+        // Only trigger a loss when a player suffers fall damage
+        if (event.getCause() == EntityDamageEvent.DamageCause.FALL) {
+            arenaSession.triggerLoss();
+        }
     }
 
 }
