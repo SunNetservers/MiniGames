@@ -34,7 +34,14 @@ commands:
     usage: /<command> <arena>
     description: Used to remove an existing dropper arena
 permissions:
+  dropper.*:
+    description: Gives all permissions
+    default: false
+    children:
+      - dropper.admin
   dropper.admin:
+    description: Gives all permissions
+    default: op
     children:
       - dropper.join
       - dropper.create
@@ -45,10 +52,10 @@ permissions:
     default: true
   dropper.create:
     description: Allows a player to create a new dropper arena
-    default: op
+    default: false
   dropper.edit:
     description: Allows a player to edit an existing dropper arena
-    default: op
+    default: false
   dropper.remove:
     description: Allows a player to remove a dropper arena
-    default: op
+    default: false

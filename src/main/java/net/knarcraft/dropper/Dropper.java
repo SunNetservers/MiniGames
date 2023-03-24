@@ -74,6 +74,9 @@ public final class Dropper extends JavaPlugin {
         //TODO: Possibly implement an optional queue mode, which only allows one player inside one dropper arena at any 
         // time (to prevent players from pushing each-other)?
 
+        //TODO: Store which players have cleared which arenas to keep track of whether the trial game-modes should be 
+        // available
+
         PluginManager pluginManager = getServer().getPluginManager();
         pluginManager.registerEvents(new DamageListener(), this);
         pluginManager.registerEvents(new MoveListener(), this);
