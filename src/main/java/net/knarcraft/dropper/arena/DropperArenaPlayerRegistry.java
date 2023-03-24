@@ -29,18 +29,8 @@ public class DropperArenaPlayerRegistry {
      *
      * @param player <p>The player to remove</p>
      */
-    public void removePlayer(@NotNull Player player) {
-        this.arenaPlayers.remove(player);
-    }
-
-    /**
-     * Gets whether the given player is currently playing in an arena
-     *
-     * @param player <p>The player to check</p>
-     * @return <p>True if the player is currently in an arena</p>
-     */
-    public boolean isInArena(@NotNull Player player) {
-        return getArenaSession(player) != null;
+    public boolean removePlayer(@NotNull Player player) {
+        return this.arenaPlayers.remove(player) != null;
     }
 
     /**

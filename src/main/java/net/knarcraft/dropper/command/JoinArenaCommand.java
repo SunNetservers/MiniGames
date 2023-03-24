@@ -18,8 +18,10 @@ public class JoinArenaCommand implements CommandExecutor {
             commandSender.sendMessage("This command must be used by a player");
             return false;
         }
-        //TODO: Implement command behavior
         //TODO: Remember to check if the player is already in an arena first!
+        //TODO: Create a new arena session
+        //TODO: Register the session in the arena player registry
+        //TODO: Teleport the player to the arena's start location
         return true;
     }
 

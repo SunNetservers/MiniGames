@@ -2,7 +2,25 @@ package net.knarcraft.dropper;
 
 import net.knarcraft.dropper.arena.DropperArenaHandler;
 import net.knarcraft.dropper.arena.DropperArenaPlayerRegistry;
+import net.knarcraft.dropper.command.CreateArenaCommand;
+import net.knarcraft.dropper.command.EditArenaCommand;
+import net.knarcraft.dropper.command.EditArenaTabCompleter;
+import net.knarcraft.dropper.command.JoinArenaCommand;
+import net.knarcraft.dropper.command.LeaveArenaCommand;
+import net.knarcraft.dropper.command.ListArenaCommand;
+import net.knarcraft.dropper.command.RemoveArenaCommand;
+import net.knarcraft.dropper.listener.DamageListener;
+import net.knarcraft.dropper.listener.MoveListener;
+import net.knarcraft.dropper.listener.PlayerLeaveListener;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.PluginCommand;
+import org.bukkit.command.TabCompleter;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.logging.Level;
 
 /**
  * The dropper plugin's main class
@@ -49,34 +67,49 @@ public final class Dropper extends JavaPlugin {
         this.arenaHandler = new DropperArenaHandler();
         this.arenaHandler.loadArenas();
 
-        //TODO: Keep track of whether players are in a dropper arena, and which arena they are in
-        //TODO: Make an event listener that kicks players from an arena if they take damage (EntityDamageEvent).
-        // Remember to cancel the event so they don't die.
-        //TODO: Make a listener for whether someone in an arena is about to hit a block (for cobwebs or similar). Use 
-        // another check in the listener to check if a player is hitting water -> do whatever should be done when winning.
-
-        //TODO: Arena settings: Spawn (where players are teleported to), Velocity (the downwards speed added to players.
-        // Might need a scheduler to maintain the speed), Stage (a numeric integer. if set, only allow access if the 
-        // previous stage has been cleared), A configurable reward of some sort?, A name (just for easy differentiation),
-        // possibly a leave location to make sure pressure plates won't create an infinite loop
-
         //TODO: Add a command for joining a specific arena. Only teleport if the stage check succeeds (The server can 
         // use something like https://www.spigotmc.org/resources/commandblocks.62720/ for immersion)
         //TODO: Store various information about players' performance, and hook into PlaceholderAPI
-        //TODO: Implement optional time trial/least deaths game-mode somehow
 
         //TODO: Possibly implement an optional queue mode, which only allows one player inside one dropper arena at any 
-        // time (to prevent players from pushing each-other)
+        // time (to prevent players from pushing each-other)?
 
-        //TODO: Set player.setAllowFlight to true while in the arena to avoid flight blocking for high velocities
+        PluginManager pluginManager = getServer().getPluginManager();
+        pluginManager.registerEvents(new DamageListener(), this);
+        pluginManager.registerEvents(new MoveListener(), this);
+        pluginManager.registerEvents(new PlayerLeaveListener(), this);
 
-
-        //TODO: Register event listeners
-        //TODO: Register commands
+        registerCommand("droppercreate", new CreateArenaCommand(), null);
+        registerCommand("dropperlist", new ListArenaCommand(), null);
+        registerCommand("dropperjoin", new JoinArenaCommand(), null);
+        registerCommand("dropperleave", new LeaveArenaCommand(), null);
+        registerCommand("dropperedit", new EditArenaCommand(), new EditArenaTabCompleter());
+        registerCommand("dropperremove", new RemoveArenaCommand(), null);
     }
 
     @Override
     public void onDisable() {
 
     }
+
+    /**
+     * Registers a command
+     *
+     * @param commandName     <p>The name of the command to register (defined in plugin.yml)</p>
+     * @param commandExecutor <p>The executor for the command</p>
+     * @param tabCompleter    <p>The tab-completer to use, or null</p>
+     */
+    private void registerCommand(@NotNull String commandName, @NotNull CommandExecutor commandExecutor,
+                                 @Nullable TabCompleter tabCompleter) {
+        PluginCommand command = this.getCommand(commandName);
+        if (command != null) {
+            command.setExecutor(commandExecutor);
+            if (tabCompleter != null) {
+                command.setTabCompleter(tabCompleter);
+            }
+        } else {
+            getLogger().log(Level.SEVERE, "Unable to register the command " + commandName);
+        }
+    }
+
 }
