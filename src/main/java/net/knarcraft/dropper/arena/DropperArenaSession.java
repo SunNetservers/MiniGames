@@ -21,6 +21,7 @@ public class DropperArenaSession {
     private final @NotNull Location entryLocation;
     private int deaths;
     private final long startTime;
+    private final float playersOriginalFlySpeed;
 
     /**
      * Instantiates a new dropper arena session
@@ -37,19 +38,20 @@ public class DropperArenaSession {
         this.deaths = 0;
         this.startTime = System.currentTimeMillis();
         this.entryLocation = player.getLocation();
-        // Prevent Spigot interference when traveling at high velocities
+
+        // Make the player fly to improve mobility in the air
         player.setAllowFlight(true);
+        player.setFlying(true);
+        this.playersOriginalFlySpeed = player.getFlySpeed();
+        player.setFlySpeed((float) this.arena.getPlayerVelocity());
     }
 
     /**
      * Triggers a win for the player playing in this session
      */
     public void triggerWin() {
-        // Remove this session from game sessions to stop listeners from fiddling more with the player
-        removeSession();
-
-        // No longer allow the player to avoid fly checks
-        player.setAllowFlight(false);
+        // Stop this session
+        stopSession();
 
         // Check for, and display, records
         registerRecord();
@@ -57,15 +59,15 @@ public class DropperArenaSession {
         //TODO: Give reward?
 
         // Register and announce any cleared stages
-        Integer arenaStage = arena.getStage();
+        Integer arenaStage = this.arena.getStage();
         if (arenaStage != null) {
-            boolean clearedNewStage = Dropper.getInstance().getArenaHandler().registerStageCleared(player, arenaStage);
+            boolean clearedNewStage = Dropper.getInstance().getArenaHandler().registerStageCleared(this.player, arenaStage);
             if (clearedNewStage) {
-                player.sendMessage("You cleared stage " + arenaStage + "!");
+                this.player.sendMessage("You cleared stage " + arenaStage + "!");
             }
         }
 
-        player.sendMessage("You won!");
+        this.player.sendMessage("You won!");
 
         // Teleport the player out of the arena
         teleportToExit();
@@ -77,12 +79,12 @@ public class DropperArenaSession {
     private void teleportToExit() {
         // Teleport the player out of the arena
         Location exitLocation;
-        if (arena.getExitLocation() != null) {
-            exitLocation = arena.getExitLocation();
+        if (this.arena.getExitLocation() != null) {
+            exitLocation = this.arena.getExitLocation();
         } else {
-            exitLocation = entryLocation;
+            exitLocation = this.entryLocation;
         }
-        PlayerTeleporter.teleportPlayer(player, exitLocation, true);
+        PlayerTeleporter.teleportPlayer(this.player, exitLocation, true);
     }
 
     /**
@@ -101,16 +103,16 @@ public class DropperArenaSession {
      * Registers the player's record if necessary, and prints record information to the player
      */
     private void registerRecord() {
-        DropperArenaRecordsRegistry recordsRegistry = arena.getRecordsRegistry();
-        RecordResult recordResult = switch (gameMode) {
-            case LEAST_TIME -> recordsRegistry.registerTimeRecord(player,
-                    System.currentTimeMillis() - startTime);
-            case LEAST_DEATHS -> recordsRegistry.registerDeathRecord(player, deaths);
+        DropperArenaRecordsRegistry recordsRegistry = this.arena.getRecordsRegistry();
+        RecordResult recordResult = switch (this.gameMode) {
+            case LEAST_TIME -> recordsRegistry.registerTimeRecord(this.player,
+                    System.currentTimeMillis() - this.startTime);
+            case LEAST_DEATHS -> recordsRegistry.registerDeathRecord(this.player, this.deaths);
             case DEFAULT -> RecordResult.NONE;
         };
         switch (recordResult) {
-            case WORLD_RECORD -> player.sendMessage("You just set a new record for this arena!");
-            case PERSONAL_BEST -> player.sendMessage("You just got a new personal record!");
+            case WORLD_RECORD -> this.player.sendMessage("You just set a new record for this arena!");
+            case PERSONAL_BEST -> this.player.sendMessage("You just got a new personal record!");
         }
     }
 
@@ -119,25 +121,36 @@ public class DropperArenaSession {
      */
     public void triggerLoss() {
         // Add to the death count if playing the least-deaths game-mode
-        if (gameMode == ArenaGameMode.LEAST_DEATHS) {
-            deaths++;
+        if (this.gameMode == ArenaGameMode.LEAST_DEATHS) {
+            this.deaths++;
         }
         //Teleport the player back to the top
-        PlayerTeleporter.teleportPlayer(player, arena.getSpawnLocation(), true);
+        PlayerTeleporter.teleportPlayer(this.player, this.arena.getSpawnLocation(), true);
     }
 
     /**
      * Triggers a quit for the player playing in this session
      */
     public void triggerQuit() {
-        // Remove this session from game sessions to stop listeners from fiddling more with the player
-        removeSession();
-        // No longer allow the player to avoid fly checks
-        player.setAllowFlight(false);
+        // Stop this session
+        stopSession();
         // Teleport the player out of the arena
         teleportToExit();
 
         player.sendMessage("You quit the arena!");
+    }
+
+    /**
+     * Stops this session, and disables flight mode
+     */
+    private void stopSession() {
+        // Remove this session from game sessions to stop listeners from fiddling more with the player
+        removeSession();
+
+        // Remove flight mode
+        this.player.setFlySpeed(this.playersOriginalFlySpeed);
+        this.player.setFlying(false);
+        this.player.setAllowFlight(false);
     }
 
     /**

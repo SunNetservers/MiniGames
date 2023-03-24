@@ -19,6 +19,11 @@ public class MoveListener implements Listener {
 
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
+        // Ignore if no actual movement is happening
+        if (event.getFrom().equals(event.getTo())) {
+            return;
+        }
+
         Player player = event.getPlayer();
         DropperArenaPlayerRegistry playerRegistry = Dropper.getInstance().getPlayerRegistry();
         DropperArenaSession arenaSession = playerRegistry.getArenaSession(player.getUniqueId());
@@ -26,23 +31,33 @@ public class MoveListener implements Listener {
             return;
         }
 
-        Block targetBlock = event.getTo().getBlock();
-        Material targetBlockType = targetBlock.getType();
-
-        // Hitting water is the trigger for winning
-        if (targetBlockType == Material.WATER) {
-            arenaSession.triggerWin();
+        // Prevent the player from flying upwards while in flight mode
+        if (event.getFrom().getY() < event.getTo().getY()) {
+            event.setCancelled(true);
             return;
         }
 
-        Location targetLocation = targetBlock.getLocation();
-        Material beneathPlayerType = targetLocation.getWorld().getBlockAt(targetLocation.add(0, -0.1, 0)).getType();
+        // Only do block type checking if the block beneath the player changes
+        if (event.getFrom().getBlock() != event.getTo().getBlock()) {
+            Block targetBlock = event.getTo().getBlock();
+            Material targetBlockType = targetBlock.getType();
 
-        // If hitting something which is not air or water, it must be a solid block, and would end in a loss
-        if (!targetBlockType.isAir() || (beneathPlayerType != Material.WATER &&
-                !beneathPlayerType.isAir())) {
-            arenaSession.triggerLoss();
-            return;
+            // Hitting water is the trigger for winning
+            if (targetBlockType == Material.WATER) {
+                arenaSession.triggerWin();
+                return;
+            }
+
+            Location targetLocation = targetBlock.getLocation();
+            Material beneathPlayerType = targetLocation.getWorld().getBlockAt(
+                    targetLocation.add(0, -0.1, 0)).getType();
+
+            // If hitting something which is not air or water, it must be a solid block, and would end in a loss
+            if (!targetBlockType.isAir() || (beneathPlayerType != Material.WATER &&
+                    !beneathPlayerType.isAir())) {
+                arenaSession.triggerLoss();
+                return;
+            }
         }
 
         //Updates the player's velocity to the one set by the arena
