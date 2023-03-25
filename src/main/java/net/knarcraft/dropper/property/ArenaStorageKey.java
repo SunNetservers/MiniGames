@@ -7,11 +7,40 @@ import org.jetbrains.annotations.NotNull;
  */
 public enum ArenaStorageKey {
 
+    /**
+     * The key for an arena's name
+     */
     NAME("arenaName"),
+
+    /**
+     * The key for an arena's spawn location
+     */
     SPAWN_LOCATION("arenaSpawnLocation"),
+
+    /**
+     * The key for an arena's exit location
+     */
     EXIT_LOCATION("arenaExitLocation"),
-    PLAYER_VELOCITY("arenaPlayerVelocity"),
+
+    /**
+     * The key for a player in this arena's vertical velocity
+     */
+    PLAYER_VERTICAL_VELOCITY("arenaPlayerVerticalVelocity"),
+
+    /**
+     * The key for a player in this arena's horizontal velocity
+     */
+    PLAYER_HORIZONTAL_VELOCITY("arenaPlayerHorizontalVelocity"),
+
+    /**
+     * The key for this arena's stage
+     */
     STAGE("arenaStage"),
+
+    /**
+     * The key for the type of this arena's win block
+     */
+    WIN_BLOCK_TYPE("winBlockType"),
     ;
 
     private final @NotNull String key;

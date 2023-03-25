@@ -5,7 +5,6 @@ import net.knarcraft.dropper.arena.DropperArena;
 import net.knarcraft.dropper.arena.DropperArenaPlayerRegistry;
 import net.knarcraft.dropper.arena.DropperArenaSession;
 import net.knarcraft.dropper.property.ArenaGameMode;
-import net.knarcraft.dropper.util.ArenaStorageHelper;
 import net.knarcraft.dropper.util.PlayerTeleporter;
 import org.bukkit.GameMode;
 import org.bukkit.command.Command;
@@ -45,14 +44,7 @@ public class JoinArenaCommand implements CommandExecutor {
         }
 
         // Make sure the arena exists
-        String arenaName = ArenaStorageHelper.sanitizeArenaName(arguments[0]);
-        DropperArena specifiedArena = null;
-        for (DropperArena arena : Dropper.getInstance().getArenaHandler().getArenas()) {
-            if (ArenaStorageHelper.sanitizeArenaName(arena.getArenaName()).equals(arenaName)) {
-                specifiedArena = arena;
-                break;
-            }
-        }
+        DropperArena specifiedArena = Dropper.getInstance().getArenaHandler().getArena(arguments[0]);
         if (specifiedArena == null) {
             commandSender.sendMessage("Unable to find the specified dropper arena.");
             return false;

@@ -43,7 +43,7 @@ public class DropperArenaSession {
         player.setAllowFlight(true);
         player.setFlying(true);
         this.playersOriginalFlySpeed = player.getFlySpeed();
-        player.setFlySpeed((float) this.arena.getPlayerVelocity());
+        player.setFlySpeed((float) this.arena.getPlayerHorizontalVelocity());
     }
 
     /**

@@ -43,8 +43,11 @@ public class MoveListener implements Listener {
         // Only do block type checking if the block beneath the player changes
         if (event.getFrom().getBlock() != event.getTo().getBlock()) {
             // Check if the player enters water
-            for (Block block : getBlocksBeneathLocation(event.getTo(), 0)) {
-                if (block.getType() == Material.WATER) {
+            Material winBlockType = arenaSession.getArena().getWinBlockType();
+            // For water, only trigger when the player enters the water, but trigger earlier for everything else
+            int depth = winBlockType == Material.WATER ? 0 : 1;
+            for (Block block : getBlocksBeneathLocation(event.getTo(), depth)) {
+                if (block.getType() == winBlockType) {
                     arenaSession.triggerWin();
                     return;
                 }
@@ -88,7 +91,7 @@ public class MoveListener implements Listener {
     private void updatePlayerVelocity(DropperArenaSession session) {
         Player player = session.getPlayer();
         Vector playerVelocity = player.getVelocity();
-        double arenaVelocity = session.getArena().getPlayerVelocity();
+        double arenaVelocity = session.getArena().getPlayerVerticalVelocity();
         Vector newVelocity = new Vector(playerVelocity.getX(), -arenaVelocity, playerVelocity.getZ());
         player.setVelocity(newVelocity);
     }

@@ -5,6 +5,7 @@ import net.knarcraft.dropper.arena.DropperArena;
 import net.knarcraft.dropper.arena.DropperArenaRecordsRegistry;
 import net.knarcraft.dropper.property.ArenaStorageKey;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.NotNull;
@@ -45,8 +46,10 @@ public final class ArenaStorageHelper {
             configSection.set(ArenaStorageKey.NAME.getKey(), arena.getArenaName());
             configSection.set(ArenaStorageKey.SPAWN_LOCATION.getKey(), arena.getSpawnLocation());
             configSection.set(ArenaStorageKey.EXIT_LOCATION.getKey(), arena.getExitLocation());
-            configSection.set(ArenaStorageKey.PLAYER_VELOCITY.getKey(), arena.getPlayerVelocity());
+            configSection.set(ArenaStorageKey.PLAYER_VERTICAL_VELOCITY.getKey(), arena.getPlayerVerticalVelocity());
+            configSection.set(ArenaStorageKey.PLAYER_HORIZONTAL_VELOCITY.getKey(), arena.getPlayerHorizontalVelocity());
             configSection.set(ArenaStorageKey.STAGE.getKey(), arena.getStage());
+            configSection.set(ArenaStorageKey.WIN_BLOCK_TYPE.getKey(), arena.getWinBlockType());
         }
         //TODO: Save records belonging to the arena
         configuration.save(arenaFile);
@@ -94,16 +97,21 @@ public final class ArenaStorageHelper {
         String arenaName = configurationSection.getString(ArenaStorageKey.NAME.getKey());
         Location spawnLocation = (Location) configurationSection.get(ArenaStorageKey.SPAWN_LOCATION.getKey());
         Location exitLocation = (Location) configurationSection.get(ArenaStorageKey.EXIT_LOCATION.getKey());
-        double playerVelocity = configurationSection.getDouble(ArenaStorageKey.PLAYER_VELOCITY.getKey());
+        double verticalVelocity = configurationSection.getDouble(ArenaStorageKey.PLAYER_VERTICAL_VELOCITY.getKey());
+        double horizontalVelocity = configurationSection.getDouble(ArenaStorageKey.PLAYER_HORIZONTAL_VELOCITY.getKey());
         Integer stage = (Integer) configurationSection.get(ArenaStorageKey.STAGE.getKey());
+        Material winBlockType = (Material) configurationSection.get(ArenaStorageKey.WIN_BLOCK_TYPE.getKey());
         if (arenaName == null || spawnLocation == null) {
             Dropper.getInstance().getLogger().log(Level.SEVERE, "Could not load the arena at configuration " +
                     "section " + configurationSection.getName() + ". Please check the arenas storage file for issues.");
             return null;
         }
+        if (winBlockType == null) {
+            winBlockType = Material.WATER;
+        }
         //TODO: Load records for this arena
-        return new DropperArena(arenaName, spawnLocation, exitLocation, playerVelocity, stage,
-                new DropperArenaRecordsRegistry());
+        return new DropperArena(arenaName, spawnLocation, exitLocation, verticalVelocity, horizontalVelocity, stage,
+                winBlockType, new DropperArenaRecordsRegistry());
     }
 
     /**

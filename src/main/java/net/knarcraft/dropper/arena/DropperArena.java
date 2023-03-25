@@ -1,6 +1,7 @@
 package net.knarcraft.dropper.arena;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,7 +29,14 @@ public class DropperArena {
     /**
      * The velocity in the y-direction to apply to all players in this arena.
      */
-    private final double playerVelocity;
+    private final double playerVerticalVelocity;
+
+    /**
+     * The velocity in the x-direction to apply to all players in this arena
+     *
+     * <p>This is technically the fly speed</p>
+     */
+    private final double playerHorizontalVelocity;
 
     /**
      * The stage number of this arena. If not null, the previous stage number must be cleared before access.
@@ -40,26 +48,36 @@ public class DropperArena {
      */
     private final @NotNull DropperArenaRecordsRegistry recordsRegistry;
 
+    /**
+     * The material of the block players have to hit to win this dropper arena
+     */
+    private final @NotNull Material winBlockType;
+
     //TODO: Store records for this arena (maps with player->deaths/time). It should be possible to get those in sorted 
     // order (smallest to largest)
 
     /**
      * Instantiates a new dropper arena
      *
-     * @param arenaName       <p>The name of the arena</p>
-     * @param spawnLocation   <p>The location players spawn in when entering the arena</p>
-     * @param exitLocation    <p>The location the players are teleported to when exiting the arena, or null</p>
-     * @param playerVelocity  <p>The velocity multiplier to use for players' velocity</p>
-     * @param stage           <p>The stage number of this stage, or null if not limited to stages</p>
-     * @param recordsRegistry <p>The registry keeping track of all of this arena's records</p>
+     * @param arenaName                <p>The name of the arena</p>
+     * @param spawnLocation            <p>The location players spawn in when entering the arena</p>
+     * @param exitLocation             <p>The location the players are teleported to when exiting the arena, or null</p>
+     * @param playerVerticalVelocity   <p>The velocity to use for players' vertical velocity</p>
+     * @param playerHorizontalVelocity <p>The velocity to use for players' horizontal velocity</p>
+     * @param stage                    <p>The stage number of this stage, or null if not limited to stages</p>
+     * @param winBlockType             <p>The material of the block players have to hit to win this dropper arena</p>
+     * @param recordsRegistry          <p>The registry keeping track of all of this arena's records</p>
      */
     public DropperArena(@NotNull String arenaName, @NotNull Location spawnLocation, @Nullable Location exitLocation,
-                        double playerVelocity, @Nullable Integer stage, @NotNull DropperArenaRecordsRegistry recordsRegistry) {
+                        double playerVerticalVelocity, double playerHorizontalVelocity, @Nullable Integer stage, @NotNull Material winBlockType,
+                        @NotNull DropperArenaRecordsRegistry recordsRegistry) {
         this.arenaName = arenaName;
         this.spawnLocation = spawnLocation;
         this.exitLocation = exitLocation;
-        this.playerVelocity = playerVelocity;
+        this.playerVerticalVelocity = playerVerticalVelocity;
+        this.playerHorizontalVelocity = playerHorizontalVelocity;
         this.stage = stage;
+        this.winBlockType = winBlockType;
         this.recordsRegistry = recordsRegistry;
     }
 
@@ -76,9 +94,11 @@ public class DropperArena {
         this.arenaName = arenaName;
         this.spawnLocation = spawnLocation;
         this.exitLocation = null;
-        this.playerVelocity = 1;
+        this.playerVerticalVelocity = 1;
+        this.playerHorizontalVelocity = 1;
         this.stage = null;
         this.recordsRegistry = new DropperArenaRecordsRegistry();
+        this.winBlockType = Material.WATER;
     }
 
     /**
@@ -120,15 +140,26 @@ public class DropperArena {
     }
 
     /**
-     * Gets the velocity for players in this arena
+     * Gets the vertical velocity for players in this arena
      *
-     * <p>The velocity is the multiplier used to define players' dropping speed in this dropper arena. 1.0 is the normal
-     * falling speed. 0.5 is half speed. 2 is double speed etc.</p>
+     * <p>This velocity will be set on the negative y-axis, for all players in this arena.</p>
      *
      * @return <p>Players' velocity in this arena</p>
      */
-    public double getPlayerVelocity() {
-        return this.playerVelocity;
+    public double getPlayerVerticalVelocity() {
+        return this.playerVerticalVelocity;
+    }
+
+
+    /**
+     * Gets the horizontal for players in this arena
+     *
+     * <p>This will be used for players' fly-speed in this arena</p>
+     *
+     * @return <p>Players' velocity in this arena</p>
+     */
+    public double getPlayerHorizontalVelocity() {
+        return this.playerHorizontalVelocity;
     }
 
     /**
@@ -143,6 +174,13 @@ public class DropperArena {
         return this.stage;
     }
 
-    //TODO: Add the appropriate getters/setters and other methods
+    /**
+     * Gets the type of block a player has to hit to win this arena
+     *
+     * @return <p>The kind of block players must hit</p>
+     */
+    public @NotNull Material getWinBlockType() {
+        return this.winBlockType;
+    }
 
 }

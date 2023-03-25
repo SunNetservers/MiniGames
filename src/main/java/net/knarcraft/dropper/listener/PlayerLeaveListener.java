@@ -2,27 +2,58 @@ package net.knarcraft.dropper.listener;
 
 import net.knarcraft.dropper.Dropper;
 import net.knarcraft.dropper.arena.DropperArenaSession;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+import java.util.logging.Level;
 
 /**
  * A listener for players leaving the server or the arena
  */
 public class PlayerLeaveListener implements Listener {
 
+    private final Map<UUID, DropperArenaSession> leftSessions = new HashMap<>();
+
     @EventHandler
     public void onPlayerLeave(PlayerQuitEvent event) {
-        triggerQuit(event.getPlayer());
+        Player player = event.getPlayer();
+        DropperArenaSession arenaSession = getSession(player);
+        if (arenaSession == null) {
+            return;
+        }
+
+        Dropper.getInstance().getLogger().log(Level.WARNING, "Found player " + player.getUniqueId() +
+                " leaving in the middle of a session!");
+        leftSessions.put(player.getUniqueId(), arenaSession);
+    }
+
+    @EventHandler
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        UUID playerId = event.getPlayer().getUniqueId();
+        // Force the player to quit from the session once they re-join
+        if (leftSessions.containsKey(playerId)) {
+            Dropper.getInstance().getLogger().log(Level.WARNING, "Found un-exited dropper session!");
+            Bukkit.getScheduler().runTaskLater(Dropper.getInstance(), () -> {
+                leftSessions.get(playerId).triggerQuit();
+                Dropper.getInstance().getLogger().log(Level.WARNING, "Triggered a quit!");
+                leftSessions.remove(playerId);
+            }, 80);
+        }
     }
 
     @EventHandler
     public void onPlayerTeleport(PlayerTeleportEvent event) {
-        if (event.getTo() == null) {
+        if (event.getTo() == null || event.isCancelled()) {
             return;
         }
 
@@ -35,24 +66,7 @@ public class PlayerLeaveListener implements Listener {
             return;
         }
 
-        triggerQuit(event.getPlayer());
-    }
-
-    /**
-     * Forces the given player to quit their current arena
-     *
-     * @param player <p>The player to trigger a quit for</p>
-     */
-    private void triggerQuit(Player player) {
-        DropperArenaSession arenaSession = getSession(player);
-        if (arenaSession == null) {
-            return;
-        }
-
         arenaSession.triggerQuit();
-
-        //TODO: It might not be possible to alter a leaving player's location here. It might be necessary to move them once 
-        // they join again
     }
 
     /**

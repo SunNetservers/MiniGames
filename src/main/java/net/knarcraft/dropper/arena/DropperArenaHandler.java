@@ -4,6 +4,7 @@ import net.knarcraft.dropper.Dropper;
 import net.knarcraft.dropper.util.ArenaStorageHelper;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -48,6 +49,22 @@ public class DropperArenaHandler {
     public void addArena(@NotNull DropperArena arena) {
         this.arenas.add(arena);
         this.saveArenas();
+    }
+
+    /**
+     * Gets the arena with the given name
+     *
+     * @param arenaName <p>The arena to get</p>
+     * @return <p>The arena with the given name, or null if not found</p>
+     */
+    public @Nullable DropperArena getArena(@NotNull String arenaName) {
+        arenaName = ArenaStorageHelper.sanitizeArenaName(arenaName);
+        for (DropperArena arena : arenas) {
+            if (ArenaStorageHelper.sanitizeArenaName(arena.getArenaName()).equals(arenaName)) {
+                return arena;
+            }
+        }
+        return null;
     }
 
     /**

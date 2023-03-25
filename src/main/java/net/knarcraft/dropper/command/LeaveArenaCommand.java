@@ -21,7 +21,8 @@ public class LeaveArenaCommand implements CommandExecutor {
             return false;
         }
 
-        DropperArenaSession existingSession = Dropper.getInstance().getPlayerRegistry().getArenaSession(player.getUniqueId());
+        DropperArenaSession existingSession = Dropper.getInstance().getPlayerRegistry().getArenaSession(
+                player.getUniqueId());
         if (existingSession == null) {
             commandSender.sendMessage("You are not in a dropper arena!");
             return false;
