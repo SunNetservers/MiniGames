@@ -22,6 +22,10 @@ public class PlayerLeaveListener implements Listener {
 
     @EventHandler
     public void onPlayerTeleport(PlayerTeleportEvent event) {
+        if (event.getTo() == null) {
+            return;
+        }
+
         DropperArenaSession arenaSession = getSession(event.getPlayer());
         if (arenaSession == null) {
             return;

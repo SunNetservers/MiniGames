@@ -12,6 +12,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.util.Vector;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * A listener for players moving inside a dropper arena
  */
@@ -20,7 +23,7 @@ public class MoveListener implements Listener {
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
         // Ignore if no actual movement is happening
-        if (event.getFrom().equals(event.getTo())) {
+        if (event.getFrom().equals(event.getTo()) || event.getTo() == null) {
             return;
         }
 
@@ -39,29 +42,42 @@ public class MoveListener implements Listener {
 
         // Only do block type checking if the block beneath the player changes
         if (event.getFrom().getBlock() != event.getTo().getBlock()) {
-            Block targetBlock = event.getTo().getBlock();
-            Material targetBlockType = targetBlock.getType();
-
-            // Hitting water is the trigger for winning
-            if (targetBlockType == Material.WATER) {
-                arenaSession.triggerWin();
-                return;
+            // Check if the player enters water
+            for (Block block : getBlocksBeneathLocation(event.getTo(), 0)) {
+                if (block.getType() == Material.WATER) {
+                    arenaSession.triggerWin();
+                    return;
+                }
             }
 
-            Location targetLocation = targetBlock.getLocation();
-            Material beneathPlayerType = targetLocation.getWorld().getBlockAt(
-                    targetLocation.add(0, -0.1, 0)).getType();
-
-            // If hitting something which is not air or water, it must be a solid block, and would end in a loss
-            if (!targetBlockType.isAir() || (beneathPlayerType != Material.WATER &&
-                    !beneathPlayerType.isAir())) {
-                arenaSession.triggerLoss();
-                return;
+            // Check if the player is about to hit a non-air and non-liquid block
+            for (Block block : getBlocksBeneathLocation(event.getTo(), 1)) {
+                if (!block.getType().isAir() && block.getType() != Material.STRUCTURE_VOID &&
+                        block.getType() != Material.WATER && block.getType() != Material.LAVA) {
+                    arenaSession.triggerLoss();
+                    return;
+                }
             }
         }
 
         //Updates the player's velocity to the one set by the arena
         updatePlayerVelocity(arenaSession);
+    }
+
+    /**
+     * Gets the blocks at the given location that will be affected by the player's hit-box
+     *
+     * @param location <p>The location to check</p>
+     * @return <p>The blocks beneath the player</p>
+     */
+    private Set<Block> getBlocksBeneathLocation(Location location, double depth) {
+        Set<Block> blocksBeneath = new HashSet<>();
+        double halfPlayerWidth = 0.3;
+        blocksBeneath.add(location.clone().subtract(halfPlayerWidth, depth, halfPlayerWidth).getBlock());
+        blocksBeneath.add(location.clone().subtract(-halfPlayerWidth, depth, halfPlayerWidth).getBlock());
+        blocksBeneath.add(location.clone().subtract(halfPlayerWidth, depth, -halfPlayerWidth).getBlock());
+        blocksBeneath.add(location.clone().subtract(-halfPlayerWidth, depth, -halfPlayerWidth).getBlock());
+        return blocksBeneath;
     }
 
     /**
