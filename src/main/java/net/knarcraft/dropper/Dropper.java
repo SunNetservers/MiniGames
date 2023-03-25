@@ -10,6 +10,7 @@ import net.knarcraft.dropper.command.JoinArenaTabCompleter;
 import net.knarcraft.dropper.command.LeaveArenaCommand;
 import net.knarcraft.dropper.command.ListArenaCommand;
 import net.knarcraft.dropper.command.RemoveArenaCommand;
+import net.knarcraft.dropper.command.RemoveArenaTabCompleter;
 import net.knarcraft.dropper.listener.DamageListener;
 import net.knarcraft.dropper.listener.MoveListener;
 import net.knarcraft.dropper.listener.PlayerLeaveListener;
@@ -88,7 +89,7 @@ public final class Dropper extends JavaPlugin {
         registerCommand("dropperjoin", new JoinArenaCommand(), new JoinArenaTabCompleter());
         registerCommand("dropperleave", new LeaveArenaCommand(), null);
         registerCommand("dropperedit", new EditArenaCommand(), new EditArenaTabCompleter());
-        registerCommand("dropperremove", new RemoveArenaCommand(), null);
+        registerCommand("dropperremove", new RemoveArenaCommand(), new RemoveArenaTabCompleter());
     }
 
     @Override

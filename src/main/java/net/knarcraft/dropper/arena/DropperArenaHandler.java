@@ -65,6 +65,7 @@ public class DropperArenaHandler {
      * @param arena <p>The arena to remove</p>
      */
     public void removeArena(@NotNull DropperArena arena) {
+        Dropper.getInstance().getPlayerRegistry().removeForArena(arena);
         this.arenas.remove(arena);
         this.saveArenas();
     }
