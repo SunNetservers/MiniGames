@@ -6,10 +6,14 @@ description: A plugin for dropper mini-games
 
 commands:
   dropperlist:
+    aliases:
+      - dlist
     permission: dropper.join
     usage: /<command>
     description: Used to list all current dropper arenas
   dropperjoin:
+    aliases:
+      - djoin
     permission: dropper.join
     usage: |
       /<command> <arena> [mode]
@@ -18,18 +22,26 @@ commands:
       time = A shortest-time competitive game-mode
     description: Used to join a dropper arena
   dropperleave:
+    aliases:
+      - dleave
     permission: dropper.join
     usage: /<command>
     description: Used to leave the current dropper arena
   droppercreate:
+    aliases:
+      - dcreate
     permission: dropper.create
     usage: /<command> (Details not finalized)
     description: Used to create a new dropper arena
   dropperedit:
+    aliases:
+      - dedit
     permission: dropper.edit
     usage: /<command> (Details not finalized)
     description: Used to edit an existing dropper arena
   dropperremove:
+    aliases:
+      - dremove
     permission: dropper.remove
     usage: /<command> <arena>
     description: Used to remove an existing dropper arena

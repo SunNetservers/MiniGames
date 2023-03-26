@@ -3,6 +3,7 @@ package net.knarcraft.dropper.util;
 import net.knarcraft.dropper.Dropper;
 import net.knarcraft.dropper.arena.DropperArena;
 import net.knarcraft.dropper.arena.DropperArenaRecordsRegistry;
+import net.knarcraft.dropper.container.SerializableMaterial;
 import net.knarcraft.dropper.property.ArenaStorageKey;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -49,7 +50,8 @@ public final class ArenaStorageHelper {
             configSection.set(ArenaStorageKey.PLAYER_VERTICAL_VELOCITY.getKey(), arena.getPlayerVerticalVelocity());
             configSection.set(ArenaStorageKey.PLAYER_HORIZONTAL_VELOCITY.getKey(), arena.getPlayerHorizontalVelocity());
             configSection.set(ArenaStorageKey.STAGE.getKey(), arena.getStage());
-            configSection.set(ArenaStorageKey.WIN_BLOCK_TYPE.getKey(), arena.getWinBlockType());
+            configSection.set(ArenaStorageKey.WIN_BLOCK_TYPE.getKey(), new SerializableMaterial(arena.getWinBlockType()));
+            configSection.set(ArenaStorageKey.RECORDS.getKey(), arena.getRecordsRegistry());
         }
         //TODO: Save records belonging to the arena
         configuration.save(arenaFile);
@@ -100,18 +102,25 @@ public final class ArenaStorageHelper {
         double verticalVelocity = configurationSection.getDouble(ArenaStorageKey.PLAYER_VERTICAL_VELOCITY.getKey());
         double horizontalVelocity = configurationSection.getDouble(ArenaStorageKey.PLAYER_HORIZONTAL_VELOCITY.getKey());
         Integer stage = (Integer) configurationSection.get(ArenaStorageKey.STAGE.getKey());
-        Material winBlockType = (Material) configurationSection.get(ArenaStorageKey.WIN_BLOCK_TYPE.getKey());
+        SerializableMaterial winBlockType = (SerializableMaterial) configurationSection.get(
+                ArenaStorageKey.WIN_BLOCK_TYPE.getKey());
+        DropperArenaRecordsRegistry recordsRegistry = (DropperArenaRecordsRegistry) configurationSection.get(
+                ArenaStorageKey.RECORDS.getKey());
+
         if (arenaName == null || spawnLocation == null) {
             Dropper.getInstance().getLogger().log(Level.SEVERE, "Could not load the arena at configuration " +
                     "section " + configurationSection.getName() + ". Please check the arenas storage file for issues.");
             return null;
         }
         if (winBlockType == null) {
-            winBlockType = Material.WATER;
+            winBlockType = new SerializableMaterial(Material.WATER);
         }
-        //TODO: Load records for this arena
+        if (recordsRegistry == null) {
+            recordsRegistry = new DropperArenaRecordsRegistry();
+        }
+
         return new DropperArena(arenaName, spawnLocation, exitLocation, verticalVelocity, horizontalVelocity, stage,
-                winBlockType, new DropperArenaRecordsRegistry());
+                winBlockType.material(), recordsRegistry);
     }
 
     /**

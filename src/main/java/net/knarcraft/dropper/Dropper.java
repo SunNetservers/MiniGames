@@ -2,6 +2,7 @@ package net.knarcraft.dropper;
 
 import net.knarcraft.dropper.arena.DropperArenaHandler;
 import net.knarcraft.dropper.arena.DropperArenaPlayerRegistry;
+import net.knarcraft.dropper.arena.DropperArenaRecordsRegistry;
 import net.knarcraft.dropper.command.CreateArenaCommand;
 import net.knarcraft.dropper.command.EditArenaCommand;
 import net.knarcraft.dropper.command.EditArenaTabCompleter;
@@ -11,12 +12,15 @@ import net.knarcraft.dropper.command.LeaveArenaCommand;
 import net.knarcraft.dropper.command.ListArenaCommand;
 import net.knarcraft.dropper.command.RemoveArenaCommand;
 import net.knarcraft.dropper.command.RemoveArenaTabCompleter;
+import net.knarcraft.dropper.container.SerializableMaterial;
+import net.knarcraft.dropper.container.SerializableUUID;
 import net.knarcraft.dropper.listener.DamageListener;
 import net.knarcraft.dropper.listener.MoveListener;
 import net.knarcraft.dropper.listener.PlayerLeaveListener;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
@@ -59,6 +63,15 @@ public final class Dropper extends JavaPlugin {
      */
     public DropperArenaPlayerRegistry getPlayerRegistry() {
         return this.playerRegistry;
+    }
+
+    @Override
+    public void onLoad() {
+        super.onLoad();
+        // Register serialization classes
+        ConfigurationSerialization.registerClass(SerializableMaterial.class);
+        ConfigurationSerialization.registerClass(DropperArenaRecordsRegistry.class);
+        ConfigurationSerialization.registerClass(SerializableUUID.class);
     }
 
     @Override

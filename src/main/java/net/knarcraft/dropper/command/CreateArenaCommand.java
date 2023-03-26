@@ -32,9 +32,10 @@ public class CreateArenaCommand implements CommandExecutor {
             return false;
         }
 
-        //TODO: Make sure the arena name doesn't contain any unwanted characters
+        // Remove known characters that are likely to cause trouble if used in an arena name
+        String arenaName = arguments[0].replaceAll("[§ :=&]", "");
 
-        DropperArena arena = new DropperArena(arguments[0], player.getLocation());
+        DropperArena arena = new DropperArena(arenaName, player.getLocation());
         Dropper.getInstance().getArenaHandler().addArena(arena);
         commandSender.sendMessage("The arena was successfully created!");
         return true;

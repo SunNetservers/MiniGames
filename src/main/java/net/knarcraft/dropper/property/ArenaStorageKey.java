@@ -41,6 +41,11 @@ public enum ArenaStorageKey {
      * The key for the type of this arena's win block
      */
     WIN_BLOCK_TYPE("winBlockType"),
+
+    /**
+     * The hey for this arena's records
+     */
+    RECORDS("records"),
     ;
 
     private final @NotNull String key;

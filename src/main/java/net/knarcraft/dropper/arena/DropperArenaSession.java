@@ -105,9 +105,9 @@ public class DropperArenaSession {
     private void registerRecord() {
         DropperArenaRecordsRegistry recordsRegistry = this.arena.getRecordsRegistry();
         RecordResult recordResult = switch (this.gameMode) {
-            case LEAST_TIME -> recordsRegistry.registerTimeRecord(this.player,
+            case LEAST_TIME -> recordsRegistry.registerTimeRecord(this.player.getUniqueId(),
                     System.currentTimeMillis() - this.startTime);
-            case LEAST_DEATHS -> recordsRegistry.registerDeathRecord(this.player, this.deaths);
+            case LEAST_DEATHS -> recordsRegistry.registerDeathRecord(this.player.getUniqueId(), this.deaths);
             case DEFAULT -> RecordResult.NONE;
         };
         switch (recordResult) {
