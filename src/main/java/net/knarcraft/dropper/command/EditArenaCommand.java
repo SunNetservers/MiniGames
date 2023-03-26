@@ -21,6 +21,10 @@ public class EditArenaCommand implements CommandExecutor {
             return false;
         }
 
+        if (arguments.length < 2) {
+            return false;
+        }
+
         DropperArena specifiedArena = Dropper.getInstance().getArenaHandler().getArena(arguments[0]);
         if (specifiedArena == null) {
             commandSender.sendMessage("Unable to find the specified dropper arena.");

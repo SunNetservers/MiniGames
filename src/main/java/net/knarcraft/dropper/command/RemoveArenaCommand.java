@@ -15,6 +15,11 @@ public class RemoveArenaCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s,
                              @NotNull String[] arguments) {
+        // Abort if no name was specified
+        if (arguments.length < 1) {
+            return false;
+        }
+
         // Get the specified arena
         DropperArena targetArena = Dropper.getInstance().getArenaHandler().getArena(arguments[0]);
         if (targetArena == null) {
