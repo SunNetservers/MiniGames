@@ -10,6 +10,7 @@ import net.knarcraft.dropper.command.JoinArenaCommand;
 import net.knarcraft.dropper.command.JoinArenaTabCompleter;
 import net.knarcraft.dropper.command.LeaveArenaCommand;
 import net.knarcraft.dropper.command.ListArenaCommand;
+import net.knarcraft.dropper.command.ReloadCommand;
 import net.knarcraft.dropper.command.RemoveArenaCommand;
 import net.knarcraft.dropper.command.RemoveArenaTabCompleter;
 import net.knarcraft.dropper.container.SerializableMaterial;
@@ -65,6 +66,14 @@ public final class Dropper extends JavaPlugin {
         return this.playerRegistry;
     }
 
+    /**
+     * Reloads all configurations and data from disk
+     */
+    public void reload() {
+        // Load all arenas again
+        this.arenaHandler.loadArenas();
+    }
+
     @Override
     public void onLoad() {
         super.onLoad();
@@ -97,6 +106,7 @@ public final class Dropper extends JavaPlugin {
         pluginManager.registerEvents(new MoveListener(), this);
         pluginManager.registerEvents(new PlayerLeaveListener(), this);
 
+        registerCommand("dropperreload", new ReloadCommand(), null);
         registerCommand("droppercreate", new CreateArenaCommand(), null);
         registerCommand("dropperlist", new ListArenaCommand(), null);
         registerCommand("dropperjoin", new JoinArenaCommand(), new JoinArenaTabCompleter());

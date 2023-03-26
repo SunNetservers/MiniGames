@@ -5,6 +5,12 @@ api-version: 1.19
 description: A plugin for dropper mini-games
 
 commands:
+  dropperreload:
+    aliases:
+      - dreload
+    permission: dropper.admin
+    usage: /<command>
+    description: Reloads all data from disk
   dropperlist:
     aliases:
       - dlist
