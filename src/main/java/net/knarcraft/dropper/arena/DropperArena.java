@@ -36,7 +36,7 @@ public class DropperArena {
      *
      * <p>This is technically the fly speed</p>
      */
-    private final double playerHorizontalVelocity;
+    private final float playerHorizontalVelocity;
 
     /**
      * The stage number of this arena. If not null, the previous stage number must be cleared before access.
@@ -53,8 +53,7 @@ public class DropperArena {
      */
     private final @NotNull Material winBlockType;
 
-    //TODO: Store records for this arena (maps with player->deaths/time). It should be possible to get those in sorted 
-    // order (smallest to largest)
+    //TODO: It should be possible to get records in sorted order (smallest to largest)
 
     /**
      * Instantiates a new dropper arena
@@ -63,14 +62,14 @@ public class DropperArena {
      * @param spawnLocation            <p>The location players spawn in when entering the arena</p>
      * @param exitLocation             <p>The location the players are teleported to when exiting the arena, or null</p>
      * @param playerVerticalVelocity   <p>The velocity to use for players' vertical velocity</p>
-     * @param playerHorizontalVelocity <p>The velocity to use for players' horizontal velocity</p>
+     * @param playerHorizontalVelocity <p>The velocity to use for players' horizontal velocity (-1 to 1)</p>
      * @param stage                    <p>The stage number of this stage, or null if not limited to stages</p>
      * @param winBlockType             <p>The material of the block players have to hit to win this dropper arena</p>
      * @param recordsRegistry          <p>The registry keeping track of all of this arena's records</p>
      */
     public DropperArena(@NotNull String arenaName, @NotNull Location spawnLocation, @Nullable Location exitLocation,
-                        double playerVerticalVelocity, double playerHorizontalVelocity, @Nullable Integer stage, @NotNull Material winBlockType,
-                        @NotNull DropperArenaRecordsRegistry recordsRegistry) {
+                        double playerVerticalVelocity, float playerHorizontalVelocity, @Nullable Integer stage,
+                        @NotNull Material winBlockType, @NotNull DropperArenaRecordsRegistry recordsRegistry) {
         this.arenaName = arenaName;
         this.spawnLocation = spawnLocation;
         this.exitLocation = exitLocation;
@@ -158,7 +157,7 @@ public class DropperArena {
      *
      * @return <p>Players' velocity in this arena</p>
      */
-    public double getPlayerHorizontalVelocity() {
+    public float getPlayerHorizontalVelocity() {
         return this.playerHorizontalVelocity;
     }
 

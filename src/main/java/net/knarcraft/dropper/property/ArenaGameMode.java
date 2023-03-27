@@ -9,7 +9,6 @@ public enum ArenaGameMode {
 
     /**
      * The default game-mode. Failing once throws the player out.
-     * //TODO: Verify if we want the default game-mode to lock the player in the arena until they beat it
      */
     DEFAULT,
 

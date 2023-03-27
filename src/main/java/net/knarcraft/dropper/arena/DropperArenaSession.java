@@ -18,10 +18,9 @@ public class DropperArenaSession {
     private final @NotNull DropperArena arena;
     private final @NotNull Player player;
     private final @NotNull ArenaGameMode gameMode;
-    private final @NotNull Location entryLocation;
     private int deaths;
     private final long startTime;
-    private final float playersOriginalFlySpeed;
+    private final PlayerEntryState entryState;
 
     /**
      * Instantiates a new dropper arena session
@@ -37,13 +36,19 @@ public class DropperArenaSession {
         this.gameMode = gameMode;
         this.deaths = 0;
         this.startTime = System.currentTimeMillis();
-        this.entryLocation = player.getLocation();
 
+        this.entryState = new PlayerEntryState(player);
         // Make the player fly to improve mobility in the air
-        player.setAllowFlight(true);
-        player.setFlying(true);
-        this.playersOriginalFlySpeed = player.getFlySpeed();
-        player.setFlySpeed((float) this.arena.getPlayerHorizontalVelocity());
+        this.entryState.setArenaState(this.arena.getPlayerHorizontalVelocity());
+    }
+
+    /**
+     * Gets the state of the player when they joined the session
+     *
+     * @return <p>The player's entry state</p>
+     */
+    public @NotNull PlayerEntryState getEntryState() {
+        return this.entryState;
     }
 
     /**
@@ -70,21 +75,21 @@ public class DropperArenaSession {
         this.player.sendMessage("You won!");
 
         // Teleport the player out of the arena
-        teleportToExit();
+        teleportToExit(false);
     }
 
     /**
      * Teleports the playing player out of the arena
      */
-    private void teleportToExit() {
+    private void teleportToExit(boolean immediately) {
         // Teleport the player out of the arena
         Location exitLocation;
         if (this.arena.getExitLocation() != null) {
             exitLocation = this.arena.getExitLocation();
         } else {
-            exitLocation = this.entryLocation;
+            exitLocation = this.entryState.getEntryLocation();
         }
-        PlayerTeleporter.teleportPlayer(this.player, exitLocation, true);
+        PlayerTeleporter.teleportPlayer(this.player, exitLocation, true, immediately);
     }
 
     /**
@@ -125,17 +130,17 @@ public class DropperArenaSession {
             this.deaths++;
         }
         //Teleport the player back to the top
-        PlayerTeleporter.teleportPlayer(this.player, this.arena.getSpawnLocation(), true);
+        PlayerTeleporter.teleportPlayer(this.player, this.arena.getSpawnLocation(), true, false);
     }
 
     /**
      * Triggers a quit for the player playing in this session
      */
-    public void triggerQuit() {
+    public void triggerQuit(boolean immediately) {
         // Stop this session
         stopSession();
         // Teleport the player out of the arena
-        teleportToExit();
+        teleportToExit(immediately);
 
         player.sendMessage("You quit the arena!");
     }
@@ -148,9 +153,7 @@ public class DropperArenaSession {
         removeSession();
 
         // Remove flight mode
-        this.player.setFlySpeed(this.playersOriginalFlySpeed);
-        this.player.setFlying(false);
-        this.player.setAllowFlight(false);
+        entryState.restore();
     }
 
     /**

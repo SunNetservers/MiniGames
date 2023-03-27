@@ -53,7 +53,6 @@ public final class ArenaStorageHelper {
             configSection.set(ArenaStorageKey.WIN_BLOCK_TYPE.getKey(), new SerializableMaterial(arena.getWinBlockType()));
             configSection.set(ArenaStorageKey.RECORDS.getKey(), arena.getRecordsRegistry());
         }
-        //TODO: Save records belonging to the arena
         configuration.save(arenaFile);
     }
 
@@ -100,7 +99,8 @@ public final class ArenaStorageHelper {
         Location spawnLocation = (Location) configurationSection.get(ArenaStorageKey.SPAWN_LOCATION.getKey());
         Location exitLocation = (Location) configurationSection.get(ArenaStorageKey.EXIT_LOCATION.getKey());
         double verticalVelocity = configurationSection.getDouble(ArenaStorageKey.PLAYER_VERTICAL_VELOCITY.getKey());
-        double horizontalVelocity = configurationSection.getDouble(ArenaStorageKey.PLAYER_HORIZONTAL_VELOCITY.getKey());
+        float horizontalVelocity = sanitizeHorizontalVelocity((float) configurationSection.getDouble(
+                ArenaStorageKey.PLAYER_HORIZONTAL_VELOCITY.getKey()));
         Integer stage = (Integer) configurationSection.get(ArenaStorageKey.STAGE.getKey());
         SerializableMaterial winBlockType = (SerializableMaterial) configurationSection.get(
                 ArenaStorageKey.WIN_BLOCK_TYPE.getKey());
@@ -131,6 +131,22 @@ public final class ArenaStorageHelper {
      */
     public static @NotNull String sanitizeArenaName(@NotNull String arenaName) {
         return arenaName.toLowerCase().trim().replaceAll(" ", "_");
+    }
+
+    /**
+     * Sanitizes the given horizontal velocity to make sure it doesn't leave its bounds
+     *
+     * @param horizontalVelocity <p>The horizontal velocity to sanitize</p>
+     * @return <p>The sanitized horizontal velocity</p>
+     */
+    private static float sanitizeHorizontalVelocity(float horizontalVelocity) {
+        if (horizontalVelocity < -1) {
+            return -1;
+        } else if (horizontalVelocity > 1) {
+            return 1;
+        } else {
+            return horizontalVelocity;
+        }
     }
 
 }

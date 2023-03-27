@@ -52,7 +52,7 @@ public class DropperArenaPlayerRegistry {
         for (Map.Entry<UUID, DropperArenaSession> entry : this.arenaPlayers.entrySet()) {
             if (entry.getValue().getArena() == arena) {
                 // Kick the player gracefully
-                entry.getValue().triggerQuit();
+                entry.getValue().triggerQuit(false);
                 this.arenaPlayers.remove(entry.getKey());
             }
         }

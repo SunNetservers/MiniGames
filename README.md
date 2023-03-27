@@ -26,6 +26,7 @@ To modify
 | /droppercreate               | \<name>                     | Creates a new dropper arena with the given name |
 | /dropperremove               | \<arena>                    | Removes the specified dropper arena             |
 | [/dropperedit](#dropperedit) | \<arena> \<option> \[value] | Gets or sets a dropper arena option             |
+| /dropperreload               |                             | Reloads all data from disk                      |
 
 ## Command explanation
 

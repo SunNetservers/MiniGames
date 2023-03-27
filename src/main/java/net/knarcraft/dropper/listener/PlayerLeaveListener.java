@@ -44,7 +44,7 @@ public class PlayerLeaveListener implements Listener {
         if (leftSessions.containsKey(playerId)) {
             Dropper.getInstance().getLogger().log(Level.WARNING, "Found un-exited dropper session!");
             Bukkit.getScheduler().runTaskLater(Dropper.getInstance(), () -> {
-                leftSessions.get(playerId).triggerQuit();
+                leftSessions.get(playerId).triggerQuit(false);
                 Dropper.getInstance().getLogger().log(Level.WARNING, "Triggered a quit!");
                 leftSessions.remove(playerId);
             }, 80);
@@ -66,7 +66,7 @@ public class PlayerLeaveListener implements Listener {
             return;
         }
 
-        arenaSession.triggerQuit();
+        arenaSession.triggerQuit(false);
     }
 
     /**

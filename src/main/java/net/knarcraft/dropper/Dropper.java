@@ -3,6 +3,7 @@ package net.knarcraft.dropper;
 import net.knarcraft.dropper.arena.DropperArenaHandler;
 import net.knarcraft.dropper.arena.DropperArenaPlayerRegistry;
 import net.knarcraft.dropper.arena.DropperArenaRecordsRegistry;
+import net.knarcraft.dropper.arena.DropperArenaSession;
 import net.knarcraft.dropper.command.CreateArenaCommand;
 import net.knarcraft.dropper.command.EditArenaCommand;
 import net.knarcraft.dropper.command.EditArenaTabCompleter;
@@ -15,6 +16,7 @@ import net.knarcraft.dropper.command.RemoveArenaCommand;
 import net.knarcraft.dropper.command.RemoveArenaTabCompleter;
 import net.knarcraft.dropper.container.SerializableMaterial;
 import net.knarcraft.dropper.container.SerializableUUID;
+import net.knarcraft.dropper.listener.CommandListener;
 import net.knarcraft.dropper.listener.DamageListener;
 import net.knarcraft.dropper.listener.MoveListener;
 import net.knarcraft.dropper.listener.PlayerLeaveListener;
@@ -22,6 +24,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
@@ -91,8 +94,6 @@ public final class Dropper extends JavaPlugin {
         this.arenaHandler = new DropperArenaHandler();
         this.arenaHandler.loadArenas();
 
-        //TODO: Add a command for joining a specific arena. Only teleport if the stage check succeeds (The server can 
-        // use something like https://www.spigotmc.org/resources/commandblocks.62720/ for immersion)
         //TODO: Store various information about players' performance, and hook into PlaceholderAPI
 
         //TODO: Possibly implement an optional queue mode, which only allows one player inside one dropper arena at any 
@@ -105,6 +106,7 @@ public final class Dropper extends JavaPlugin {
         pluginManager.registerEvents(new DamageListener(), this);
         pluginManager.registerEvents(new MoveListener(), this);
         pluginManager.registerEvents(new PlayerLeaveListener(), this);
+        pluginManager.registerEvents(new CommandListener(), this);
 
         registerCommand("dropperreload", new ReloadCommand(), null);
         registerCommand("droppercreate", new CreateArenaCommand(), null);
@@ -117,7 +119,13 @@ public final class Dropper extends JavaPlugin {
 
     @Override
     public void onDisable() {
-
+        // Throw out currently playing players before exiting
+        for (Player player : getServer().getOnlinePlayers()) {
+            DropperArenaSession session = playerRegistry.getArenaSession(player.getUniqueId());
+            if (session != null) {
+                session.triggerQuit(true);
+            }
+        }
     }
 
     /**

@@ -6,7 +6,6 @@ import net.knarcraft.dropper.arena.DropperArenaPlayerRegistry;
 import net.knarcraft.dropper.arena.DropperArenaSession;
 import net.knarcraft.dropper.property.ArenaGameMode;
 import net.knarcraft.dropper.util.PlayerTeleporter;
-import org.bukkit.GameMode;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -30,12 +29,6 @@ public class JoinArenaCommand implements CommandExecutor {
             return false;
         }
 
-        if (player.isFlying() || player.getGameMode() == GameMode.CREATIVE ||
-                player.getGameMode() == GameMode.SPECTATOR) {
-            commandSender.sendMessage("You cannot join a dropper arena while able to fly!");
-            return false;
-        }
-
         // Disallow joining if the player is already in a dropper arena
         DropperArenaSession existingSession = Dropper.getInstance().getPlayerRegistry().getArenaSession(player.getUniqueId());
         if (existingSession != null) {
@@ -50,6 +43,24 @@ public class JoinArenaCommand implements CommandExecutor {
             return false;
         }
 
+        // Deny vehicles as allowing this is tricky, and will cause problems in some cases
+        if (player.isInsideVehicle() || !player.getPassengers().isEmpty()) {
+            commandSender.sendMessage("You cannot join an arena while inside a vehicle or carrying a passenger.");
+            return false;
+        }
+
+        return joinArena(specifiedArena, player, arguments);
+    }
+
+    /**
+     * Performs the actual arena joining
+     *
+     * @param specifiedArena <p>The arena the player wants to join</p>
+     * @param player         <p>The player joining the arena</p>
+     * @param arguments      <p>The arguments given</p>
+     * @return <p>Whether the arena was joined successfully</p>
+     */
+    private boolean joinArena(DropperArena specifiedArena, Player player, String[] arguments) {
         // Find the specified game-mode
         ArenaGameMode gameMode;
         if (arguments.length > 1) {
@@ -66,13 +77,15 @@ public class JoinArenaCommand implements CommandExecutor {
         playerRegistry.registerPlayer(player.getUniqueId(), newSession);
 
         // Try to teleport the player to the arena
-        boolean teleported = PlayerTeleporter.teleportPlayer(player, specifiedArena.getSpawnLocation(), false);
+        boolean teleported = PlayerTeleporter.teleportPlayer(player, specifiedArena.getSpawnLocation(), false, false);
         if (!teleported) {
-            commandSender.sendMessage("Unable to teleport you to the dropper arena. Make sure you're not in a vehicle," +
-                    "and is not carrying a passenger!");
-            newSession.triggerQuit();
+            player.sendMessage("Unable to teleport you to the dropper arena. Make sure you're not in a vehicle," +
+                    "and not carrying a passenger!");
+            newSession.triggerQuit(false);
             return false;
         } else {
+            // Make sure to update the state again in the air to remove a potential swimming state
+            newSession.getEntryState().setArenaState(specifiedArena.getPlayerHorizontalVelocity());
             return true;
         }
     }
