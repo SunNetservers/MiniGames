@@ -23,7 +23,7 @@ public final class TabCompleteHelper {
      */
     public static @NotNull List<String> getArenas() {
         List<String> arenaNames = new ArrayList<>();
-        for (DropperArena dropperArena : Dropper.getInstance().getArenaHandler().getArenas()) {
+        for (DropperArena dropperArena : Dropper.getInstance().getArenaHandler().getArenas().values()) {
             arenaNames.add(dropperArena.getArenaName());
         }
         return arenaNames;

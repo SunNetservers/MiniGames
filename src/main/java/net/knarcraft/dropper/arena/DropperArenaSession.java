@@ -108,7 +108,7 @@ public class DropperArenaSession {
      * Registers the player's record if necessary, and prints record information to the player
      */
     private void registerRecord() {
-        DropperArenaRecordsRegistry recordsRegistry = this.arena.getRecordsRegistry();
+        DropperArenaRecordsRegistry recordsRegistry = this.arena.getData().recordsRegistry();
         RecordResult recordResult = switch (this.gameMode) {
             case LEAST_TIME -> recordsRegistry.registerTimeRecord(this.player.getUniqueId(),
                     System.currentTimeMillis() - this.startTime);

@@ -8,6 +8,11 @@ import org.jetbrains.annotations.NotNull;
 public enum ArenaStorageKey {
 
     /**
+     * The key for an arena's id
+     */
+    ID("arenaId"),
+
+    /**
      * The key for an arena's name
      */
     NAME("arenaName"),
@@ -43,9 +48,9 @@ public enum ArenaStorageKey {
     WIN_BLOCK_TYPE("winBlockType"),
 
     /**
-     * The hey for this arena's records
+     * The hey for this arena's data
      */
-    RECORDS("records"),
+    DATA("arenaData"),
     ;
 
     private final @NotNull String key;

@@ -5,10 +5,18 @@ import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashSet;
+import java.util.UUID;
+
 /**
  * A representation of one dropper arena
  */
 public class DropperArena {
+
+    /**
+     * An unique and persistent identifier for this arena
+     */
+    private final UUID arenaId;
 
     /**
      * A name used when listing and storing this arena.
@@ -44,20 +52,21 @@ public class DropperArena {
     private final @Nullable Integer stage;
 
     /**
-     * The registry used to save this arena's records
-     */
-    private final @NotNull DropperArenaRecordsRegistry recordsRegistry;
-
-    /**
      * The material of the block players have to hit to win this dropper arena
      */
     private final @NotNull Material winBlockType;
+
+    /**
+     * The arena data for this arena
+     */
+    private final DropperArenaData dropperArenaData;
 
     //TODO: It should be possible to get records in sorted order (smallest to largest)
 
     /**
      * Instantiates a new dropper arena
      *
+     * @param arenaId                  <p>The id of the arena</p>
      * @param arenaName                <p>The name of the arena</p>
      * @param spawnLocation            <p>The location players spawn in when entering the arena</p>
      * @param exitLocation             <p>The location the players are teleported to when exiting the arena, or null</p>
@@ -65,11 +74,13 @@ public class DropperArena {
      * @param playerHorizontalVelocity <p>The velocity to use for players' horizontal velocity (-1 to 1)</p>
      * @param stage                    <p>The stage number of this stage, or null if not limited to stages</p>
      * @param winBlockType             <p>The material of the block players have to hit to win this dropper arena</p>
-     * @param recordsRegistry          <p>The registry keeping track of all of this arena's records</p>
+     * @param dropperArenaData         <p>The arena data keeping track of which players have done what in this arena</p>
      */
-    public DropperArena(@NotNull String arenaName, @NotNull Location spawnLocation, @Nullable Location exitLocation,
-                        double playerVerticalVelocity, float playerHorizontalVelocity, @Nullable Integer stage,
-                        @NotNull Material winBlockType, @NotNull DropperArenaRecordsRegistry recordsRegistry) {
+    public DropperArena(@NotNull UUID arenaId, @NotNull String arenaName, @NotNull Location spawnLocation,
+                        @Nullable Location exitLocation, double playerVerticalVelocity, float playerHorizontalVelocity,
+                        @Nullable Integer stage, @NotNull Material winBlockType,
+                        @NotNull DropperArenaData dropperArenaData) {
+        this.arenaId = arenaId;
         this.arenaName = arenaName;
         this.spawnLocation = spawnLocation;
         this.exitLocation = exitLocation;
@@ -77,7 +88,7 @@ public class DropperArena {
         this.playerHorizontalVelocity = playerHorizontalVelocity;
         this.stage = stage;
         this.winBlockType = winBlockType;
-        this.recordsRegistry = recordsRegistry;
+        this.dropperArenaData = dropperArenaData;
     }
 
     /**
@@ -90,29 +101,40 @@ public class DropperArena {
      * @param spawnLocation <p>The location players spawn in when entering the arena</p>
      */
     public DropperArena(@NotNull String arenaName, @NotNull Location spawnLocation) {
+        this.arenaId = UUID.randomUUID();
         this.arenaName = arenaName;
         this.spawnLocation = spawnLocation;
         this.exitLocation = null;
         this.playerVerticalVelocity = 1;
         this.playerHorizontalVelocity = 1;
         this.stage = null;
-        this.recordsRegistry = new DropperArenaRecordsRegistry();
+        this.dropperArenaData = new DropperArenaData(this.arenaId, new DropperArenaRecordsRegistry(this.arenaId),
+                new HashSet<>());
         this.winBlockType = Material.WATER;
     }
 
     /**
-     * Gets the registry keeping track of this arena's records
+     * Gets this arena's data
      *
-     * @return <p>This arena's record registry</p>
+     * @return <p>This arena's data</p>
      */
-    public @NotNull DropperArenaRecordsRegistry getRecordsRegistry() {
-        return this.recordsRegistry;
+    public @NotNull DropperArenaData getData() {
+        return this.dropperArenaData;
+    }
+
+    /**
+     * Gets the id of this arena
+     *
+     * @return <p>This arena's identifier</p>
+     */
+    public @NotNull UUID getArenaId() {
+        return this.arenaId;
     }
 
     /**
      * Gets the name of this arena
      *
-     * @return <p>The name of this arena.</p>
+     * @return <p>The name of this arena</p>
      */
     public @NotNull String getArenaName() {
         return this.arenaName;

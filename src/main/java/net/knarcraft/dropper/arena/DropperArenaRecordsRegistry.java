@@ -16,13 +16,15 @@ import java.util.stream.Stream;
  */
 public class DropperArenaRecordsRegistry implements ConfigurationSerializable {
 
+    private final UUID arenaId;
     private final Map<SerializableUUID, Integer> leastDeaths;
     private final Map<SerializableUUID, Long> shortestTimeMilliSeconds;
 
     /**
      * Instantiates a new empty records registry
      */
-    public DropperArenaRecordsRegistry() {
+    public DropperArenaRecordsRegistry(@NotNull UUID arenaId) {
+        this.arenaId = arenaId;
         this.leastDeaths = new HashMap<>();
         this.shortestTimeMilliSeconds = new HashMap<>();
     }
@@ -33,8 +35,9 @@ public class DropperArenaRecordsRegistry implements ConfigurationSerializable {
      * @param leastDeaths              <p>The existing least death records to use</p>
      * @param shortestTimeMilliSeconds <p>The existing leash time records to use</p>
      */
-    public DropperArenaRecordsRegistry(@NotNull Map<SerializableUUID, Integer> leastDeaths,
+    public DropperArenaRecordsRegistry(@NotNull UUID arenaId, @NotNull Map<SerializableUUID, Integer> leastDeaths,
                                        @NotNull Map<SerializableUUID, Long> shortestTimeMilliSeconds) {
+        this.arenaId = arenaId;
         this.leastDeaths = new HashMap<>(leastDeaths);
         this.shortestTimeMilliSeconds = new HashMap<>(shortestTimeMilliSeconds);
     }
@@ -70,16 +73,20 @@ public class DropperArenaRecordsRegistry implements ConfigurationSerializable {
         SerializableUUID serializableUUID = new SerializableUUID(playerId);
 
         if (records.allMatch((entry) -> deaths < entry.getValue())) {
-            //If the given value is less than all other values, that's a world record!
+            // If the given value is less than all other values, that's a world record!
             result = RecordResult.WORLD_RECORD;
             leastDeaths.put(serializableUUID, deaths);
             save();
         } else if (leastDeaths.containsKey(serializableUUID) && deaths < leastDeaths.get(serializableUUID)) {
-            //If the given value is less than the player's previous value, that's a personal best!
+            // If the given value is less than the player's previous value, that's a personal best!
             result = RecordResult.PERSONAL_BEST;
             leastDeaths.put(serializableUUID, deaths);
             save();
         } else {
+            // Make sure to save the record if this is the user's first attempt
+            if (!leastDeaths.containsKey(serializableUUID)) {
+                save();
+            }
             result = RecordResult.NONE;
         }
 
@@ -110,6 +117,10 @@ public class DropperArenaRecordsRegistry implements ConfigurationSerializable {
             shortestTimeMilliSeconds.put(serializableUUID, milliseconds);
             save();
         } else {
+            // Make sure to save the record if this is the user's first attempt
+            if (!shortestTimeMilliSeconds.containsKey(serializableUUID)) {
+                save();
+            }
             result = RecordResult.NONE;
         }
 
@@ -120,13 +131,14 @@ public class DropperArenaRecordsRegistry implements ConfigurationSerializable {
      * Saves changed records
      */
     private void save() {
-        Dropper.getInstance().getArenaHandler().saveArenas();
+        Dropper.getInstance().getArenaHandler().saveData(this.arenaId);
     }
 
     @NotNull
     @Override
     public Map<String, Object> serialize() {
         Map<String, Object> data = new HashMap<>();
+        data.put("arenaId", new SerializableUUID(this.arenaId));
         data.put("leastDeaths", this.leastDeaths);
         data.put("shortestTime", this.shortestTimeMilliSeconds);
         return data;
@@ -140,12 +152,13 @@ public class DropperArenaRecordsRegistry implements ConfigurationSerializable {
      */
     @SuppressWarnings({"unused", "unchecked"})
     public static DropperArenaRecordsRegistry deserialize(Map<String, Object> data) {
+        UUID arenaId = ((SerializableUUID) data.get("arenaId")).uuid();
         Map<SerializableUUID, Integer> leastDeathsData =
                 (Map<SerializableUUID, Integer>) data.getOrDefault("leastDeaths", new HashMap<>());
         Map<SerializableUUID, Long> shortestTimeMillisecondsData =
                 (Map<SerializableUUID, Long>) data.getOrDefault("shortestTime", new HashMap<>());
 
-        return new DropperArenaRecordsRegistry(leastDeathsData, shortestTimeMillisecondsData);
+        return new DropperArenaRecordsRegistry(arenaId, leastDeathsData, shortestTimeMillisecondsData);
     }
 
 }

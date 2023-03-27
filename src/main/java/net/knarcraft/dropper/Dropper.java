@@ -1,5 +1,6 @@
 package net.knarcraft.dropper;
 
+import net.knarcraft.dropper.arena.DropperArenaData;
 import net.knarcraft.dropper.arena.DropperArenaHandler;
 import net.knarcraft.dropper.arena.DropperArenaPlayerRegistry;
 import net.knarcraft.dropper.arena.DropperArenaRecordsRegistry;
@@ -84,6 +85,7 @@ public final class Dropper extends JavaPlugin {
         ConfigurationSerialization.registerClass(SerializableMaterial.class);
         ConfigurationSerialization.registerClass(DropperArenaRecordsRegistry.class);
         ConfigurationSerialization.registerClass(SerializableUUID.class);
+        ConfigurationSerialization.registerClass(DropperArenaData.class);
     }
 
     @Override

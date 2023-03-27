@@ -6,12 +6,10 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.logging.Level;
 
 /**
@@ -19,9 +17,7 @@ import java.util.logging.Level;
  */
 public class DropperArenaHandler {
 
-    private static final File arenaFile = new File(Dropper.getInstance().getDataFolder(), "arenas.yml");
-
-    private List<DropperArena> arenas = new ArrayList<>();
+    private Map<UUID, DropperArena> arenas = new HashMap<>();
     private final Map<Player, Integer> stagesCleared = new HashMap<>();
 
     /**
@@ -47,7 +43,7 @@ public class DropperArenaHandler {
      * @param arena <p>The arena to add</p>
      */
     public void addArena(@NotNull DropperArena arena) {
-        this.arenas.add(arena);
+        this.arenas.put(arena.getArenaId(), arena);
         this.saveArenas();
     }
 
@@ -59,7 +55,7 @@ public class DropperArenaHandler {
      */
     public @Nullable DropperArena getArena(@NotNull String arenaName) {
         arenaName = ArenaStorageHelper.sanitizeArenaName(arenaName);
-        for (DropperArena arena : arenas) {
+        for (DropperArena arena : arenas.values()) {
             if (ArenaStorageHelper.sanitizeArenaName(arena.getArenaName()).equals(arenaName)) {
                 return arena;
             }
@@ -72,8 +68,8 @@ public class DropperArenaHandler {
      *
      * @return <p>All known arenas</p>
      */
-    public @NotNull List<DropperArena> getArenas() {
-        return new ArrayList<>(this.arenas);
+    public @NotNull Map<UUID, DropperArena> getArenas() {
+        return new HashMap<>(this.arenas);
     }
 
     /**
@@ -83,8 +79,22 @@ public class DropperArenaHandler {
      */
     public void removeArena(@NotNull DropperArena arena) {
         Dropper.getInstance().getPlayerRegistry().removeForArena(arena);
-        this.arenas.remove(arena);
+        this.arenas.remove(arena.getArenaId());
         this.saveArenas();
+    }
+
+    /**
+     * Stores the data for the given arena
+     *
+     * @param arenaId <p>The id of the arena whose data should be saved</p>
+     */
+    public void saveData(UUID arenaId) {
+        try {
+            ArenaStorageHelper.saveArenaData(this.arenas.get(arenaId).getData());
+        } catch (IOException e) {
+            Dropper.getInstance().getLogger().log(Level.SEVERE, "Unable to save arena data! Data loss can occur!");
+            Dropper.getInstance().getLogger().log(Level.SEVERE, e.getMessage());
+        }
     }
 
     /**
@@ -92,10 +102,11 @@ public class DropperArenaHandler {
      */
     public void saveArenas() {
         try {
-            ArenaStorageHelper.saveArenas(this.arenas, arenaFile);
+            ArenaStorageHelper.saveArenas(this.arenas);
         } catch (IOException e) {
             Dropper.getInstance().getLogger().log(Level.SEVERE, "Unable to save current arenas! " +
                     "Data loss can occur!");
+            Dropper.getInstance().getLogger().log(Level.SEVERE, e.getMessage());
         }
     }
 
@@ -103,7 +114,7 @@ public class DropperArenaHandler {
      * Loads all arenas from disk
      */
     public void loadArenas() {
-        this.arenas = ArenaStorageHelper.loadArenas(arenaFile);
+        this.arenas = ArenaStorageHelper.loadArenas();
     }
 
 }
