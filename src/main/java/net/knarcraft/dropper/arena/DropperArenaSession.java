@@ -131,6 +131,7 @@ public class DropperArenaSession {
         }
         //Teleport the player back to the top
         PlayerTeleporter.teleportPlayer(this.player, this.arena.getSpawnLocation(), true, false);
+        this.entryState.setArenaState(this.arena.getPlayerHorizontalVelocity());
     }
 
     /**
