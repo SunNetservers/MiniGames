@@ -1,6 +1,7 @@
 package net.knarcraft.dropper;
 
 import net.knarcraft.dropper.arena.DropperArenaData;
+import net.knarcraft.dropper.arena.DropperArenaGroup;
 import net.knarcraft.dropper.arena.DropperArenaHandler;
 import net.knarcraft.dropper.arena.DropperArenaPlayerRegistry;
 import net.knarcraft.dropper.arena.DropperArenaRecordsRegistry;
@@ -76,6 +77,7 @@ public final class Dropper extends JavaPlugin {
     public void reload() {
         // Load all arenas again
         this.arenaHandler.loadArenas();
+        this.arenaHandler.loadGroups();
     }
 
     @Override
@@ -86,6 +88,7 @@ public final class Dropper extends JavaPlugin {
         ConfigurationSerialization.registerClass(DropperArenaRecordsRegistry.class);
         ConfigurationSerialization.registerClass(SerializableUUID.class);
         ConfigurationSerialization.registerClass(DropperArenaData.class);
+        ConfigurationSerialization.registerClass(DropperArenaGroup.class);
     }
 
     @Override
@@ -95,6 +98,7 @@ public final class Dropper extends JavaPlugin {
         this.playerRegistry = new DropperArenaPlayerRegistry();
         this.arenaHandler = new DropperArenaHandler();
         this.arenaHandler.loadArenas();
+        this.arenaHandler.loadGroups();
 
         //TODO: Store various information about players' performance, and hook into PlaceholderAPI
 

@@ -1,5 +1,6 @@
 package net.knarcraft.dropper.arena;
 
+import net.knarcraft.dropper.Dropper;
 import net.knarcraft.dropper.container.SerializableUUID;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
@@ -41,8 +42,8 @@ public record DropperArenaData(@NotNull UUID arenaId, @NotNull DropperArenaRecor
      * @param player <p>The player to check</p>
      * @return <p>True if the player has cleared the arena this data belongs to</p>
      */
-    public boolean hasCompleted(@NotNull Player player) {
-        return this.playersCompleted.contains(new SerializableUUID(player.getUniqueId()));
+    public boolean hasNotCompleted(@NotNull Player player) {
+        return !this.playersCompleted.contains(new SerializableUUID(player.getUniqueId()));
     }
 
     /**
@@ -50,8 +51,13 @@ public record DropperArenaData(@NotNull UUID arenaId, @NotNull DropperArenaRecor
      *
      * @param player <p>The player that completed this data's arena</p>
      */
-    public void addCompleted(@NotNull Player player) {
-        this.playersCompleted.add(new SerializableUUID(player.getUniqueId()));
+    public boolean addCompleted(@NotNull Player player) {
+        boolean added = this.playersCompleted.add(new SerializableUUID(player.getUniqueId()));
+        // Persistently save the completion
+        if (added) {
+            Dropper.getInstance().getArenaHandler().saveData(this.arenaId);
+        }
+        return added;
     }
 
     @NotNull

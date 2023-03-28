@@ -63,15 +63,10 @@ public class DropperArenaSession {
 
         //TODO: Give reward?
 
-        // Register and announce any cleared stages
-        Integer arenaStage = this.arena.getStage();
-        if (arenaStage != null) {
-            boolean clearedNewStage = Dropper.getInstance().getArenaHandler().registerStageCleared(this.player, arenaStage);
-            if (clearedNewStage) {
-                this.player.sendMessage("You cleared stage " + arenaStage + "!");
-            }
+        // Mark the arena as cleared
+        if (this.arena.getData().addCompleted(this.player)) {
+            this.player.sendMessage("You cleared the arena!");
         }
-
         this.player.sendMessage("You won!");
 
         // Teleport the player out of the arena
