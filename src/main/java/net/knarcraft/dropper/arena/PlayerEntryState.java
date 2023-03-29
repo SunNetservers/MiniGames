@@ -25,7 +25,7 @@ public class PlayerEntryState {
      */
     public PlayerEntryState(Player player) {
         this.player = player;
-        this.entryLocation = player.getLocation();
+        this.entryLocation = player.getLocation().clone();
         this.originalFlySpeed = player.getFlySpeed();
         this.originalIsFlying = player.isFlying();
         this.originalGameMode = player.getGameMode();

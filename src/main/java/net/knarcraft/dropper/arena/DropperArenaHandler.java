@@ -73,6 +73,19 @@ public class DropperArenaHandler {
     }
 
     /**
+     * Replaces an arena's lookup name
+     *
+     * @param oldName <p>The arena's old sanitized lookup name</p>
+     * @param newName <p>The arena's new sanitized lookup name</p>
+     */
+    public void updateLookupName(@NotNull String oldName, @NotNull String newName) {
+        UUID arenaId = this.arenaNameLookup.remove(oldName);
+        if (arenaId != null) {
+            this.arenaNameLookup.put(newName, arenaId);
+        }
+    }
+
+    /**
      * Adds a new arena
      *
      * @param arena <p>The arena to add</p>

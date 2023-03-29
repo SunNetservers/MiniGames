@@ -38,7 +38,7 @@ This command is used for joining a dropper arena.
 
 | Argument | Usage                                                                                                            |
 |----------|------------------------------------------------------------------------------------------------------------------|
-| arena    | The name of the arena to join                                                                                    |
+| arena    | The name of the arena to join.                                                                                   |
 | mode     | Additional challenge modes can be played after an arena has been cleared once. Available modes: deaths and time. |
 
 ### /dropperedit
@@ -47,8 +47,19 @@ This command allows editing the specified property for the specified dropper are
 
 `/dropperedit <arena> <option> [value]`
 
-| Argument | Usage                                |
-|----------|--------------------------------------|
-| arena    | The name of the arena to edit        |
-| option   | The option to display or change      |
-| value    | The new value of the selected option |
+| Argument | Usage                                 |
+|----------|---------------------------------------|
+| arena    | The name of the arena to edit.        |
+| option   | The option to display or change.      |
+| value    | The new value of the selected option. |
+
+These are all the options that can be changed for an arena
+
+| Option             | Details                                                                                                                                                                     |
+|--------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| name               | The name of the arena. Used mainly to select the arena in commands.                                                                                                         |
+| spawnLocation      | The spawn location of any player joining the arena. Use `56.546,64.0,44.45` to specify coordinates, or `here`, `this` or any other string to select your current location.  |
+| exitLocation       | The location players will be sent to when exiting the arena. If not set, the player will be sent to where they joined from. Valid values are the same as for spawnLocation. |
+| verticalVelocity   | The vertical velocity set for players in the arena (basically their falling speed). It must be greater than 0, but max 100. `12.565` and other decimals are allowed.        |
+| horizontalVelocity | The horizontal velocity (technically fly speed) set for players in the arena. It must be between -1 and 1, and cannot be 0. Decimals are allowed.                           |
+| winBlockType       | The type of block players must hit to win the arena. It can be any material as long as it's a block, and not a type of air.                                                 |

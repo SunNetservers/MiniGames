@@ -37,7 +37,9 @@ commands:
     aliases:
       - dcreate
     permission: dropper.create
-    usage: /<command> (Details not finalized)
+    usage: |
+      /<command> <arena> <property> [new value]
+      Valid properties: name, spawnLocation, exitLocation, verticalVelocity, horizontalVelocity, winBlockType
     description: Used to create a new dropper arena
   dropperedit:
     aliases:
