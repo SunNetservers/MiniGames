@@ -25,7 +25,7 @@ public class CreateArenaCommand implements CommandExecutor {
         if (arguments.length < 1) {
             return false;
         }
-        
+
         DropperArena existingArena = Dropper.getInstance().getArenaHandler().getArena(arguments[0]);
         if (existingArena != null) {
             commandSender.sendMessage("There already exists a dropper arena with that name!");

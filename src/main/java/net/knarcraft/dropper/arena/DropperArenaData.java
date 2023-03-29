@@ -20,7 +20,7 @@ import java.util.UUID;
  * @param playersCompleted <p>A list of all player that have completed this arena</p>
  */
 public record DropperArenaData(@NotNull UUID arenaId, @NotNull DropperArenaRecordsRegistry recordsRegistry,
-                               @NotNull Set<SerializableUUID> playersCompleted) implements ConfigurationSerializable {
+                               @NotNull Set<UUID> playersCompleted) implements ConfigurationSerializable {
 
     /**
      * Instantiates a new dropper arena data object
@@ -30,7 +30,7 @@ public record DropperArenaData(@NotNull UUID arenaId, @NotNull DropperArenaRecor
      * @param playersCompleted <p>The set of ids for players that have cleared this data's arena</p>
      */
     public DropperArenaData(@NotNull UUID arenaId, @NotNull DropperArenaRecordsRegistry recordsRegistry,
-                            @NotNull Set<SerializableUUID> playersCompleted) {
+                            @NotNull Set<UUID> playersCompleted) {
         this.arenaId = arenaId;
         this.recordsRegistry = recordsRegistry;
         this.playersCompleted = new HashSet<>(playersCompleted);
@@ -43,7 +43,7 @@ public record DropperArenaData(@NotNull UUID arenaId, @NotNull DropperArenaRecor
      * @return <p>True if the player has cleared the arena this data belongs to</p>
      */
     public boolean hasNotCompleted(@NotNull Player player) {
-        return !this.playersCompleted.contains(new SerializableUUID(player.getUniqueId()));
+        return !this.playersCompleted.contains(player.getUniqueId());
     }
 
     /**
@@ -52,7 +52,7 @@ public record DropperArenaData(@NotNull UUID arenaId, @NotNull DropperArenaRecor
      * @param player <p>The player that completed this data's arena</p>
      */
     public boolean addCompleted(@NotNull Player player) {
-        boolean added = this.playersCompleted.add(new SerializableUUID(player.getUniqueId()));
+        boolean added = this.playersCompleted.add(player.getUniqueId());
         // Persistently save the completion
         if (added) {
             Dropper.getInstance().getArenaHandler().saveData(this.arenaId);
@@ -66,7 +66,12 @@ public record DropperArenaData(@NotNull UUID arenaId, @NotNull DropperArenaRecor
         Map<String, Object> data = new HashMap<>();
         data.put("arenaId", new SerializableUUID(this.arenaId));
         data.put("recordsRegistry", this.recordsRegistry);
-        data.put("playersCompleted", this.playersCompleted);
+
+        Set<SerializableUUID> playersCompleted = new HashSet<>();
+        for (UUID playerCompleted : this.playersCompleted) {
+            playersCompleted.add(new SerializableUUID(playerCompleted));
+        }
+        data.put("playersCompleted", playersCompleted);
         return data;
     }
 
@@ -80,7 +85,11 @@ public record DropperArenaData(@NotNull UUID arenaId, @NotNull DropperArenaRecor
     public static @NotNull DropperArenaData deserialize(@NotNull Map<String, Object> data) {
         SerializableUUID serializableUUID = (SerializableUUID) data.get("arenaId");
         DropperArenaRecordsRegistry recordsRegistry = (DropperArenaRecordsRegistry) data.get("recordsRegistry");
-        Set<SerializableUUID> playersCompleted = (Set<SerializableUUID>) data.get("playersCompleted");
+        Set<SerializableUUID> playersCompletedData = (Set<SerializableUUID>) data.get("playersCompleted");
+        Set<UUID> playersCompleted = new HashSet<>();
+        for (SerializableUUID completedId : playersCompletedData) {
+            playersCompleted.add(completedId.uuid());
+        }
         return new DropperArenaData(serializableUUID.uuid(), recordsRegistry, playersCompleted);
     }
 
