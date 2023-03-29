@@ -61,8 +61,6 @@ public class DropperArenaSession {
         // Check for, and display, records
         registerRecord();
 
-        //TODO: Give reward?
-
         // Mark the arena as cleared
         if (this.arena.getData().addCompleted(this.player)) {
             this.player.sendMessage("You cleared the arena!");

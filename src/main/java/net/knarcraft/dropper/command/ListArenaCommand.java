@@ -22,8 +22,6 @@ public class ListArenaCommand implements TabExecutor {
         for (String arenaName : TabCompleteHelper.getArenas()) {
             sender.sendMessage(arenaName);
         }
-
-        //TODO: Allow displaying information about each arena (possibly admin-only)
         return true;
     }
 
