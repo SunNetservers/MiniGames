@@ -9,6 +9,9 @@ import net.knarcraft.dropper.arena.DropperArenaSession;
 import net.knarcraft.dropper.command.CreateArenaCommand;
 import net.knarcraft.dropper.command.EditArenaCommand;
 import net.knarcraft.dropper.command.EditArenaTabCompleter;
+import net.knarcraft.dropper.command.GroupListCommand;
+import net.knarcraft.dropper.command.GroupSetCommand;
+import net.knarcraft.dropper.command.GroupSwapCommand;
 import net.knarcraft.dropper.command.JoinArenaCommand;
 import net.knarcraft.dropper.command.JoinArenaTabCompleter;
 import net.knarcraft.dropper.command.LeaveArenaCommand;
@@ -108,13 +111,16 @@ public final class Dropper extends JavaPlugin {
         pluginManager.registerEvents(new PlayerLeaveListener(), this);
         pluginManager.registerEvents(new CommandListener(), this);
 
-        registerCommand("dropperreload", new ReloadCommand(), null);
-        registerCommand("droppercreate", new CreateArenaCommand(), null);
-        registerCommand("dropperlist", new ListArenaCommand(), null);
-        registerCommand("dropperjoin", new JoinArenaCommand(), new JoinArenaTabCompleter());
-        registerCommand("dropperleave", new LeaveArenaCommand(), null);
-        registerCommand("dropperedit", new EditArenaCommand(), new EditArenaTabCompleter());
-        registerCommand("dropperremove", new RemoveArenaCommand(), new RemoveArenaTabCompleter());
+        registerCommand("dropperReload", new ReloadCommand(), null);
+        registerCommand("dropperCreate", new CreateArenaCommand(), null);
+        registerCommand("dropperList", new ListArenaCommand(), null);
+        registerCommand("dropperJoin", new JoinArenaCommand(), new JoinArenaTabCompleter());
+        registerCommand("dropperLeave", new LeaveArenaCommand(), null);
+        registerCommand("dropperEdit", new EditArenaCommand(), new EditArenaTabCompleter());
+        registerCommand("dropperRemove", new RemoveArenaCommand(), new RemoveArenaTabCompleter());
+        registerCommand("dropperGroupSet", new GroupSetCommand(), null);
+        registerCommand("dropperGroupSwap", new GroupSwapCommand(), null);
+        registerCommand("dropperGroupList", new GroupListCommand(), null);
     }
 
     @Override
