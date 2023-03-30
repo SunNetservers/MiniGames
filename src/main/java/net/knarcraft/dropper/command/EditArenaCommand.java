@@ -92,7 +92,7 @@ public class EditArenaCommand implements CommandExecutor {
         try {
             velocity = Double.parseDouble(velocityString);
         } catch (NumberFormatException exception) {
-            velocity = 0.5;
+            velocity = 3.92;
         }
 
         // Require at least speed of 0.001, and at most 75 blocks/s

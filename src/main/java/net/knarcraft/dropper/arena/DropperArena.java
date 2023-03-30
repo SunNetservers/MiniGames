@@ -104,7 +104,7 @@ public class DropperArena {
         this.arenaName = arenaName;
         this.spawnLocation = spawnLocation;
         this.exitLocation = null;
-        this.playerVerticalVelocity = 1;
+        this.playerVerticalVelocity = 3.92;
         this.playerHorizontalVelocity = 1;
         this.dropperArenaData = new DropperArenaData(this.arenaId, new DropperArenaRecordsRegistry(this.arenaId),
                 new HashSet<>());
