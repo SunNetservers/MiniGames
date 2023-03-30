@@ -7,6 +7,7 @@ import net.knarcraft.dropper.arena.DropperArenaGroup;
 import net.knarcraft.dropper.arena.DropperArenaRecordsRegistry;
 import net.knarcraft.dropper.container.SerializableMaterial;
 import net.knarcraft.dropper.container.SerializableUUID;
+import net.knarcraft.dropper.property.ArenaGameMode;
 import net.knarcraft.dropper.property.ArenaStorageKey;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -164,7 +165,12 @@ public final class ArenaStorageHelper {
         DropperArenaData arenaData = loadArenaData(arenaId);
         if (arenaData == null) {
             Dropper.getInstance().getLogger().log(Level.SEVERE, "Unable to load arena data for " + arenaId);
-            arenaData = new DropperArenaData(arenaId, new DropperArenaRecordsRegistry(arenaId), new HashSet<>());
+
+            Map<ArenaGameMode, DropperArenaRecordsRegistry> recordRegistries = new HashMap<>();
+            for (ArenaGameMode arenaGameMode : ArenaGameMode.values()) {
+                recordRegistries.put(arenaGameMode, new DropperArenaRecordsRegistry(arenaId));
+            }
+            arenaData = new DropperArenaData(arenaId, recordRegistries, new HashMap<>());
         }
 
         return new DropperArena(arenaId, arenaName, spawnLocation, exitLocation, verticalVelocity, horizontalVelocity,

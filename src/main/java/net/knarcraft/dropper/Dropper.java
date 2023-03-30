@@ -22,6 +22,7 @@ import net.knarcraft.dropper.listener.CommandListener;
 import net.knarcraft.dropper.listener.DamageListener;
 import net.knarcraft.dropper.listener.MoveListener;
 import net.knarcraft.dropper.listener.PlayerLeaveListener;
+import net.knarcraft.dropper.property.ArenaGameMode;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabCompleter;
@@ -89,6 +90,7 @@ public final class Dropper extends JavaPlugin {
         ConfigurationSerialization.registerClass(SerializableUUID.class);
         ConfigurationSerialization.registerClass(DropperArenaData.class);
         ConfigurationSerialization.registerClass(DropperArenaGroup.class);
+        ConfigurationSerialization.registerClass(ArenaGameMode.class);
     }
 
     @Override

@@ -24,8 +24,8 @@ commands:
     usage: |
       /<command> <arena> [mode]
       Mode can be used to select challenge modes which can be played after beating the arena.
-      deaths = A least-deaths competitive game-mode
-      time = A shortest-time competitive game-mode
+      inverted = A game-mode where the WASD buttons are inverted
+      random = A game-mode where the WASD buttons toggle between being inverted and not
     description: Used to join a dropper arena
   dropperleave:
     aliases:

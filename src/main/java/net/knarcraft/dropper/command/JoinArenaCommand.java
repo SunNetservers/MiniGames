@@ -76,9 +76,10 @@ public class JoinArenaCommand implements CommandExecutor {
             return false;
         }
 
-        // Make sure the player has beaten the arena once before playing a challenge mode
-        if (gameMode != ArenaGameMode.DEFAULT && specifiedArena.getData().hasNotCompleted(player)) {
-            player.sendMessage("You must complete this arena in normal mode before starting a challenge!");
+        // Make sure the player has beaten the arena once in normal mode before playing another mode
+        if (gameMode != ArenaGameMode.DEFAULT &&
+                specifiedArena.getData().hasNotCompleted(ArenaGameMode.DEFAULT, player)) {
+            player.sendMessage("You must complete this arena in normal mode first!");
             return false;
         }
 
@@ -112,16 +113,18 @@ public class JoinArenaCommand implements CommandExecutor {
      */
     private boolean doGroupChecks(@NotNull DropperArena dropperArena, @NotNull DropperArenaGroup arenaGroup,
                                   @NotNull ArenaGameMode arenaGameMode, @NotNull Player player) {
-        if (arenaGameMode == ArenaGameMode.DEFAULT) {
-            if (!arenaGroup.canPlay(player, dropperArena.getArenaId())) {
-                player.sendMessage("You have not yet beaten the previous arena!");
-                return false;
-            }
-        } else {
-            if (arenaGroup.hasBeatenAll(player)) {
+        // Require that players beat all arenas in the group in the normal game-mode before trying challenge modes
+        if (arenaGameMode != ArenaGameMode.DEFAULT) {
+            if (!arenaGroup.hasBeatenAll(ArenaGameMode.DEFAULT, player)) {
                 player.sendMessage("You have not yet beaten all arenas in this group!");
                 return false;
             }
+        }
+
+        // Require that the player has beaten the previous arena on the same game-mode before trying this one
+        if (!arenaGroup.canPlay(arenaGameMode, player, dropperArena.getArenaId())) {
+            player.sendMessage("You have not yet beaten the previous arena!");
+            return false;
         }
 
         return true;

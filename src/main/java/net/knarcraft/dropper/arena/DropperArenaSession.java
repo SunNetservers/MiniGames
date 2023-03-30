@@ -37,9 +37,18 @@ public class DropperArenaSession {
         this.deaths = 0;
         this.startTime = System.currentTimeMillis();
 
-        this.entryState = new PlayerEntryState(player);
+        this.entryState = new PlayerEntryState(player, gameMode);
         // Make the player fly to improve mobility in the air
         this.entryState.setArenaState(this.arena.getPlayerHorizontalVelocity());
+    }
+
+    /**
+     * Gets the game-mode the player is playing in this session
+     *
+     * @return <p>The game-mode for this session</p>
+     */
+    public @NotNull ArenaGameMode getGameMode() {
+        return this.gameMode;
     }
 
     /**
@@ -62,7 +71,7 @@ public class DropperArenaSession {
         registerRecord();
 
         // Mark the arena as cleared
-        if (this.arena.getData().addCompleted(this.player)) {
+        if (this.arena.getData().addCompleted(this.gameMode, this.player)) {
             this.player.sendMessage("You cleared the arena!");
         }
         this.player.sendMessage("You won!");
@@ -101,27 +110,44 @@ public class DropperArenaSession {
      * Registers the player's record if necessary, and prints record information to the player
      */
     private void registerRecord() {
-        DropperArenaRecordsRegistry recordsRegistry = this.arena.getData().recordsRegistry();
-        RecordResult recordResult = switch (this.gameMode) {
-            case LEAST_TIME -> recordsRegistry.registerTimeRecord(this.player.getUniqueId(),
-                    System.currentTimeMillis() - this.startTime);
-            case LEAST_DEATHS -> recordsRegistry.registerDeathRecord(this.player.getUniqueId(), this.deaths);
-            case DEFAULT -> RecordResult.NONE;
-        };
-        switch (recordResult) {
-            case WORLD_RECORD -> this.player.sendMessage("You just set a new record for this arena!");
-            case PERSONAL_BEST -> this.player.sendMessage("You just got a new personal record!");
+        DropperArenaRecordsRegistry recordsRegistry = this.arena.getData().recordRegistries().get(this.gameMode);
+        long timeElapsed = System.currentTimeMillis() - this.startTime;
+        announceRecord(recordsRegistry.registerTimeRecord(this.player.getUniqueId(), timeElapsed), "time");
+        announceRecord(recordsRegistry.registerDeathRecord(this.player.getUniqueId(), this.deaths), "least deaths");
+    }
+
+    /**
+     * Announces a record set by this player
+     *
+     * @param recordResult <p>The result of the record</p>
+     * @param type         <p>The type of record set (time or deaths)</p>
+     */
+    private void announceRecord(@NotNull RecordResult recordResult, @NotNull String type) {
+        if (recordResult == RecordResult.NONE) {
+            return;
         }
+
+        // Gets a string representation of the played game-mode
+        String gameModeString = switch (this.gameMode) {
+            case DEFAULT -> "default";
+            case INVERTED -> "inverted";
+            case RANDOM_INVERTED -> "random";
+        };
+
+        String recordString = "You just set a %s on the %s game-mode!";
+        recordString = switch (recordResult) {
+            case WORLD_RECORD -> String.format(recordString, "new %s record", gameModeString);
+            case PERSONAL_BEST -> String.format(recordString, "personal %s record", gameModeString);
+            default -> throw new IllegalStateException("Unexpected value: " + recordResult);
+        };
+        player.sendMessage(String.format(recordString, type));
     }
 
     /**
      * Triggers a loss for the player playing in this session
      */
     public void triggerLoss() {
-        // Add to the death count if playing the least-deaths game-mode
-        if (this.gameMode == ArenaGameMode.LEAST_DEATHS) {
-            this.deaths++;
-        }
+        this.deaths++;
         //Teleport the player back to the top
         PlayerTeleporter.teleportPlayer(this.player, this.arena.getSpawnLocation(), true, false);
         this.entryState.setArenaState(this.arena.getPlayerHorizontalVelocity());

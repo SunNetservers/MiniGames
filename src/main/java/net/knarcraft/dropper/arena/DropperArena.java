@@ -1,6 +1,7 @@
 package net.knarcraft.dropper.arena;
 
 import net.knarcraft.dropper.Dropper;
+import net.knarcraft.dropper.property.ArenaGameMode;
 import net.knarcraft.dropper.util.ArenaStorageHelper;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -8,7 +9,8 @@ import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -106,8 +108,13 @@ public class DropperArena {
         this.exitLocation = null;
         this.playerVerticalVelocity = 3.92;
         this.playerHorizontalVelocity = 1;
-        this.dropperArenaData = new DropperArenaData(this.arenaId, new DropperArenaRecordsRegistry(this.arenaId),
-                new HashSet<>());
+
+        Map<ArenaGameMode, DropperArenaRecordsRegistry> recordRegistries = new HashMap<>();
+        for (ArenaGameMode arenaGameMode : ArenaGameMode.values()) {
+            recordRegistries.put(arenaGameMode, new DropperArenaRecordsRegistry(this.arenaId));
+        }
+
+        this.dropperArenaData = new DropperArenaData(this.arenaId, recordRegistries, new HashMap<>());
         this.winBlockType = Material.WATER;
     }
 

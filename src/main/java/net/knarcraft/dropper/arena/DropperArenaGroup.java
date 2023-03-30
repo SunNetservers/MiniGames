@@ -2,6 +2,7 @@ package net.knarcraft.dropper.arena;
 
 import net.knarcraft.dropper.Dropper;
 import net.knarcraft.dropper.container.SerializableUUID;
+import net.knarcraft.dropper.property.ArenaGameMode;
 import net.knarcraft.dropper.util.ArenaStorageHelper;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
@@ -117,12 +118,13 @@ public class DropperArenaGroup implements ConfigurationSerializable {
     }
 
     /**
-     * Checks whether the given player has beaten all arenas in this group
+     * Checks whether the given player has beaten all arenas in this group on the given game-mode
      *
-     * @param player <p>The player to check</p>
+     * @param gameMode <p>The game-mode to check</p>
+     * @param player   <p>The player to check</p>
      * @return <p>True if the player has beaten all arenas, false otherwise</p>
      */
-    public boolean hasBeatenAll(Player player) {
+    public boolean hasBeatenAll(ArenaGameMode gameMode, Player player) {
         DropperArenaHandler arenaHandler = Dropper.getInstance().getArenaHandler();
         for (UUID anArenaId : this.getArenas()) {
             DropperArena dropperArena = arenaHandler.getArena(anArenaId);
@@ -133,7 +135,7 @@ public class DropperArenaGroup implements ConfigurationSerializable {
                 continue;
             }
 
-            if (dropperArena.getData().hasNotCompleted(player)) {
+            if (dropperArena.getData().hasNotCompleted(gameMode, player)) {
                 return false;
             }
         }
@@ -141,14 +143,15 @@ public class DropperArenaGroup implements ConfigurationSerializable {
     }
 
     /**
-     * Gets whether the given player can play the given arena part of this group
+     * Gets whether the given player can play the given arena part of this group, on the given game-mode
      *
-     * @param player  <p>The player to check</p>
-     * @param arenaId <p>The id of the arena in this group to check</p>
+     * @param gameMode <p>The game-mode the player is trying to play</p>
+     * @param player   <p>The player to check</p>
+     * @param arenaId  <p>The id of the arena in this group to check</p>
      * @return <p>True if the player is allowed to play the arena</p>
      * @throws IllegalArgumentException <p>If checking an arena not in this group</p>
      */
-    public boolean canPlay(Player player, UUID arenaId) throws IllegalArgumentException {
+    public boolean canPlay(ArenaGameMode gameMode, Player player, UUID arenaId) throws IllegalArgumentException {
         if (!this.arenas.contains(arenaId)) {
             throw new IllegalArgumentException("Cannot check for playability for arena not in this group!");
         }
@@ -170,7 +173,7 @@ public class DropperArenaGroup implements ConfigurationSerializable {
             }
 
             // This is a lower-numbered arena the player has yet to complete
-            if (dropperArena.getData().hasNotCompleted(player)) {
+            if (dropperArena.getData().hasNotCompleted(gameMode, player)) {
                 return false;
             }
         }

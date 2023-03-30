@@ -120,7 +120,7 @@ public class EditArenaCommand implements CommandExecutor {
         }
 
         // If outside bonds, choose the most extreme value
-        return Math.min(Math.max(-1, velocity), 1);
+        return Math.min(Math.max(0.1f, velocity), 1);
     }
 
     /**
