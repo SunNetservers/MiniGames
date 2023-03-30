@@ -2,11 +2,13 @@ package net.knarcraft.dropper.arena;
 
 import net.knarcraft.dropper.Dropper;
 import net.knarcraft.dropper.util.ArenaStorageHelper;
+import net.knarcraft.dropper.util.StringSanitizer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -35,11 +37,27 @@ public class DropperArenaHandler {
      * Sets the group for the given arena
      *
      * @param arenaId    <p>The id of the arena to change</p>
-     * @param arenaGroup <p>The group to add the arena to</p>
+     * @param arenaGroup <p>The group to add the arena to, or null to remove the current group</p>
      */
-    public void setGroup(@NotNull UUID arenaId, @NotNull DropperArenaGroup arenaGroup) {
-        this.arenaGroups.put(arenaId, arenaGroup);
-        arenaGroup.addArena(arenaId);
+    public void setGroup(@NotNull UUID arenaId, @Nullable DropperArenaGroup arenaGroup) {
+        if (arenaGroup == null) {
+            // No need to remove something non-existing
+            if (!this.arenaGroups.containsKey(arenaId)) {
+                return;
+            }
+
+            // Remove the existing group
+            DropperArenaGroup oldGroup = this.arenaGroups.remove(arenaId);
+            oldGroup.removeArena(arenaId);
+        } else {
+            // Make sure to remove the arena from the old group's internal tracking
+            if (this.arenaGroups.containsKey(arenaId)) {
+                this.arenaGroups.remove(arenaId).removeArena(arenaId);
+            }
+
+            this.arenaGroups.put(arenaId, arenaGroup);
+            arenaGroup.addArena(arenaId);
+        }
         saveGroups();
     }
 
@@ -50,26 +68,13 @@ public class DropperArenaHandler {
      * @return <p>The group, or null if not found</p>
      */
     public @Nullable DropperArenaGroup getGroup(String groupName) {
-        String sanitized = ArenaStorageHelper.sanitizeArenaName(groupName);
+        String sanitized = StringSanitizer.sanitizeArenaName(groupName);
         for (DropperArenaGroup arenaGroup : this.arenaGroups.values()) {
             if (arenaGroup.getGroupNameSanitized().equals(sanitized)) {
                 return arenaGroup;
             }
         }
         return null;
-    }
-
-    /**
-     * Removes the given arena from its group
-     *
-     * @param arenaId <p>The id of the arena to ungroup</p>
-     */
-    public void removeFromGroup(@NotNull UUID arenaId) {
-        if (this.arenaGroups.containsKey(arenaId)) {
-            this.arenaGroups.get(arenaId).removeArena(arenaId);
-            this.arenaGroups.remove(arenaId);
-            saveGroups();
-        }
     }
 
     /**
@@ -113,7 +118,7 @@ public class DropperArenaHandler {
      * @return <p>The arena with the given name, or null if not found</p>
      */
     public @Nullable DropperArena getArena(@NotNull String arenaName) {
-        return this.arenas.get(this.arenaNameLookup.get(ArenaStorageHelper.sanitizeArenaName(arenaName)));
+        return this.arenas.get(this.arenaNameLookup.get(StringSanitizer.sanitizeArenaName(arenaName)));
     }
 
     /**
@@ -157,7 +162,7 @@ public class DropperArenaHandler {
      */
     public void saveGroups() {
         try {
-            ArenaStorageHelper.saveDropperArenaGroups((Set<DropperArenaGroup>) this.arenaGroups.values());
+            ArenaStorageHelper.saveDropperArenaGroups(new HashSet<>(this.arenaGroups.values()));
         } catch (IOException e) {
             Dropper.getInstance().getLogger().log(Level.SEVERE, "Unable to save current arena groups! " +
                     "Data loss can occur!");

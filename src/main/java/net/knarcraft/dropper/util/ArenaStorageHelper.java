@@ -178,16 +178,6 @@ public final class ArenaStorageHelper {
     }
 
     /**
-     * Sanitizes an arena name for usage as a YAML key
-     *
-     * @param arenaName <p>The arena name to sanitize</p>
-     * @return <p>The sanitized arena name</p>
-     */
-    public static @NotNull String sanitizeArenaName(@NotNull String arenaName) {
-        return arenaName.toLowerCase().trim().replaceAll(" ", "_");
-    }
-
-    /**
      * Stores the given arena data to a file
      *
      * @param arenaData <p>The arena data to store</p>

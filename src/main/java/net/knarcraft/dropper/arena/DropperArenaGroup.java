@@ -3,7 +3,7 @@ package net.knarcraft.dropper.arena;
 import net.knarcraft.dropper.Dropper;
 import net.knarcraft.dropper.container.SerializableUUID;
 import net.knarcraft.dropper.property.ArenaGameMode;
-import net.knarcraft.dropper.util.ArenaStorageHelper;
+import net.knarcraft.dropper.util.StringSanitizer;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -187,7 +187,7 @@ public class DropperArenaGroup implements ConfigurationSerializable {
      * @return <p>The sanitized group name</p>
      */
     public @NotNull String getGroupNameSanitized() {
-        return ArenaStorageHelper.sanitizeArenaName(this.getGroupName());
+        return StringSanitizer.sanitizeArenaName(this.getGroupName());
     }
 
     /**

@@ -2,7 +2,7 @@ package net.knarcraft.dropper.arena;
 
 import net.knarcraft.dropper.Dropper;
 import net.knarcraft.dropper.property.ArenaGameMode;
-import net.knarcraft.dropper.util.ArenaStorageHelper;
+import net.knarcraft.dropper.util.StringSanitizer;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -203,7 +203,7 @@ public class DropperArena {
      * @return <p>This arena's sanitized name</p>
      */
     public @NotNull String getArenaNameSanitized() {
-        return ArenaStorageHelper.sanitizeArenaName(this.getArenaName());
+        return StringSanitizer.sanitizeArenaName(this.getArenaName());
     }
 
     /**
