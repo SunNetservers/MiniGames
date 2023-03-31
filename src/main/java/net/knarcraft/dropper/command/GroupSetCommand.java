@@ -67,6 +67,9 @@ public class GroupSetCommand implements TabExecutor {
             List<String> possibleValues = new ArrayList<>();
             possibleValues.add("none");
             possibleValues.add("GroupName");
+            for (DropperArenaGroup group : Dropper.getInstance().getArenaHandler().getAllGroups()) {
+                possibleValues.add(group.getGroupName());
+            }
             return possibleValues;
         } else {
             return new ArrayList<>();

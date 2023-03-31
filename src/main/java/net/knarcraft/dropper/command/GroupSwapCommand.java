@@ -17,4 +17,7 @@ public class GroupSwapCommand implements CommandExecutor {
         return false;
     }
 
+    // Tab-completion TODO: Only give arenas with a group for the first value. Only give arenas within the same group
+    //  for the second value
+
 }

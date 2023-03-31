@@ -24,6 +24,15 @@ public class DropperArenaHandler {
     private Map<String, UUID> arenaNameLookup = new HashMap<>();
 
     /**
+     * Gets a copy of all dropper groups
+     *
+     * @return <p>All dropper groups</p>
+     */
+    public Set<DropperArenaGroup> getAllGroups() {
+        return new HashSet<>(arenaGroups.values());
+    }
+
+    /**
      * Gets the group the given arena belongs to
      *
      * @param arenaId <p>The id of the arena to get the group of</p>
