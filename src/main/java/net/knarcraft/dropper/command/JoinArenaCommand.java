@@ -2,6 +2,7 @@ package net.knarcraft.dropper.command;
 
 import net.knarcraft.dropper.Dropper;
 import net.knarcraft.dropper.arena.DropperArena;
+import net.knarcraft.dropper.arena.DropperArenaGroup;
 import net.knarcraft.dropper.arena.DropperArenaPlayerRegistry;
 import net.knarcraft.dropper.arena.DropperArenaSession;
 import net.knarcraft.dropper.property.ArenaGameMode;
@@ -69,7 +70,18 @@ public class JoinArenaCommand implements CommandExecutor {
             gameMode = ArenaGameMode.DEFAULT;
         }
 
-        //TODO: Check if the arena has been beaten if the non-default game-mode has been chosen
+        // Make sure the player has beaten the necessary levels
+        DropperArenaGroup arenaGroup = Dropper.getInstance().getArenaHandler().getGroup(specifiedArena.getArenaId());
+        if (arenaGroup != null && !doGroupChecks(specifiedArena, arenaGroup, gameMode, player)) {
+            return false;
+        }
+
+        // Make sure the player has beaten the arena once in normal mode before playing another mode
+        if (gameMode != ArenaGameMode.DEFAULT &&
+                specifiedArena.getData().hasNotCompleted(ArenaGameMode.DEFAULT, player)) {
+            player.sendMessage("You must complete this arena in normal mode first!");
+            return false;
+        }
 
         // Register the player's session
         DropperArenaSession newSession = new DropperArenaSession(specifiedArena, player, gameMode);
@@ -88,6 +100,34 @@ public class JoinArenaCommand implements CommandExecutor {
             newSession.getEntryState().setArenaState(specifiedArena.getPlayerHorizontalVelocity());
             return true;
         }
+    }
+
+    /**
+     * Performs necessary check for the given arena's group
+     *
+     * @param dropperArena  <p>The arena the player is trying to join</p>
+     * @param arenaGroup    <p>The arena group the arena belongs to</p>
+     * @param arenaGameMode <p>The game-mode the player selected</p>
+     * @param player        <p>The the player trying to join the arena</p>
+     * @return <p>False if any checks failed</p>
+     */
+    private boolean doGroupChecks(@NotNull DropperArena dropperArena, @NotNull DropperArenaGroup arenaGroup,
+                                  @NotNull ArenaGameMode arenaGameMode, @NotNull Player player) {
+        // Require that players beat all arenas in the group in the normal game-mode before trying challenge modes
+        if (arenaGameMode != ArenaGameMode.DEFAULT) {
+            if (!arenaGroup.hasBeatenAll(ArenaGameMode.DEFAULT, player)) {
+                player.sendMessage("You have not yet beaten all arenas in this group!");
+                return false;
+            }
+        }
+
+        // Require that the player has beaten the previous arena on the same game-mode before trying this one
+        if (!arenaGroup.canPlay(arenaGameMode, player, dropperArena.getArenaId())) {
+            player.sendMessage("You have not yet beaten the previous arena!");
+            return false;
+        }
+
+        return true;
     }
 
 }

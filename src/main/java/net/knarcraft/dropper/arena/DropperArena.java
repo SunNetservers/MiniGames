@@ -1,11 +1,16 @@
 package net.knarcraft.dropper.arena;
 
+import net.knarcraft.dropper.Dropper;
+import net.knarcraft.dropper.property.ArenaGameMode;
+import net.knarcraft.dropper.util.StringSanitizer;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -21,47 +26,42 @@ public class DropperArena {
     /**
      * A name used when listing and storing this arena.
      */
-    private final @NotNull String arenaName;
+    private @NotNull String arenaName;
 
     /**
      * The location players are teleported to when joining this arena.
      */
-    private final @NotNull Location spawnLocation;
+    private @NotNull Location spawnLocation;
 
     /**
      * The location players will be sent to when they win or lose the arena. If not set, their entry location should be
      * used instead.
      */
-    private final @Nullable Location exitLocation;
+    private @Nullable Location exitLocation;
 
     /**
      * The velocity in the y-direction to apply to all players in this arena.
      */
-    private final double playerVerticalVelocity;
+    private double playerVerticalVelocity;
 
     /**
      * The velocity in the x-direction to apply to all players in this arena
      *
      * <p>This is technically the fly speed</p>
      */
-    private final float playerHorizontalVelocity;
-
-    /**
-     * The stage number of this arena. If not null, the previous stage number must be cleared before access.
-     */
-    private final @Nullable Integer stage;
+    private float playerHorizontalVelocity;
 
     /**
      * The material of the block players have to hit to win this dropper arena
      */
-    private final @NotNull Material winBlockType;
+    private @NotNull Material winBlockType;
 
     /**
      * The arena data for this arena
      */
     private final DropperArenaData dropperArenaData;
 
-    //TODO: It should be possible to get records in sorted order (smallest to largest)
+    private static DropperArenaHandler dropperArenaHandler = null;
 
     /**
      * Instantiates a new dropper arena
@@ -72,23 +72,24 @@ public class DropperArena {
      * @param exitLocation             <p>The location the players are teleported to when exiting the arena, or null</p>
      * @param playerVerticalVelocity   <p>The velocity to use for players' vertical velocity</p>
      * @param playerHorizontalVelocity <p>The velocity to use for players' horizontal velocity (-1 to 1)</p>
-     * @param stage                    <p>The stage number of this stage, or null if not limited to stages</p>
      * @param winBlockType             <p>The material of the block players have to hit to win this dropper arena</p>
      * @param dropperArenaData         <p>The arena data keeping track of which players have done what in this arena</p>
      */
     public DropperArena(@NotNull UUID arenaId, @NotNull String arenaName, @NotNull Location spawnLocation,
                         @Nullable Location exitLocation, double playerVerticalVelocity, float playerHorizontalVelocity,
-                        @Nullable Integer stage, @NotNull Material winBlockType,
-                        @NotNull DropperArenaData dropperArenaData) {
+                        @NotNull Material winBlockType, @NotNull DropperArenaData dropperArenaData) {
         this.arenaId = arenaId;
         this.arenaName = arenaName;
         this.spawnLocation = spawnLocation;
         this.exitLocation = exitLocation;
         this.playerVerticalVelocity = playerVerticalVelocity;
         this.playerHorizontalVelocity = playerHorizontalVelocity;
-        this.stage = stage;
         this.winBlockType = winBlockType;
         this.dropperArenaData = dropperArenaData;
+
+        if (dropperArenaHandler == null) {
+            dropperArenaHandler = Dropper.getInstance().getArenaHandler();
+        }
     }
 
     /**
@@ -105,11 +106,15 @@ public class DropperArena {
         this.arenaName = arenaName;
         this.spawnLocation = spawnLocation;
         this.exitLocation = null;
-        this.playerVerticalVelocity = 1;
+        this.playerVerticalVelocity = 3.92;
         this.playerHorizontalVelocity = 1;
-        this.stage = null;
-        this.dropperArenaData = new DropperArenaData(this.arenaId, new DropperArenaRecordsRegistry(this.arenaId),
-                new HashSet<>());
+
+        Map<ArenaGameMode, DropperArenaRecordsRegistry> recordRegistries = new HashMap<>();
+        for (ArenaGameMode arenaGameMode : ArenaGameMode.values()) {
+            recordRegistries.put(arenaGameMode, new DropperArenaRecordsRegistry(this.arenaId));
+        }
+
+        this.dropperArenaData = new DropperArenaData(this.arenaId, recordRegistries, new HashMap<>());
         this.winBlockType = Material.WATER;
     }
 
@@ -184,24 +189,143 @@ public class DropperArena {
     }
 
     /**
-     * Gets the stage this arena belongs to
-     *
-     * <p>It's assumed that arena stages go from 1,2,3,4,... and upwards. If the stage number is set, this arena can
-     * only be played if all previous stages have been beaten. If not set, however, this arena can be used freely.</p>
-     *
-     * @return <p>This arena's stage number</p>
-     */
-    public @Nullable Integer getStage() {
-        return this.stage;
-    }
-
-    /**
      * Gets the type of block a player has to hit to win this arena
      *
      * @return <p>The kind of block players must hit</p>
      */
     public @NotNull Material getWinBlockType() {
         return this.winBlockType;
+    }
+
+    /**
+     * Gets this arena's sanitized name
+     *
+     * @return <p>This arena's sanitized name</p>
+     */
+    public @NotNull String getArenaNameSanitized() {
+        return StringSanitizer.sanitizeArenaName(this.getArenaName());
+    }
+
+    /**
+     * Sets the spawn location for this arena
+     *
+     * @param newLocation <p>The new spawn location</p>
+     * @return <p>True if successfully updated</p>
+     */
+    public boolean setSpawnLocation(@NotNull Location newLocation) {
+        if (isInvalid(newLocation)) {
+            return false;
+        } else {
+            this.spawnLocation = newLocation;
+            dropperArenaHandler.saveArenas();
+            return true;
+        }
+    }
+
+    /**
+     * Sets the exit location for this arena
+     *
+     * @param newLocation <p>The new exit location</p>
+     * @return <p>True if successfully updated</p>
+     */
+    public boolean setExitLocation(@NotNull Location newLocation) {
+        if (isInvalid(newLocation)) {
+            return false;
+        } else {
+            this.exitLocation = newLocation;
+            dropperArenaHandler.saveArenas();
+            return true;
+        }
+    }
+
+    /**
+     * Sets the name of this arena
+     *
+     * @param arenaName <p>The new name</p>
+     * @return <p>True if successfully updated</p>
+     */
+    public boolean setName(@NotNull String arenaName) {
+        if (!arenaName.isBlank()) {
+            String oldName = this.getArenaNameSanitized();
+            this.arenaName = arenaName;
+            // Update the arena lookup map to make sure the new name can be used immediately
+            dropperArenaHandler.updateLookupName(oldName, this.getArenaNameSanitized());
+            dropperArenaHandler.saveArenas();
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Sets the material of the win block type
+     *
+     * <p>The win block type is the type of block a player must hit to win in this arena</p>
+     *
+     * @param material <p>The material to set for the win block type</p>
+     * @return <p>True if successfully updated</p>
+     */
+    public boolean setWinBlockType(@NotNull Material material) {
+        if (material.isAir() || !material.isBlock()) {
+            return false;
+        } else {
+            this.winBlockType = material;
+            dropperArenaHandler.saveArenas();
+            return true;
+        }
+    }
+
+    /**
+     * Sets the horizontal velocity of this arena's players
+     *
+     * <p>Note: It's assumed the given value is already bound-checked! (-1 to 1)</p>
+     *
+     * @param horizontalVelocity <p>The horizontal velocity to use</p>
+     * @return <p>True if successfully updated</p>
+     */
+    public boolean setHorizontalVelocity(float horizontalVelocity) {
+        if (horizontalVelocity < -1 || horizontalVelocity > 1) {
+            return false;
+        } else {
+            this.playerHorizontalVelocity = horizontalVelocity;
+            dropperArenaHandler.saveArenas();
+            return true;
+        }
+    }
+
+    /**
+     * Sets the vertical velocity of this arena's players
+     *
+     * @param verticalVelocity <p>The vertical velocity to use</p>
+     * @return <p>True if successfully updated</p>
+     */
+    public boolean setVerticalVelocity(double verticalVelocity) {
+        if (verticalVelocity <= 0 || verticalVelocity > 100) {
+            return false;
+        } else {
+            this.playerVerticalVelocity = verticalVelocity;
+            dropperArenaHandler.saveArenas();
+            return true;
+        }
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (!(other instanceof DropperArena otherArena)) {
+            return false;
+        }
+        return this.getArenaNameSanitized().equals(otherArena.getArenaNameSanitized());
+    }
+
+    /**
+     * Checks whether the given location is valid
+     *
+     * @param location <p>The location to validate</p>
+     * @return <p>False if the location is valid</p>
+     */
+    private boolean isInvalid(Location location) {
+        World world = location.getWorld();
+        return world == null || !world.getWorldBorder().isInside(location);
     }
 
 }

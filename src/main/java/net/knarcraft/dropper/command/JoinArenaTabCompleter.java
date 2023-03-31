@@ -23,8 +23,8 @@ public class JoinArenaTabCompleter implements TabCompleter {
         } else if (arguments.length == 2) {
             List<String> gameModes = new ArrayList<>();
             gameModes.add("default");
-            gameModes.add("deaths");
-            gameModes.add("time");
+            gameModes.add("inverted");
+            gameModes.add("random");
             return gameModes;
         } else {
             return new ArrayList<>();

@@ -2,6 +2,7 @@ package net.knarcraft.dropper.util;
 
 import net.knarcraft.dropper.Dropper;
 import net.knarcraft.dropper.arena.DropperArena;
+import net.knarcraft.dropper.property.ArenaEditableProperty;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -27,6 +28,19 @@ public final class TabCompleteHelper {
             arenaNames.add(dropperArena.getArenaName());
         }
         return arenaNames;
+    }
+
+    /**
+     * Gets the argument strings of all arena properties
+     *
+     * @return <p>All arena properties</p>
+     */
+    public static @NotNull List<String> getArenaProperties() {
+        List<String> arenaProperties = new ArrayList<>();
+        for (ArenaEditableProperty property : ArenaEditableProperty.values()) {
+            arenaProperties.add(property.getArgumentString());
+        }
+        return arenaProperties;
     }
 
 }

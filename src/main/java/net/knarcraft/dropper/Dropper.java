@@ -1,6 +1,7 @@
 package net.knarcraft.dropper;
 
 import net.knarcraft.dropper.arena.DropperArenaData;
+import net.knarcraft.dropper.arena.DropperArenaGroup;
 import net.knarcraft.dropper.arena.DropperArenaHandler;
 import net.knarcraft.dropper.arena.DropperArenaPlayerRegistry;
 import net.knarcraft.dropper.arena.DropperArenaRecordsRegistry;
@@ -8,6 +9,9 @@ import net.knarcraft.dropper.arena.DropperArenaSession;
 import net.knarcraft.dropper.command.CreateArenaCommand;
 import net.knarcraft.dropper.command.EditArenaCommand;
 import net.knarcraft.dropper.command.EditArenaTabCompleter;
+import net.knarcraft.dropper.command.GroupListCommand;
+import net.knarcraft.dropper.command.GroupSetCommand;
+import net.knarcraft.dropper.command.GroupSwapCommand;
 import net.knarcraft.dropper.command.JoinArenaCommand;
 import net.knarcraft.dropper.command.JoinArenaTabCompleter;
 import net.knarcraft.dropper.command.LeaveArenaCommand;
@@ -21,6 +25,7 @@ import net.knarcraft.dropper.listener.CommandListener;
 import net.knarcraft.dropper.listener.DamageListener;
 import net.knarcraft.dropper.listener.MoveListener;
 import net.knarcraft.dropper.listener.PlayerLeaveListener;
+import net.knarcraft.dropper.property.ArenaGameMode;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabCompleter;
@@ -76,6 +81,7 @@ public final class Dropper extends JavaPlugin {
     public void reload() {
         // Load all arenas again
         this.arenaHandler.loadArenas();
+        this.arenaHandler.loadGroups();
     }
 
     @Override
@@ -86,6 +92,8 @@ public final class Dropper extends JavaPlugin {
         ConfigurationSerialization.registerClass(DropperArenaRecordsRegistry.class);
         ConfigurationSerialization.registerClass(SerializableUUID.class);
         ConfigurationSerialization.registerClass(DropperArenaData.class);
+        ConfigurationSerialization.registerClass(DropperArenaGroup.class);
+        ConfigurationSerialization.registerClass(ArenaGameMode.class);
     }
 
     @Override
@@ -95,14 +103,7 @@ public final class Dropper extends JavaPlugin {
         this.playerRegistry = new DropperArenaPlayerRegistry();
         this.arenaHandler = new DropperArenaHandler();
         this.arenaHandler.loadArenas();
-
-        //TODO: Store various information about players' performance, and hook into PlaceholderAPI
-
-        //TODO: Possibly implement an optional queue mode, which only allows one player inside one dropper arena at any 
-        // time (to prevent players from pushing each-other)?
-
-        //TODO: Store which players have cleared which arenas to keep track of whether the trial game-modes should be 
-        // available
+        this.arenaHandler.loadGroups();
 
         PluginManager pluginManager = getServer().getPluginManager();
         pluginManager.registerEvents(new DamageListener(), this);
@@ -110,13 +111,16 @@ public final class Dropper extends JavaPlugin {
         pluginManager.registerEvents(new PlayerLeaveListener(), this);
         pluginManager.registerEvents(new CommandListener(), this);
 
-        registerCommand("dropperreload", new ReloadCommand(), null);
-        registerCommand("droppercreate", new CreateArenaCommand(), null);
-        registerCommand("dropperlist", new ListArenaCommand(), null);
-        registerCommand("dropperjoin", new JoinArenaCommand(), new JoinArenaTabCompleter());
-        registerCommand("dropperleave", new LeaveArenaCommand(), null);
-        registerCommand("dropperedit", new EditArenaCommand(), new EditArenaTabCompleter());
-        registerCommand("dropperremove", new RemoveArenaCommand(), new RemoveArenaTabCompleter());
+        registerCommand("dropperReload", new ReloadCommand(), null);
+        registerCommand("dropperCreate", new CreateArenaCommand(), null);
+        registerCommand("dropperList", new ListArenaCommand(), null);
+        registerCommand("dropperJoin", new JoinArenaCommand(), new JoinArenaTabCompleter());
+        registerCommand("dropperLeave", new LeaveArenaCommand(), null);
+        registerCommand("dropperEdit", new EditArenaCommand(), new EditArenaTabCompleter());
+        registerCommand("dropperRemove", new RemoveArenaCommand(), new RemoveArenaTabCompleter());
+        registerCommand("dropperGroupSet", new GroupSetCommand(), null);
+        registerCommand("dropperGroupSwap", new GroupSwapCommand(), null);
+        registerCommand("dropperGroupList", new GroupListCommand(), null);
     }
 
     @Override

@@ -1,8 +1,10 @@
 package net.knarcraft.dropper.arena;
 
+import net.knarcraft.dropper.property.ArenaGameMode;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * The state of a player before entering a dropper arena
@@ -17,21 +19,23 @@ public class PlayerEntryState {
     private final boolean originalAllowFlight;
     private final boolean originalInvulnerable;
     private final boolean originalIsSwimming;
+    private final ArenaGameMode arenaGameMode;
 
     /**
      * Instantiates a new player state
      *
      * @param player <p>The player whose state should be stored</p>
      */
-    public PlayerEntryState(Player player) {
+    public PlayerEntryState(@NotNull Player player, @NotNull ArenaGameMode arenaGameMode) {
         this.player = player;
-        this.entryLocation = player.getLocation();
+        this.entryLocation = player.getLocation().clone();
         this.originalFlySpeed = player.getFlySpeed();
         this.originalIsFlying = player.isFlying();
         this.originalGameMode = player.getGameMode();
         this.originalAllowFlight = player.getAllowFlight();
         this.originalInvulnerable = player.isInvulnerable();
         this.originalIsSwimming = player.isSwimming();
+        this.arenaGameMode = arenaGameMode;
     }
 
     /**
@@ -42,9 +46,15 @@ public class PlayerEntryState {
     public void setArenaState(float horizontalVelocity) {
         this.player.setAllowFlight(true);
         this.player.setFlying(true);
-        this.player.setFlySpeed(horizontalVelocity);
         this.player.setGameMode(GameMode.ADVENTURE);
         this.player.setSwimming(false);
+
+        // If playing on the inverted game-mode, negate the horizontal velocity to swap the controls
+        if (arenaGameMode == ArenaGameMode.INVERTED) {
+            this.player.setFlySpeed(-horizontalVelocity);
+        } else {
+            this.player.setFlySpeed(horizontalVelocity);
+        }
     }
 
     /**

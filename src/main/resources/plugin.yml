@@ -4,48 +4,77 @@ main: net.knarcraft.dropper.Dropper
 api-version: 1.19
 description: A plugin for dropper mini-games
 
+# Note to self: Aliases must be lowercase!
 commands:
-  dropperreload:
+  dropperGroupSet:
+    aliases:
+      - dgset
+    permission: dropper.edit
+    usage: |
+      /<command> <arena> <group>
+      - The group will be created if it doesn't already exist
+      - Use "none" or "null" as the group to release the arena from its group
+    description: Sets the group of the given arena
+  dropperGroupSwap:
+    aliases:
+      - dgswap
+    permission: dropper.edit
+    usage: |
+      /<command> <arena1> <arena2>
+      - The two arenas must be in the same group
+    description: Swaps the order of two arenas in the same group
+  dropperGroupList:
+    aliases:
+      - dglist
+    permission: dropper.edit
+    usage: |
+      /<command> [group]
+      - Existing groups will be listed if used without an argument
+      - Supplying a group shows the group's arenas
+    description: Lists existing groups and their arenas
+  dropperReload:
     aliases:
       - dreload
     permission: dropper.admin
     usage: /<command>
     description: Reloads all data from disk
-  dropperlist:
+  dropperList:
     aliases:
       - dlist
     permission: dropper.join
     usage: /<command>
     description: Used to list all current dropper arenas
-  dropperjoin:
+  dropperJoin:
     aliases:
       - djoin
     permission: dropper.join
     usage: |
       /<command> <arena> [mode]
-      Mode can be used to select challenge modes which can be played after beating the arena.
-      deaths = A least-deaths competitive game-mode
-      time = A shortest-time competitive game-mode
+      - Mode can be used to select challenge modes which can be played after beating the arena.
+      - inverted = A game-mode where the WASD buttons are inverted
+      - random = A game-mode where the WASD buttons toggle between being inverted and not
     description: Used to join a dropper arena
-  dropperleave:
+  dropperLeave:
     aliases:
       - dleave
     permission: dropper.join
     usage: /<command>
     description: Used to leave the current dropper arena
-  droppercreate:
+  dropperCreate:
     aliases:
       - dcreate
     permission: dropper.create
-    usage: /<command> (Details not finalized)
+    usage: |
+      /<command> <arena> <property> [new value]
+      - Valid properties: name, spawnLocation, exitLocation, verticalVelocity, horizontalVelocity, winBlockType
     description: Used to create a new dropper arena
-  dropperedit:
+  dropperEdit:
     aliases:
       - dedit
     permission: dropper.edit
     usage: /<command> (Details not finalized)
     description: Used to edit an existing dropper arena
-  dropperremove:
+  dropperRemove:
     aliases:
       - dremove
     permission: dropper.remove

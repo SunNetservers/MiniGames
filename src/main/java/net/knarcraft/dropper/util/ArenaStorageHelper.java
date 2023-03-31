@@ -3,9 +3,11 @@ package net.knarcraft.dropper.util;
 import net.knarcraft.dropper.Dropper;
 import net.knarcraft.dropper.arena.DropperArena;
 import net.knarcraft.dropper.arena.DropperArenaData;
+import net.knarcraft.dropper.arena.DropperArenaGroup;
 import net.knarcraft.dropper.arena.DropperArenaRecordsRegistry;
 import net.knarcraft.dropper.container.SerializableMaterial;
 import net.knarcraft.dropper.container.SerializableUUID;
+import net.knarcraft.dropper.property.ArenaGameMode;
 import net.knarcraft.dropper.property.ArenaStorageKey;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -19,6 +21,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Level;
 
@@ -28,7 +31,9 @@ import java.util.logging.Level;
 public final class ArenaStorageHelper {
 
     private final static String arenasConfigurationSection = "arenas";
+    private final static String groupsConfigurationSection = "groups";
     private static final File arenaFile = new File(Dropper.getInstance().getDataFolder(), "arenas.yml");
+    private static final File groupFile = new File(Dropper.getInstance().getDataFolder(), "groups.yml");
     private static final File arenaDataFolder = new File(Dropper.getInstance().getDataFolder(), "arena_data");
 
     private ArenaStorageHelper() {
@@ -36,7 +41,46 @@ public final class ArenaStorageHelper {
     }
 
     /**
-     * Saves the given arenas to the given file
+     * Saves the given dropper arena groups
+     *
+     * @param arenaGroups <p>The arena groups to save</p>
+     * @throws IOException <p>If unable to write to the file</p>
+     */
+    public static void saveDropperArenaGroups(@NotNull Set<DropperArenaGroup> arenaGroups) throws IOException {
+        YamlConfiguration configuration = new YamlConfiguration();
+        ConfigurationSection groupSection = configuration.createSection(groupsConfigurationSection);
+
+        for (DropperArenaGroup arenaGroup : arenaGroups) {
+            groupSection.set(arenaGroup.getGroupId().toString(), arenaGroup);
+        }
+
+        configuration.save(groupFile);
+    }
+
+    /**
+     * Loads all existing dropper arena groups
+     *
+     * @return <p>The loaded arena groups</p>
+     */
+    public static @NotNull Set<DropperArenaGroup> loadDropperArenaGroups() {
+        YamlConfiguration configuration = YamlConfiguration.loadConfiguration(groupFile);
+        ConfigurationSection groupSection = configuration.getConfigurationSection(groupsConfigurationSection);
+        //If no such section exists, it must be the case that there is no data to load
+        if (groupSection == null) {
+            return new HashSet<>();
+        }
+
+        Set<DropperArenaGroup> arenaGroups = new HashSet<>();
+
+        for (String sectionName : groupSection.getKeys(false)) {
+            arenaGroups.add((DropperArenaGroup) groupSection.get(sectionName));
+        }
+
+        return arenaGroups;
+    }
+
+    /**
+     * Saves the given arenas
      *
      * @param arenas <p>The arenas to save</p>
      * @throws IOException <p>If unable to write to the file</p>
@@ -47,15 +91,13 @@ public final class ArenaStorageHelper {
         for (DropperArena arena : arenas.values()) {
             //Note: While the arena name is used as the key, as the key has to be sanitized, the un-sanitized arena name
             // must be stored as well
-            @NotNull ConfigurationSection configSection = arenaSection.createSection(sanitizeArenaName(
-                    arena.getArenaName()));
+            @NotNull ConfigurationSection configSection = arenaSection.createSection(arena.getArenaId().toString());
             configSection.set(ArenaStorageKey.ID.getKey(), new SerializableUUID(arena.getArenaId()));
             configSection.set(ArenaStorageKey.NAME.getKey(), arena.getArenaName());
             configSection.set(ArenaStorageKey.SPAWN_LOCATION.getKey(), arena.getSpawnLocation());
             configSection.set(ArenaStorageKey.EXIT_LOCATION.getKey(), arena.getExitLocation());
             configSection.set(ArenaStorageKey.PLAYER_VERTICAL_VELOCITY.getKey(), arena.getPlayerVerticalVelocity());
             configSection.set(ArenaStorageKey.PLAYER_HORIZONTAL_VELOCITY.getKey(), arena.getPlayerHorizontalVelocity());
-            configSection.set(ArenaStorageKey.STAGE.getKey(), arena.getStage());
             configSection.set(ArenaStorageKey.WIN_BLOCK_TYPE.getKey(), new SerializableMaterial(arena.getWinBlockType()));
             saveArenaData(arena.getData());
         }
@@ -63,7 +105,7 @@ public final class ArenaStorageHelper {
     }
 
     /**
-     * Loads all arenas from the given file
+     * Loads all arenas
      *
      * @return <p>The loaded arenas, or null if the arenas configuration section is missing.</p>
      */
@@ -108,7 +150,6 @@ public final class ArenaStorageHelper {
         double verticalVelocity = configurationSection.getDouble(ArenaStorageKey.PLAYER_VERTICAL_VELOCITY.getKey());
         float horizontalVelocity = sanitizeHorizontalVelocity((float) configurationSection.getDouble(
                 ArenaStorageKey.PLAYER_HORIZONTAL_VELOCITY.getKey()));
-        Integer stage = (Integer) configurationSection.get(ArenaStorageKey.STAGE.getKey());
         SerializableMaterial winBlockType = (SerializableMaterial) configurationSection.get(
                 ArenaStorageKey.WIN_BLOCK_TYPE.getKey());
 
@@ -124,21 +165,16 @@ public final class ArenaStorageHelper {
         DropperArenaData arenaData = loadArenaData(arenaId);
         if (arenaData == null) {
             Dropper.getInstance().getLogger().log(Level.SEVERE, "Unable to load arena data for " + arenaId);
-            arenaData = new DropperArenaData(arenaId, new DropperArenaRecordsRegistry(arenaId), new HashSet<>());
+
+            Map<ArenaGameMode, DropperArenaRecordsRegistry> recordRegistries = new HashMap<>();
+            for (ArenaGameMode arenaGameMode : ArenaGameMode.values()) {
+                recordRegistries.put(arenaGameMode, new DropperArenaRecordsRegistry(arenaId));
+            }
+            arenaData = new DropperArenaData(arenaId, recordRegistries, new HashMap<>());
         }
 
         return new DropperArena(arenaId, arenaName, spawnLocation, exitLocation, verticalVelocity, horizontalVelocity,
-                stage, winBlockType.material(), arenaData);
-    }
-
-    /**
-     * Sanitizes an arena name for usage as a YAML key
-     *
-     * @param arenaName <p>The arena name to sanitize</p>
-     * @return <p>The sanitized arena name</p>
-     */
-    public static @NotNull String sanitizeArenaName(@NotNull String arenaName) {
-        return arenaName.toLowerCase().trim().replaceAll(" ", "_");
+                winBlockType.material(), arenaData);
     }
 
     /**

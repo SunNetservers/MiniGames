@@ -38,11 +38,6 @@ public enum ArenaStorageKey {
     PLAYER_HORIZONTAL_VELOCITY("arenaPlayerHorizontalVelocity"),
 
     /**
-     * The key for this arena's stage
-     */
-    STAGE("arenaStage"),
-
-    /**
      * The key for the type of this arena's win block
      */
     WIN_BLOCK_TYPE("winBlockType"),
