@@ -1,6 +1,5 @@
 package net.knarcraft.dropper.arena;
 
-import net.knarcraft.dropper.Dropper;
 import net.knarcraft.dropper.property.ArenaGameMode;
 import net.knarcraft.dropper.util.StringSanitizer;
 import org.bukkit.Location;
@@ -61,7 +60,7 @@ public class DropperArena {
      */
     private final DropperArenaData dropperArenaData;
 
-    private static DropperArenaHandler dropperArenaHandler = null;
+    private final DropperArenaHandler dropperArenaHandler;
 
     /**
      * Instantiates a new dropper arena
@@ -74,10 +73,12 @@ public class DropperArena {
      * @param playerHorizontalVelocity <p>The velocity to use for players' horizontal velocity (-1 to 1)</p>
      * @param winBlockType             <p>The material of the block players have to hit to win this dropper arena</p>
      * @param dropperArenaData         <p>The arena data keeping track of which players have done what in this arena</p>
+     * @param arenaHandler             <p>The arena handler used for saving any changes</p>
      */
     public DropperArena(@NotNull UUID arenaId, @NotNull String arenaName, @NotNull Location spawnLocation,
                         @Nullable Location exitLocation, double playerVerticalVelocity, float playerHorizontalVelocity,
-                        @NotNull Material winBlockType, @NotNull DropperArenaData dropperArenaData) {
+                        @NotNull Material winBlockType, @NotNull DropperArenaData dropperArenaData,
+                        @NotNull DropperArenaHandler arenaHandler) {
         this.arenaId = arenaId;
         this.arenaName = arenaName;
         this.spawnLocation = spawnLocation;
@@ -86,10 +87,7 @@ public class DropperArena {
         this.playerHorizontalVelocity = playerHorizontalVelocity;
         this.winBlockType = winBlockType;
         this.dropperArenaData = dropperArenaData;
-
-        if (dropperArenaHandler == null) {
-            dropperArenaHandler = Dropper.getInstance().getArenaHandler();
-        }
+        this.dropperArenaHandler = arenaHandler;
     }
 
     /**
@@ -100,8 +98,10 @@ public class DropperArena {
      *
      * @param arenaName     <p>The name of the arena</p>
      * @param spawnLocation <p>The location players spawn in when entering the arena</p>
+     * @param arenaHandler  <p>The arena handler used for saving any changes</p>
      */
-    public DropperArena(@NotNull String arenaName, @NotNull Location spawnLocation) {
+    public DropperArena(@NotNull String arenaName, @NotNull Location spawnLocation,
+                        @NotNull DropperArenaHandler arenaHandler) {
         this.arenaId = UUID.randomUUID();
         this.arenaName = arenaName;
         this.spawnLocation = spawnLocation;
@@ -116,6 +116,7 @@ public class DropperArena {
 
         this.dropperArenaData = new DropperArenaData(this.arenaId, recordRegistries, new HashMap<>());
         this.winBlockType = Material.WATER;
+        this.dropperArenaHandler = arenaHandler;
     }
 
     /**

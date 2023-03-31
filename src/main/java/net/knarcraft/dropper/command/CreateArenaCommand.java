@@ -2,6 +2,7 @@ package net.knarcraft.dropper.command;
 
 import net.knarcraft.dropper.Dropper;
 import net.knarcraft.dropper.arena.DropperArena;
+import net.knarcraft.dropper.arena.DropperArenaHandler;
 import net.knarcraft.dropper.util.StringSanitizer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -35,14 +36,16 @@ public class CreateArenaCommand implements CommandExecutor {
             return false;
         }
 
-        DropperArena existingArena = Dropper.getInstance().getArenaHandler().getArena(arenaName);
+        DropperArenaHandler arenaHandler = Dropper.getInstance().getArenaHandler();
+
+        DropperArena existingArena = arenaHandler.getArena(arenaName);
         if (existingArena != null) {
             commandSender.sendMessage("There already exists a dropper arena with that name!");
             return false;
         }
 
-        DropperArena arena = new DropperArena(arenaName, player.getLocation());
-        Dropper.getInstance().getArenaHandler().addArena(arena);
+        DropperArena arena = new DropperArena(arenaName, player.getLocation(), arenaHandler);
+        arenaHandler.addArena(arena);
         commandSender.sendMessage("The arena was successfully created!");
         return true;
     }
