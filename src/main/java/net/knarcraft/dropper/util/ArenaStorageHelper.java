@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * A helper class for saving and loading arenas
@@ -152,9 +153,10 @@ public final class ArenaStorageHelper {
                 ArenaStorageKey.PLAYER_HORIZONTAL_VELOCITY.getKey()));
         SerializableMaterial winBlockType = (SerializableMaterial) configurationSection.get(
                 ArenaStorageKey.WIN_BLOCK_TYPE.getKey());
+        Logger logger = Dropper.getInstance().getLogger();
 
         if (arenaName == null || spawnLocation == null) {
-            Dropper.getInstance().getLogger().log(Level.SEVERE, "Could not load the arena at configuration " +
+            logger.log(Level.SEVERE, "Could not load the arena at configuration " +
                     "section " + configurationSection.getName() + ". Please check the arenas storage file for issues.");
             return null;
         }
@@ -164,7 +166,7 @@ public final class ArenaStorageHelper {
 
         DropperArenaData arenaData = loadArenaData(arenaId);
         if (arenaData == null) {
-            Dropper.getInstance().getLogger().log(Level.SEVERE, "Unable to load arena data for " + arenaId);
+            logger.log(Level.SEVERE, "Unable to load arena data for " + arenaId);
 
             Map<ArenaGameMode, DropperArenaRecordsRegistry> recordRegistries = new HashMap<>();
             for (ArenaGameMode arenaGameMode : ArenaGameMode.values()) {
@@ -174,7 +176,7 @@ public final class ArenaStorageHelper {
         }
 
         return new DropperArena(arenaId, arenaName, spawnLocation, exitLocation, verticalVelocity, horizontalVelocity,
-                winBlockType.material(), arenaData);
+                winBlockType.material(), arenaData, Dropper.getInstance().getArenaHandler());
     }
 
     /**

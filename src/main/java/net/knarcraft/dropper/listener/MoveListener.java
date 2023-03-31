@@ -6,6 +6,7 @@ import net.knarcraft.dropper.arena.DropperArenaSession;
 import net.knarcraft.dropper.property.ArenaGameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -84,8 +85,9 @@ public class MoveListener implements Listener {
 
         // Check if the player is about to hit a non-air and non-liquid block
         for (Block block : getBlocksBeneathLocation(toLocation, solidDepth)) {
-            if (!block.getType().isAir() && block.getType() != Material.STRUCTURE_VOID &&
-                    block.getType() != Material.WATER && block.getType() != Material.LAVA) {
+            Material blockType = block.getType();
+            if (!blockType.isAir() && blockType != Material.STRUCTURE_VOID && blockType != Material.WATER &&
+                    blockType != Material.LAVA && !Tag.WALL_SIGNS.isTagged(blockType)) {
                 arenaSession.triggerLoss();
                 return true;
             }
