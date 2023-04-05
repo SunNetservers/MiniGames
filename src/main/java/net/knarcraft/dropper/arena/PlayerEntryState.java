@@ -21,7 +21,7 @@ public class PlayerEntryState {
     private final boolean originalAllowFlight;
     private final boolean originalInvulnerable;
     private final boolean originalIsSwimming;
-    private final boolean originalCollidable;
+    private final boolean originalCollideAble;
     private final ArenaGameMode arenaGameMode;
 
     /**
@@ -39,7 +39,7 @@ public class PlayerEntryState {
         this.originalInvulnerable = player.isInvulnerable();
         this.originalIsSwimming = player.isSwimming();
         this.arenaGameMode = arenaGameMode;
-        this.originalCollidable = player.isCollidable();
+        this.originalCollideAble = player.isCollidable();
     }
 
     /**
@@ -73,7 +73,7 @@ public class PlayerEntryState {
         this.player.setFlySpeed(this.originalFlySpeed);
         this.player.setInvulnerable(this.originalInvulnerable);
         this.player.setSwimming(this.originalIsSwimming);
-        this.player.setCollidable(this.originalCollidable);
+        this.player.setCollidable(this.originalCollideAble);
         this.player.removePotionEffect(PotionEffectType.INVISIBILITY);
     }
 
