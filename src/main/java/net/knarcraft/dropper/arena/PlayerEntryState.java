@@ -4,6 +4,8 @@ import net.knarcraft.dropper.property.ArenaGameMode;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -19,6 +21,7 @@ public class PlayerEntryState {
     private final boolean originalAllowFlight;
     private final boolean originalInvulnerable;
     private final boolean originalIsSwimming;
+    private final boolean originalCollidable;
     private final ArenaGameMode arenaGameMode;
 
     /**
@@ -36,6 +39,7 @@ public class PlayerEntryState {
         this.originalInvulnerable = player.isInvulnerable();
         this.originalIsSwimming = player.isSwimming();
         this.arenaGameMode = arenaGameMode;
+        this.originalCollidable = player.isCollidable();
     }
 
     /**
@@ -48,6 +52,8 @@ public class PlayerEntryState {
         this.player.setFlying(true);
         this.player.setGameMode(GameMode.ADVENTURE);
         this.player.setSwimming(false);
+        this.player.setCollidable(false);
+        this.player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, PotionEffect.INFINITE_DURATION, 3));
 
         // If playing on the inverted game-mode, negate the horizontal velocity to swap the controls
         if (arenaGameMode == ArenaGameMode.INVERTED) {
@@ -67,6 +73,8 @@ public class PlayerEntryState {
         this.player.setFlySpeed(this.originalFlySpeed);
         this.player.setInvulnerable(this.originalInvulnerable);
         this.player.setSwimming(this.originalIsSwimming);
+        this.player.setCollidable(this.originalCollidable);
+        this.player.removePotionEffect(PotionEffectType.INVISIBILITY);
     }
 
     /**
