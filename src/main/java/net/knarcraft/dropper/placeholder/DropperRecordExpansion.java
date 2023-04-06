@@ -19,6 +19,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -110,6 +111,16 @@ public class DropperRecordExpansion extends PlaceholderExpansion {
             return null;
         }
         // TODO: Basically, find all UUIDs that exist for all arenas (for selected game mode), and sum them together
+        List<DropperArena> arenas = new ArrayList<>();
+        for (UUID arenaId : group.getArenas()) {
+            arenas.add(arenaHandler.getArena(arenaId));
+        }
+
+        Set<DropperArenaRecordsRegistry> registries = new HashSet<>();
+        for (DropperArena arena : arenas) {
+            registries.add(arena.getData().recordRegistries().get(gameMode));
+        }
+
         return "";
     }
 
