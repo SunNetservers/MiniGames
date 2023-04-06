@@ -111,7 +111,7 @@ follows:
 | dropper_record |                             | Denotes that it's a placeholder for a dropper record. Must be present as-is.                                                       |
 | recordType     | deaths / time               | Selects the type of record to get (deaths or time).                                                                                |
 | gameModeType   | default / inverted / random | Selects the game-mode to get the record for.                                                                                       |
-| identifierType | arena / group               | The type of thing the following identifier points to (an arena or an arena group).                                                 |
+| identifierType | arena                       | This specifies that the following string is an arena identifier.                                                                   |
 | identifier     | ?                           | An identifier (the name or UUID) for an arena or a group (whichever was chosen as identifierType).                                 |
 | recordPlacing  | 1 / 2 / 3 / ...             | The position of the record to get (1 = first place, 2 = second place, etc.).                                                       |
 | infoType       | player / value / combined   | The type of info to get. Player gets the player name, Value gets the value of the achieved record. Combined gets "Player: Record". |

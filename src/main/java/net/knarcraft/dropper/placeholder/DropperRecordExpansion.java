@@ -4,7 +4,6 @@ import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import net.knarcraft.dropper.Dropper;
 import net.knarcraft.dropper.arena.ArenaRecord;
 import net.knarcraft.dropper.arena.DropperArena;
-import net.knarcraft.dropper.arena.DropperArenaGroup;
 import net.knarcraft.dropper.arena.DropperArenaHandler;
 import net.knarcraft.dropper.arena.DropperArenaRecordsRegistry;
 import net.knarcraft.dropper.placeholder.parsing.InfoType;
@@ -76,41 +75,11 @@ public class DropperRecordExpansion extends PlaceholderExpansion {
 
         String info = null;
         DropperArenaHandler arenaHandler = plugin.getArenaHandler();
-        if (selectionType == SelectionType.GROUP) {
-            info = getGroupRecord(arenaHandler, identifier, gameMode, recordType, recordNumber, infoType);
-        } else if (selectionType == SelectionType.ARENA) {
+        if (selectionType == SelectionType.ARENA) {
             info = getArenaRecord(arenaHandler, identifier, gameMode, recordType, recordNumber, infoType);
         }
 
         return Objects.requireNonNullElse(info, parameters);
-    }
-
-    /**
-     * Gets a piece of record information from a dropper arena group
-     *
-     * @param arenaHandler <p>The arena handler to get the group from</p>
-     * @param identifier   <p>The identifier (name/uuid) selecting the group</p>
-     * @param gameMode     <p>The game-mode to get a record for</p>
-     * @param recordType   <p>The type of record to get</p>
-     * @param recordNumber <p>The placing of the record to get (1st place, 2nd place, etc.)</p>
-     * @param infoType     <p>The type of info (player, value, combined) to get</p>
-     * @return <p>The selected information about the record, or null if not found</p>
-     */
-    private @Nullable String getGroupRecord(@NotNull DropperArenaHandler arenaHandler, @NotNull String identifier,
-                                            @NotNull ArenaGameMode gameMode, @NotNull RecordType recordType,
-                                            int recordNumber, @NotNull InfoType infoType) {
-        // Allow specifying the group UUID or the arena name
-        DropperArenaGroup group;
-        try {
-            group = arenaHandler.getGroup(UUID.fromString(identifier));
-        } catch (IllegalArgumentException exception) {
-            group = arenaHandler.getGroup(identifier);
-        }
-        if (group == null) {
-            return null;
-        }
-        // TODO: Basically, find all UUIDs that exist for all arenas (for selected game mode), and sum them together
-        return "";
     }
 
     /**
