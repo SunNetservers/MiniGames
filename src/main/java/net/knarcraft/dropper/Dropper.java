@@ -26,7 +26,7 @@ import net.knarcraft.dropper.listener.CommandListener;
 import net.knarcraft.dropper.listener.DamageListener;
 import net.knarcraft.dropper.listener.MoveListener;
 import net.knarcraft.dropper.listener.PlayerLeaveListener;
-import net.knarcraft.dropper.placeholder.RecordExpansion;
+import net.knarcraft.dropper.placeholder.DropperRecordExpansion;
 import net.knarcraft.dropper.property.ArenaGameMode;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandExecutor;
@@ -127,7 +127,7 @@ public final class Dropper extends JavaPlugin {
         registerCommand("dropperGroupList", new GroupListCommand(), null);
 
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
-            if (!new RecordExpansion(this).register()) {
+            if (!new DropperRecordExpansion(this).register()) {
                 getLogger().log(Level.WARNING, "Unable to register PlaceholderAPI expansion!");
             }
         }
