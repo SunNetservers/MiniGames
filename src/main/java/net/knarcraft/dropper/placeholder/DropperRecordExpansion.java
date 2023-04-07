@@ -19,12 +19,14 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 /**
  * A placeholder expansion for dropper record placeholders
@@ -32,9 +34,18 @@ import java.util.UUID;
 public class DropperRecordExpansion extends PlaceholderExpansion {
 
     private final Dropper plugin;
+    private final Map<UUID, Set<GroupRecordCache<Integer>>> groupRecordDeathsCache;
+    private final Map<UUID, Set<GroupRecordCache<Long>>> groupRecordTimeCache;
 
+    /**
+     * Initializes a new record expansion
+     *
+     * @param plugin <p>A reference to the dropper plugin</p>
+     */
     public DropperRecordExpansion(Dropper plugin) {
         this.plugin = plugin;
+        this.groupRecordDeathsCache = new HashMap<>();
+        this.groupRecordTimeCache = new HashMap<>();
     }
 
     @Override
@@ -113,9 +124,9 @@ public class DropperRecordExpansion extends PlaceholderExpansion {
 
         ArenaRecord<?> record;
         if (recordType == RecordType.DEATHS) {
-            record = getRecord(DropperGroupRecordHelper.getCombinedDeaths(group, gameMode), recordNumber);
+            record = getDeathRecords(group, gameMode, recordNumber);
         } else {
-            record = getRecord(DropperGroupRecordHelper.getCombinedTime(group, gameMode), recordNumber);
+            record = getTimeRecords(group, gameMode, recordNumber);
         }
 
         // If a record number is not found, leave it blank, so it looks neat
@@ -124,6 +135,64 @@ public class DropperRecordExpansion extends PlaceholderExpansion {
         }
 
         return getRecordData(infoType, record);
+    }
+
+    private ArenaRecord<?> getTimeRecords(DropperArenaGroup group, ArenaGameMode gameMode, int recordNumber) {
+        return getCachedGroupRecord(group, gameMode, RecordType.TIME, recordNumber, groupRecordTimeCache,
+                () -> DropperGroupRecordHelper.getCombinedTime(group, gameMode));
+    }
+
+    private ArenaRecord<?> getDeathRecords(DropperArenaGroup group, ArenaGameMode gameMode, int recordNumber) {
+        return getCachedGroupRecord(group, gameMode, RecordType.DEATHS, recordNumber, groupRecordDeathsCache,
+                () -> DropperGroupRecordHelper.getCombinedDeaths(group, gameMode));
+    }
+
+    /**
+     * Gets a group record, fetching from a cache if possible
+     *
+     * @param group          <p>The group to get the record for</p>
+     * @param gameMode       <p>The game-mode to get the record for</p>
+     * @param recordType     <p>The type of record to get</p>
+     * @param recordNumber   <p>The placing of the record to get (1st place, 2nd place, etc.)</p>
+     * @param caches         <p>The caches to use for looking for and saving the record</p>
+     * @param recordProvider <p>The provider of records if the cache cannot provide the record</p>
+     * @param <K>            <p>The type of the provided records</p>
+     * @return <p>The specified record, or null if not found</p>
+     */
+    private <K extends Comparable<K>> @Nullable ArenaRecord<?> getCachedGroupRecord(@NotNull DropperArenaGroup group,
+                                                                                    @NotNull ArenaGameMode gameMode,
+                                                                                    @NotNull RecordType recordType,
+                                                                                    int recordNumber,
+                                                                                    @NotNull Map<UUID, Set<GroupRecordCache<K>>> caches,
+                                                                                    @NotNull Supplier<Set<ArenaRecord<K>>> recordProvider) {
+        UUID groupId = group.getGroupId();
+        if (!caches.containsKey(groupId)) {
+            caches.put(groupId, new HashSet<>());
+        }
+
+        Set<GroupRecordCache<K>> existingCaches = caches.get(groupId);
+        Set<GroupRecordCache<K>> expired = new HashSet<>();
+        Set<ArenaRecord<K>> cachedRecords = null;
+
+        for (GroupRecordCache<K> cache : existingCaches) {
+            // Expire caches after 30 seconds
+            if (System.currentTimeMillis() - cache.createdTime() > 30000) {
+                expired.add(cache);
+            }
+            // If of the correct type, and not expired, use the cache
+            if (cache.gameMode() == gameMode && cache.recordType() == recordType) {
+                cachedRecords = cache.records();
+                break;
+            }
+        }
+        existingCaches.removeAll(expired);
+
+        // If not found, generate and cache the specified record
+        if (cachedRecords == null) {
+            cachedRecords = recordProvider.get();
+            existingCaches.add(new GroupRecordCache<>(gameMode, recordType, cachedRecords, System.currentTimeMillis()));
+        }
+        return getRecord(cachedRecords, recordNumber);
     }
 
     /**
