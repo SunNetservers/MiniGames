@@ -103,6 +103,12 @@ public record DropperArenaData(@NotNull UUID arenaId,
         Map<ArenaGameMode, Set<SerializableUUID>> playersCompletedData =
                 (Map<ArenaGameMode, Set<SerializableUUID>>) data.get("playersCompleted");
 
+        if (recordsRegistry == null) {
+            recordsRegistry = new HashMap<>();
+        } else if (playersCompletedData == null) {
+            playersCompletedData = new HashMap<>();
+        }
+
         // Convert the serializable UUIDs to normal UUIDs
         Map<ArenaGameMode, Set<UUID>> allPlayersCompleted = new HashMap<>();
         for (ArenaGameMode arenaGameMode : playersCompletedData.keySet()) {
@@ -111,6 +117,10 @@ public record DropperArenaData(@NotNull UUID arenaId,
                 playersCompleted.add(completedId.uuid());
             }
             allPlayersCompleted.put(arenaGameMode, playersCompleted);
+
+            if (!recordsRegistry.containsKey(arenaGameMode) || recordsRegistry.get(arenaGameMode) == null) {
+                recordsRegistry.put(arenaGameMode, new DropperArenaRecordsRegistry(serializableUUID.uuid()));
+            }
         }
         return new DropperArenaData(serializableUUID.uuid(), recordsRegistry, allPlayersCompleted);
     }

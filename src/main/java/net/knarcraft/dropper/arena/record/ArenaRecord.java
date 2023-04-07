@@ -12,7 +12,7 @@ import java.util.UUID;
 /**
  * A record stored for an arena
  */
-public class ArenaRecord<K extends Comparable<K>> implements Comparable<ArenaRecord<K>>, ConfigurationSerializable {
+public abstract class ArenaRecord<K extends Comparable<K>> implements Comparable<ArenaRecord<K>>, ConfigurationSerializable {
 
     private final UUID userId;
     private final K record;
@@ -61,18 +61,6 @@ public class ArenaRecord<K extends Comparable<K>> implements Comparable<ArenaRec
         data.put("userId", new SerializableUUID(getUserId()));
         data.put("record", record);
         return data;
-    }
-
-    /**
-     * Deserializes the saved arena record
-     *
-     * @param data <p>The data to deserialize</p>
-     * @param <K>  <p>The type of the deserialized record</p>
-     * @return <p>The deserialized data</p>
-     */
-    @SuppressWarnings({"unused", "unchecked"})
-    public static <K extends Comparable<K>> ArenaRecord<K> deserialize(@NotNull Map<String, Object> data) {
-        return new ArenaRecord<>(((SerializableUUID) data.get("userId")).uuid(), (K) data.get("record"));
     }
 
     @Override

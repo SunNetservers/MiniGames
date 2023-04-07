@@ -14,9 +14,11 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 
 /**
  * A registry keeping track of all records
@@ -75,8 +77,9 @@ public class DropperArenaRecordsRegistry implements ConfigurationSerializable {
      * @return <p>The result explaining what type of record was achieved</p>
      */
     public @NotNull RecordResult registerDeathRecord(@NotNull UUID playerId, int deaths) {
+        Consumer<Integer> consumer = (value) -> leastDeaths.add(new IntegerRecord(playerId, value));
         Set<ArenaRecord<Integer>> asInt = new HashSet<>(leastDeaths);
-        return registerRecord(asInt, playerId, deaths);
+        return registerRecord(asInt, consumer, playerId, deaths);
     }
 
     /**
@@ -87,8 +90,9 @@ public class DropperArenaRecordsRegistry implements ConfigurationSerializable {
      * @return <p>The result explaining what type of record was achieved</p>
      */
     public @NotNull RecordResult registerTimeRecord(@NotNull UUID playerId, long milliseconds) {
+        Consumer<Long> consumer = (value) -> shortestTimeMilliSeconds.add(new LongRecord(playerId, value));
         Set<ArenaRecord<Long>> asLong = new HashSet<>(shortestTimeMilliSeconds);
-        return registerRecord(asLong, playerId, milliseconds);
+        return registerRecord(asLong, consumer, playerId, milliseconds);
     }
 
     /**
@@ -102,17 +106,19 @@ public class DropperArenaRecordsRegistry implements ConfigurationSerializable {
      * Registers a new record if applicable
      *
      * @param existingRecords <p>The map of existing records to use</p>
+     * @param recordSetter    <p>The consumer used to set a new record</p>
      * @param playerId        <p>The id of the player that potentially achieved a record</p>
      * @param amount          <p>The amount of whatever the player achieved</p>
      * @return <p>The result of the player's record attempt</p>
      */
     private <T extends Comparable<T>> @NotNull RecordResult registerRecord(@NotNull Set<ArenaRecord<T>> existingRecords,
+                                                                           @NotNull Consumer<T> recordSetter,
                                                                            @NotNull UUID playerId, T amount) {
         RecordResult result;
         if (existingRecords.stream().allMatch((entry) -> amount.compareTo(entry.getRecord()) < 0)) {
             // If the given value is less than all other values, that's a world record!
             result = RecordResult.WORLD_RECORD;
-            existingRecords.add(new ArenaRecord<>(playerId, amount));
+            recordSetter.accept(amount);
             save();
             return result;
         }
@@ -121,11 +127,12 @@ public class DropperArenaRecordsRegistry implements ConfigurationSerializable {
         if (playerRecord != null && amount.compareTo(playerRecord.getRecord()) < 0) {
             // If the given value is less than the player's previous value, that's a personal best!
             result = RecordResult.PERSONAL_BEST;
-            existingRecords.add(new ArenaRecord<>(playerId, amount));
+            recordSetter.accept(amount);
             save();
         } else {
             // Make sure to save the record if this is the user's first attempt
             if (playerRecord == null) {
+                recordSetter.accept(amount);
                 save();
             }
             result = RecordResult.NONE;
@@ -176,6 +183,9 @@ public class DropperArenaRecordsRegistry implements ConfigurationSerializable {
                 (Set<IntegerRecord>) data.getOrDefault("leastDeaths", new HashMap<>());
         Set<LongRecord> shortestTimeMilliseconds =
                 (Set<LongRecord>) data.getOrDefault("shortestTime", new HashMap<>());
+
+        leastDeaths.removeIf(Objects::isNull);
+        shortestTimeMilliseconds.removeIf(Objects::isNull);
         return new DropperArenaRecordsRegistry(arenaId, leastDeaths, shortestTimeMilliseconds);
     }
 

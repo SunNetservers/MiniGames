@@ -147,6 +147,9 @@ public final class DropperGroupRecordHelper {
             Set<SummableArenaRecord<K>> existingRecords = recordSupplier.apply(arena, gameMode);
             // For each arena's record registry, calculate the combined records
             for (SummableArenaRecord<K> value : existingRecords) {
+                if (value == null) {
+                    continue;
+                }
                 UUID userId = value.getUserId();
 
                 // Bump the number of records found for the user
