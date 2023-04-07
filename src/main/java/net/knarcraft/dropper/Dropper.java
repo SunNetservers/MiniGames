@@ -1,12 +1,12 @@
 package net.knarcraft.dropper;
 
-import net.knarcraft.dropper.arena.ArenaRecord;
 import net.knarcraft.dropper.arena.DropperArenaData;
 import net.knarcraft.dropper.arena.DropperArenaGroup;
 import net.knarcraft.dropper.arena.DropperArenaHandler;
 import net.knarcraft.dropper.arena.DropperArenaPlayerRegistry;
 import net.knarcraft.dropper.arena.DropperArenaRecordsRegistry;
 import net.knarcraft.dropper.arena.DropperArenaSession;
+import net.knarcraft.dropper.arena.record.ArenaRecord;
 import net.knarcraft.dropper.command.CreateArenaCommand;
 import net.knarcraft.dropper.command.EditArenaCommand;
 import net.knarcraft.dropper.command.EditArenaTabCompleter;

@@ -1,4 +1,4 @@
-package net.knarcraft.dropper.arena;
+package net.knarcraft.dropper.arena.record;
 
 import net.knarcraft.dropper.container.SerializableUUID;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -6,17 +6,43 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
  * A record stored for an arena
- *
- * @param userId <p>The id of the player that achieved the record</p>
- * @param record <p>The record achieved</p>
- * @param <K>    <p>The comparable type of the record</p>
  */
-public record ArenaRecord<K extends Comparable<K>>(UUID userId, K record) implements Comparable<ArenaRecord<K>>,
-        ConfigurationSerializable {
+public class ArenaRecord<K extends Comparable<K>> implements Comparable<ArenaRecord<K>>, ConfigurationSerializable {
+
+    private final UUID userId;
+    private final K record;
+
+    /**
+     * @param userId <p>The id of the player that achieved the record</p>
+     * @param record <p>The record achieved</p>
+     */
+    public ArenaRecord(UUID userId, K record) {
+        this.userId = userId;
+        this.record = record;
+    }
+
+    /**
+     * Gets the id of the user this record belongs to
+     *
+     * @return <p>The record's achiever</p>
+     */
+    public UUID getUserId() {
+        return userId;
+    }
+
+    /**
+     * Gets the value of the stored record
+     *
+     * @return <p>The record value</p>
+     */
+    public K getRecord() {
+        return record;
+    }
 
     @Override
     public boolean equals(Object other) {
@@ -32,7 +58,7 @@ public record ArenaRecord<K extends Comparable<K>>(UUID userId, K record) implem
     @Override
     public Map<String, Object> serialize() {
         Map<String, Object> data = new HashMap<>();
-        data.put("userId", new SerializableUUID(userId()));
+        data.put("userId", new SerializableUUID(getUserId()));
         data.put("record", record);
         return data;
     }
@@ -47,6 +73,16 @@ public record ArenaRecord<K extends Comparable<K>>(UUID userId, K record) implem
     @SuppressWarnings({"unused", "unchecked"})
     public static <K extends Comparable<K>> ArenaRecord<K> deserialize(@NotNull Map<String, Object> data) {
         return new ArenaRecord<>(((SerializableUUID) data.get("userId")).uuid(), (K) data.get("record"));
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(userId, record);
+    }
+
+    @Override
+    public String toString() {
+        return userId + ": " + record;
     }
 
 }

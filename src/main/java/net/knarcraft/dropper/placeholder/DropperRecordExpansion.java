@@ -2,15 +2,16 @@ package net.knarcraft.dropper.placeholder;
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import net.knarcraft.dropper.Dropper;
-import net.knarcraft.dropper.arena.ArenaRecord;
 import net.knarcraft.dropper.arena.DropperArena;
 import net.knarcraft.dropper.arena.DropperArenaGroup;
 import net.knarcraft.dropper.arena.DropperArenaHandler;
 import net.knarcraft.dropper.arena.DropperArenaRecordsRegistry;
+import net.knarcraft.dropper.arena.record.ArenaRecord;
 import net.knarcraft.dropper.placeholder.parsing.InfoType;
 import net.knarcraft.dropper.placeholder.parsing.RecordType;
 import net.knarcraft.dropper.placeholder.parsing.SelectionType;
 import net.knarcraft.dropper.property.ArenaGameMode;
+import net.knarcraft.dropper.util.DropperGroupRecordHelper;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -110,18 +111,20 @@ public class DropperRecordExpansion extends PlaceholderExpansion {
         if (group == null) {
             return null;
         }
-        // TODO: Basically, find all UUIDs that exist for all arenas (for selected game mode), and sum them together
-        List<DropperArena> arenas = new ArrayList<>();
-        for (UUID arenaId : group.getArenas()) {
-            arenas.add(arenaHandler.getArena(arenaId));
+
+        ArenaRecord<?> record;
+        if (recordType == RecordType.DEATHS) {
+            record = getRecord(DropperGroupRecordHelper.getCombinedDeaths(group, gameMode), recordNumber);
+        } else {
+            record = getRecord(DropperGroupRecordHelper.getCombinedTime(group, gameMode), recordNumber);
         }
 
-        Set<DropperArenaRecordsRegistry> registries = new HashSet<>();
-        for (DropperArena arena : arenas) {
-            registries.add(arena.getData().recordRegistries().get(gameMode));
+        // If a record number is not found, leave it blank, so it looks neat
+        if (record == null) {
+            return "";
         }
 
-        return "";
+        return getRecordData(infoType, record);
     }
 
     /**
@@ -172,8 +175,8 @@ public class DropperRecordExpansion extends PlaceholderExpansion {
     private @Nullable ArenaRecord<?> getRecord(@NotNull DropperArenaRecordsRegistry recordsRegistry,
                                                @NotNull RecordType recordType, int recordNumber) {
         return switch (recordType) {
-            case TIME -> getRecord(recordsRegistry.getShortestTimeMilliSecondsRecords(), recordNumber);
-            case DEATHS -> getRecord(recordsRegistry.getLeastDeathsRecords(), recordNumber);
+            case TIME -> getRecord(new HashSet<>(recordsRegistry.getShortestTimeMilliSecondsRecords()), recordNumber);
+            case DEATHS -> getRecord(new HashSet<>(recordsRegistry.getLeastDeathsRecords()), recordNumber);
         };
     }
 
@@ -203,9 +206,9 @@ public class DropperRecordExpansion extends PlaceholderExpansion {
      */
     private String getRecordData(@NotNull InfoType infoType, @NotNull ArenaRecord<?> arenaRecord) {
         return switch (infoType) {
-            case PLAYER -> getPlayerName(arenaRecord.userId());
-            case VALUE -> arenaRecord.record().toString();
-            case COMBINED -> getPlayerName(arenaRecord.userId()) + ": " + arenaRecord.record().toString();
+            case PLAYER -> getPlayerName(arenaRecord.getUserId());
+            case VALUE -> arenaRecord.getRecord().toString();
+            case COMBINED -> getPlayerName(arenaRecord.getUserId()) + ": " + arenaRecord.getRecord().toString();
         };
     }
 

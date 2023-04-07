@@ -1,10 +1,15 @@
 package net.knarcraft.dropper.arena;
 
 import net.knarcraft.dropper.Dropper;
+import net.knarcraft.dropper.arena.record.ArenaRecord;
+import net.knarcraft.dropper.arena.record.IntegerRecord;
+import net.knarcraft.dropper.arena.record.LongRecord;
+import net.knarcraft.dropper.arena.record.SummableArenaRecord;
 import net.knarcraft.dropper.container.SerializableUUID;
 import net.knarcraft.dropper.property.RecordResult;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -19,8 +24,8 @@ import java.util.concurrent.atomic.AtomicReference;
 public class DropperArenaRecordsRegistry implements ConfigurationSerializable {
 
     private final UUID arenaId;
-    private final @NotNull Set<ArenaRecord<Integer>> leastDeaths;
-    private final @NotNull Set<ArenaRecord<Long>> shortestTimeMilliSeconds;
+    private final @NotNull Set<IntegerRecord> leastDeaths;
+    private final @NotNull Set<LongRecord> shortestTimeMilliSeconds;
 
     /**
      * Instantiates a new empty records registry
@@ -37,8 +42,8 @@ public class DropperArenaRecordsRegistry implements ConfigurationSerializable {
      * @param leastDeaths              <p>The existing least death records to use</p>
      * @param shortestTimeMilliSeconds <p>The existing leash time records to use</p>
      */
-    private DropperArenaRecordsRegistry(@NotNull UUID arenaId, @NotNull Set<ArenaRecord<Integer>> leastDeaths,
-                                        @NotNull Set<ArenaRecord<Long>> shortestTimeMilliSeconds) {
+    private DropperArenaRecordsRegistry(@NotNull UUID arenaId, @NotNull Set<IntegerRecord> leastDeaths,
+                                        @NotNull Set<LongRecord> shortestTimeMilliSeconds) {
         this.arenaId = arenaId;
         this.leastDeaths = new HashSet<>(leastDeaths);
         this.shortestTimeMilliSeconds = new HashSet<>(shortestTimeMilliSeconds);
@@ -49,7 +54,7 @@ public class DropperArenaRecordsRegistry implements ConfigurationSerializable {
      *
      * @return <p>Existing death records</p>
      */
-    public Set<ArenaRecord<Integer>> getLeastDeathsRecords() {
+    public Set<SummableArenaRecord<Integer>> getLeastDeathsRecords() {
         return new HashSet<>(this.leastDeaths);
     }
 
@@ -58,7 +63,7 @@ public class DropperArenaRecordsRegistry implements ConfigurationSerializable {
      *
      * @return <p>Existing time records</p>
      */
-    public Set<ArenaRecord<Long>> getShortestTimeMilliSecondsRecords() {
+    public Set<SummableArenaRecord<Long>> getShortestTimeMilliSecondsRecords() {
         return new HashSet<>(this.shortestTimeMilliSeconds);
     }
 
@@ -70,7 +75,8 @@ public class DropperArenaRecordsRegistry implements ConfigurationSerializable {
      * @return <p>The result explaining what type of record was achieved</p>
      */
     public @NotNull RecordResult registerDeathRecord(@NotNull UUID playerId, int deaths) {
-        return registerRecord(leastDeaths, playerId, deaths);
+        Set<ArenaRecord<Integer>> asInt = new HashSet<>(leastDeaths);
+        return registerRecord(asInt, playerId, deaths);
     }
 
     /**
@@ -81,7 +87,8 @@ public class DropperArenaRecordsRegistry implements ConfigurationSerializable {
      * @return <p>The result explaining what type of record was achieved</p>
      */
     public @NotNull RecordResult registerTimeRecord(@NotNull UUID playerId, long milliseconds) {
-        return registerRecord(shortestTimeMilliSeconds, playerId, milliseconds);
+        Set<ArenaRecord<Long>> asLong = new HashSet<>(shortestTimeMilliSeconds);
+        return registerRecord(asLong, playerId, milliseconds);
     }
 
     /**
@@ -102,7 +109,7 @@ public class DropperArenaRecordsRegistry implements ConfigurationSerializable {
     private <T extends Comparable<T>> @NotNull RecordResult registerRecord(@NotNull Set<ArenaRecord<T>> existingRecords,
                                                                            @NotNull UUID playerId, T amount) {
         RecordResult result;
-        if (existingRecords.stream().allMatch((entry) -> amount.compareTo(entry.record()) < 0)) {
+        if (existingRecords.stream().allMatch((entry) -> amount.compareTo(entry.getRecord()) < 0)) {
             // If the given value is less than all other values, that's a world record!
             result = RecordResult.WORLD_RECORD;
             existingRecords.add(new ArenaRecord<>(playerId, amount));
@@ -111,7 +118,7 @@ public class DropperArenaRecordsRegistry implements ConfigurationSerializable {
         }
 
         ArenaRecord<T> playerRecord = getRecord(existingRecords, playerId);
-        if (playerRecord != null && amount.compareTo(playerRecord.record()) < 0) {
+        if (playerRecord != null && amount.compareTo(playerRecord.getRecord()) < 0) {
             // If the given value is less than the player's previous value, that's a personal best!
             result = RecordResult.PERSONAL_BEST;
             existingRecords.add(new ArenaRecord<>(playerId, amount));
@@ -127,11 +134,19 @@ public class DropperArenaRecordsRegistry implements ConfigurationSerializable {
         return result;
     }
 
-    private <T extends Comparable<T>> ArenaRecord<T> getRecord(@NotNull Set<ArenaRecord<T>> existingRecords,
-                                                               @NotNull UUID playerId) {
+    /**
+     * Gets the record stored for the given player
+     *
+     * @param existingRecords <p>The existing records to look through</p>
+     * @param playerId        <p>The id of the player to look for</p>
+     * @param <T>             <p>The type of the stored record</p>
+     * @return <p>The record, or null if not found</p>
+     */
+    private <T extends Comparable<T>> @Nullable ArenaRecord<T> getRecord(@NotNull Set<ArenaRecord<T>> existingRecords,
+                                                                         @NotNull UUID playerId) {
         AtomicReference<ArenaRecord<T>> record = new AtomicReference<>();
         existingRecords.forEach((item) -> {
-            if (item.userId().equals(playerId)) {
+            if (item.getUserId().equals(playerId)) {
                 record.set(item);
             }
         });
@@ -157,10 +172,10 @@ public class DropperArenaRecordsRegistry implements ConfigurationSerializable {
     @SuppressWarnings({"unused", "unchecked"})
     public static DropperArenaRecordsRegistry deserialize(Map<String, Object> data) {
         UUID arenaId = ((SerializableUUID) data.get("arenaId")).uuid();
-        Set<ArenaRecord<Integer>> leastDeaths =
-                (Set<ArenaRecord<Integer>>) data.getOrDefault("leastDeaths", new HashMap<>());
-        Set<ArenaRecord<Long>> shortestTimeMilliseconds =
-                (Set<ArenaRecord<Long>>) data.getOrDefault("shortestTime", new HashMap<>());
+        Set<IntegerRecord> leastDeaths =
+                (Set<IntegerRecord>) data.getOrDefault("leastDeaths", new HashMap<>());
+        Set<LongRecord> shortestTimeMilliseconds =
+                (Set<LongRecord>) data.getOrDefault("shortestTime", new HashMap<>());
         return new DropperArenaRecordsRegistry(arenaId, leastDeaths, shortestTimeMilliseconds);
     }
 
