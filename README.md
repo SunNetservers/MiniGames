@@ -18,22 +18,22 @@ To modify
 
 ## Commands
 
-| Command                                 | Alias    | Arguments                   | Description                                                                         |
-|-----------------------------------------|----------|-----------------------------|-------------------------------------------------------------------------------------|
-| /dropperList                            | /dlist   |                             | Lists available dropper arenas.                                                     |
-| [/dropperJoin](#/dropperJoin)           | /djoin   | \<arena> \[mode]            | Joins the selected arena.                                                           |
-| /dropperLeave                           | /dleave  |                             | Leaves the current dropper arena.                                                   |
-| /dropperCreate                          | /dcreate | \<name>                     | Creates a new dropper arena with the given name. The spawn is set to your location. |
-| /dropperRemove                          | /dremove | \<arena>                    | Removes the specified dropper arena.                                                |
-| [/dropperEdit](#/dropperEdit)           | /dedit   | \<arena> \<option> \[value] | Gets or sets a dropper arena option.                                                |
-| /dropperReload                          | /dreload |                             | Reloads all data from disk.                                                         |
-| [/dropperGroupSet](#/dropperGroupSet)   | /dgset   | \<arena> \<group>           | Puts the given arena in the given group. Use "none" to remove an existing group.    |
-| /dropperGroupList                       | /dglist  | \[group]                    | Lists groups, or the stages of a group if a group is specified.                     |
-| [/dropperGroupSwap](#/dropperGroupSwap) | /dgswap  | \<arena1> \<arena2>         | Swaps the two arenas in the group's ordered list.                                   |
+| Command                                | Alias    | Arguments                   | Description                                                                         |
+|----------------------------------------|----------|-----------------------------|-------------------------------------------------------------------------------------|
+| /dropperList                           | /dlist   |                             | Lists available dropper arenas.                                                     |
+| [/dropperJoin](#dropperJoin)           | /djoin   | \<arena> \[mode]            | Joins the selected arena.                                                           |
+| /dropperLeave                          | /dleave  |                             | Leaves the current dropper arena.                                                   |
+| /dropperCreate                         | /dcreate | \<name>                     | Creates a new dropper arena with the given name. The spawn is set to your location. |
+| /dropperRemove                         | /dremove | \<arena>                    | Removes the specified dropper arena.                                                |
+| [/dropperEdit](#dropperEdit)           | /dedit   | \<arena> \<option> \[value] | Gets or sets a dropper arena option.                                                |
+| /dropperReload                         | /dreload |                             | Reloads all data from disk.                                                         |
+| [/dropperGroupSet](#dropperGroupSet)   | /dgset   | \<arena> \<group>           | Puts the given arena in the given group. Use "none" to remove an existing group.    |
+| /dropperGroupList                      | /dglist  | \[group]                    | Lists groups, or the stages of a group if a group is specified.                     |
+| [/dropperGroupSwap](#dropperGroupSwap) | /dgswap  | \<arena1> \<arena2>         | Swaps the two arenas in the group's ordered list.                                   |
 
-## Command explanation
+### Command explanation
 
-### /dropperJoin
+#### /dropperJoin
 
 This command is used for joining a dropper arena.
 
@@ -44,7 +44,7 @@ This command is used for joining a dropper arena.
 | arena    | The name of the arena to join.                                                                                       |
 | mode     | Additional challenge modes can be played after an arena has been cleared once. Available modes: inverted and random. |
 
-### /dropperEdit
+#### /dropperEdit
 
 This command allows editing the specified property for the specified dropper arena.
 
@@ -67,7 +67,7 @@ These are all the options that can be changed for an arena.
 | horizontalVelocity | The horizontal velocity (technically fly speed) set for players in the arena. It must be between 0 and 1, and cannot be 0. Decimals are allowed.                            |
 | winBlockType       | The type of block players must hit to win the arena. It can be any material as long as it's a block, and not a type of air.                                                 |
 
-### /dropperGroupSet
+#### /dropperGroupSet
 
 This command is used to set the group of an arena
 
@@ -78,7 +78,7 @@ will be used again if you specify the "potato" group for another arena. You use 
 its group. If the group has no arenas, it will be automatically removed. If the arena already is in a group, it will be
 moved to the new group.
 
-### /dropperGroupSwap
+#### /dropperGroupSwap
 
 This command is used for changing the order of arenas within a group.
 
@@ -99,10 +99,11 @@ You could use `/droppergroupswap Sea Savanna` to change the order to:
 3. Nether
 4. Sea
 
-## Record display placeholders
+## Record placeholders
 
-Player records can be displayed on a leaderboard by using PlaceholderAPI. The format for the built-in placeholders is as
-follows:
+Player records can be displayed on a leaderboard by using PlaceholderAPI. If you want to display a sign-based
+leaderboard, you can use the [Placeholder Signs](https://git.knarcraft.net/EpicKnarvik97/PlaceholderSigns) plugin. The
+format for the built-in placeholders is as follows:
 
 `%dropper_record_recordType_gameModeType_identifierType_identifier_recordPlacing_infoType%`
 
