@@ -124,9 +124,9 @@ public class DropperRecordExpansion extends PlaceholderExpansion {
 
         ArenaRecord<?> record;
         if (recordType == RecordType.DEATHS) {
-            record = getDeathRecords(group, gameMode, recordNumber);
+            record = getGroupDeathRecord(group, gameMode, recordNumber);
         } else {
-            record = getTimeRecords(group, gameMode, recordNumber);
+            record = getGroupTimeRecord(group, gameMode, recordNumber);
         }
 
         // If a record number is not found, leave it blank, so it looks neat
@@ -137,12 +137,30 @@ public class DropperRecordExpansion extends PlaceholderExpansion {
         return getRecordData(infoType, record);
     }
 
-    private ArenaRecord<?> getTimeRecords(DropperArenaGroup group, ArenaGameMode gameMode, int recordNumber) {
+    /**
+     * Gets a time record from a group, using the cache if possible
+     *
+     * @param group        <p>The group to get the record from</p>
+     * @param gameMode     <p>The game-mode to get the record from</p>
+     * @param recordNumber <p>The placing of the record to get (1st place, 2nd place, etc.)</p>
+     * @return <p>The record, or null if not found</p>
+     */
+    private @Nullable ArenaRecord<?> getGroupTimeRecord(@NotNull DropperArenaGroup group,
+                                                        @NotNull ArenaGameMode gameMode, int recordNumber) {
         return getCachedGroupRecord(group, gameMode, RecordType.TIME, recordNumber, groupRecordTimeCache,
                 () -> DropperGroupRecordHelper.getCombinedTime(group, gameMode));
     }
 
-    private ArenaRecord<?> getDeathRecords(DropperArenaGroup group, ArenaGameMode gameMode, int recordNumber) {
+    /**
+     * Gets a death record from a group, using the cache if possible
+     *
+     * @param group        <p>The group to get the record from</p>
+     * @param gameMode     <p>The game-mode to get the record from</p>
+     * @param recordNumber <p>The placing of the record to get (1st place, 2nd place, etc.)</p>
+     * @return <p>The record, or null if not found</p>
+     */
+    private @Nullable ArenaRecord<?> getGroupDeathRecord(@NotNull DropperArenaGroup group,
+                                                         @NotNull ArenaGameMode gameMode, int recordNumber) {
         return getCachedGroupRecord(group, gameMode, RecordType.DEATHS, recordNumber, groupRecordDeathsCache,
                 () -> DropperGroupRecordHelper.getCombinedDeaths(group, gameMode));
     }
