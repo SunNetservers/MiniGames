@@ -3,6 +3,8 @@ version: '${project.version}'
 main: net.knarcraft.dropper.Dropper
 api-version: 1.19
 description: A plugin for dropper mini-games
+softdepend:
+  - PlaceholderAPI
 
 # Note to self: Aliases must be lowercase!
 commands:

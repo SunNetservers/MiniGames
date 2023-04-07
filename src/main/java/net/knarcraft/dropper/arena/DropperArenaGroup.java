@@ -160,7 +160,7 @@ public class DropperArenaGroup implements ConfigurationSerializable {
 
         for (UUID anArenaId : this.getArenas()) {
             // If the target arena is reached, allow, as all previous arenas must have been cleared
-            if (arenaId == anArenaId) {
+            if (arenaId.equals(anArenaId)) {
                 return true;
             }
 
