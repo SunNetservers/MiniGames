@@ -20,6 +20,11 @@ public class LongRecord extends SummableArenaRecord<Long> {
     }
 
     @Override
+    public boolean equals(Object other) {
+        return other instanceof LongRecord && this.getUserId().equals(((LongRecord) other).getUserId());
+    }
+
+    @Override
     public SummableArenaRecord<Long> sum(Long value) {
         return new LongRecord(this.getUserId(), this.getRecord() + value);
     }

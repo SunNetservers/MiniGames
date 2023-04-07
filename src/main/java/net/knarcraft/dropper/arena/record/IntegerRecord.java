@@ -24,6 +24,11 @@ public class IntegerRecord extends SummableArenaRecord<Integer> {
         return new IntegerRecord(this.getUserId(), this.getRecord() + value);
     }
 
+    @Override
+    public boolean equals(Object other) {
+        return other instanceof IntegerRecord && this.getUserId().equals(((IntegerRecord) other).getUserId());
+    }
+
     /**
      * Deserializes the saved arena record
      *

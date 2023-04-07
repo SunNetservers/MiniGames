@@ -77,7 +77,10 @@ public class DropperArenaRecordsRegistry implements ConfigurationSerializable {
      * @return <p>The result explaining what type of record was achieved</p>
      */
     public @NotNull RecordResult registerDeathRecord(@NotNull UUID playerId, int deaths) {
-        Consumer<Integer> consumer = (value) -> leastDeaths.add(new IntegerRecord(playerId, value));
+        Consumer<Integer> consumer = (value) -> {
+            leastDeaths.removeIf((item) -> item.getUserId().equals(playerId));
+            leastDeaths.add(new IntegerRecord(playerId, value));
+        };
         Set<ArenaRecord<Integer>> asInt = new HashSet<>(leastDeaths);
         return registerRecord(asInt, consumer, playerId, deaths);
     }
@@ -90,7 +93,10 @@ public class DropperArenaRecordsRegistry implements ConfigurationSerializable {
      * @return <p>The result explaining what type of record was achieved</p>
      */
     public @NotNull RecordResult registerTimeRecord(@NotNull UUID playerId, long milliseconds) {
-        Consumer<Long> consumer = (value) -> shortestTimeMilliSeconds.add(new LongRecord(playerId, value));
+        Consumer<Long> consumer = (value) -> {
+            shortestTimeMilliSeconds.removeIf((item) -> item.getUserId().equals(playerId));
+            shortestTimeMilliSeconds.add(new LongRecord(playerId, value));
+        };
         Set<ArenaRecord<Long>> asLong = new HashSet<>(shortestTimeMilliSeconds);
         return registerRecord(asLong, consumer, playerId, milliseconds);
     }
