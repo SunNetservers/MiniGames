@@ -14,7 +14,6 @@ import net.knarcraft.dropper.property.ArenaGameMode;
 import net.knarcraft.dropper.util.DropperGroupRecordHelper;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -233,12 +232,7 @@ public class DropperRecordExpansion extends PlaceholderExpansion {
      * @return <p>The name of the player, or a string representation of the UUID if not found</p>
      */
     private String getPlayerName(@NotNull UUID playerId) {
-        Player player = Bukkit.getPlayer(playerId);
-        if (player != null) {
-            return player.getName();
-        } else {
-            return playerId.toString();
-        }
+        return Bukkit.getOfflinePlayer(playerId).getName();
     }
 
 }
