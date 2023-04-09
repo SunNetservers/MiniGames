@@ -158,10 +158,15 @@ public class DropperArenaHandler {
      * @param arena <p>The arena to remove</p>
      */
     public void removeArena(@NotNull DropperArena arena) {
+        UUID arenaId = arena.getArenaId();
         Dropper.getInstance().getPlayerRegistry().removeForArena(arena);
-        this.arenas.remove(arena.getArenaId());
+        this.arenas.remove(arenaId);
         this.arenaNameLookup.remove(arena.getArenaNameSanitized());
-        this.arenaGroups.remove(arena.getArenaId());
+        this.arenaGroups.remove(arenaId);
+        if (!ArenaStorageHelper.removeArenaData(arenaId)) {
+            Dropper.getInstance().getLogger().log(Level.WARNING, "Unable to remove dropper arena data file " +
+                    arenaId + ".yml. You must remove it manually!");
+        }
         this.saveArenas();
     }
 

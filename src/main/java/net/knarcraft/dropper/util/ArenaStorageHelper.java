@@ -204,6 +204,16 @@ public final class ArenaStorageHelper {
     }
 
     /**
+     * Removes data for the arena with the given id
+     *
+     * @param arenaId <p>The id of the arena to remove data for</p>
+     * @return <p>True if the data was successfully removed</p>
+     */
+    public static boolean removeArenaData(@NotNull UUID arenaId) {
+        return getArenaDataFile(arenaId).delete();
+    }
+
+    /**
      * Gets the file used to store the given arena id's data
      *
      * @param arenaId <p>The id of the arena to get a data file for</p>
