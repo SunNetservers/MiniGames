@@ -1,8 +1,8 @@
 package net.knarcraft.dropper.placeholder;
 
+import net.knarcraft.dropper.arena.ArenaGameMode;
 import net.knarcraft.dropper.arena.record.ArenaRecord;
-import net.knarcraft.dropper.placeholder.parsing.RecordType;
-import net.knarcraft.dropper.property.ArenaGameMode;
+import net.knarcraft.dropper.property.RecordType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;

@@ -1,12 +1,12 @@
 package net.knarcraft.dropper.util;
 
 import net.knarcraft.dropper.Dropper;
+import net.knarcraft.dropper.arena.ArenaGameMode;
 import net.knarcraft.dropper.arena.DropperArena;
 import net.knarcraft.dropper.arena.DropperArenaGroup;
 import net.knarcraft.dropper.arena.DropperArenaHandler;
 import net.knarcraft.dropper.arena.record.ArenaRecord;
 import net.knarcraft.dropper.arena.record.SummableArenaRecord;
-import net.knarcraft.dropper.property.ArenaGameMode;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;

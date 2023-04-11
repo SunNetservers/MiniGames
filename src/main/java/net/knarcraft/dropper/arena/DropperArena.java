@@ -1,6 +1,7 @@
 package net.knarcraft.dropper.arena;
 
-import net.knarcraft.dropper.property.ArenaGameMode;
+import net.knarcraft.dropper.Dropper;
+import net.knarcraft.dropper.config.DropperConfiguration;
 import net.knarcraft.dropper.util.StringSanitizer;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -102,12 +103,13 @@ public class DropperArena {
      */
     public DropperArena(@NotNull String arenaName, @NotNull Location spawnLocation,
                         @NotNull DropperArenaHandler arenaHandler) {
+        DropperConfiguration configuration = Dropper.getInstance().getDropperConfiguration();
         this.arenaId = UUID.randomUUID();
         this.arenaName = arenaName;
         this.spawnLocation = spawnLocation;
         this.exitLocation = null;
-        this.playerVerticalVelocity = 3.92;
-        this.playerHorizontalVelocity = 1;
+        this.playerVerticalVelocity = configuration.getVerticalVelocity();
+        this.playerHorizontalVelocity = configuration.getHorizontalVelocity();
 
         Map<ArenaGameMode, DropperArenaRecordsRegistry> recordRegistries = new HashMap<>();
         for (ArenaGameMode arenaGameMode : ArenaGameMode.values()) {

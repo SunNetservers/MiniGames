@@ -2,15 +2,15 @@ package net.knarcraft.dropper.placeholder;
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import net.knarcraft.dropper.Dropper;
+import net.knarcraft.dropper.arena.ArenaGameMode;
 import net.knarcraft.dropper.arena.DropperArena;
 import net.knarcraft.dropper.arena.DropperArenaGroup;
 import net.knarcraft.dropper.arena.DropperArenaHandler;
 import net.knarcraft.dropper.arena.DropperArenaRecordsRegistry;
 import net.knarcraft.dropper.arena.record.ArenaRecord;
 import net.knarcraft.dropper.placeholder.parsing.InfoType;
-import net.knarcraft.dropper.placeholder.parsing.RecordType;
 import net.knarcraft.dropper.placeholder.parsing.SelectionType;
-import net.knarcraft.dropper.property.ArenaGameMode;
+import net.knarcraft.dropper.property.RecordType;
 import net.knarcraft.dropper.util.DropperGroupRecordHelper;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -95,6 +95,14 @@ public class DropperRecordExpansion extends PlaceholderExpansion {
         }
 
         return Objects.requireNonNullElse(info, parameters);
+    }
+
+    /**
+     * Clears all record caches
+     */
+    public void clearCaches() {
+        this.groupRecordDeathsCache.clear();
+        this.groupRecordTimeCache.clear();
     }
 
     /**

@@ -1,8 +1,9 @@
 package net.knarcraft.dropper.command;
 
 import net.knarcraft.dropper.Dropper;
+import net.knarcraft.dropper.arena.ArenaEditableProperty;
 import net.knarcraft.dropper.arena.DropperArena;
-import net.knarcraft.dropper.property.ArenaEditableProperty;
+import net.knarcraft.dropper.config.DropperConfiguration;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -15,6 +16,17 @@ import org.jetbrains.annotations.NotNull;
  * The command for editing an existing dropper arena
  */
 public class EditArenaCommand implements CommandExecutor {
+
+    private final DropperConfiguration configuration;
+
+    /**
+     * Instantiates a new edit arena command
+     *
+     * @param configuration <p>The configuration to use</p>
+     */
+    public EditArenaCommand(DropperConfiguration configuration) {
+        this.configuration = configuration;
+    }
 
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s,
@@ -92,7 +104,7 @@ public class EditArenaCommand implements CommandExecutor {
         try {
             velocity = Double.parseDouble(velocityString);
         } catch (NumberFormatException exception) {
-            velocity = 3.92;
+            velocity = configuration.getVerticalVelocity();
         }
 
         // Require at least speed of 0.001, and at most 75 blocks/s
@@ -111,12 +123,7 @@ public class EditArenaCommand implements CommandExecutor {
         try {
             velocity = Float.parseFloat(velocityString);
         } catch (NumberFormatException exception) {
-            velocity = 1;
-        }
-
-        // Make sure the velocity isn't exactly 0
-        if (velocity == 0) {
-            velocity = 0.5f;
+            velocity = configuration.getHorizontalVelocity();
         }
 
         // If outside bonds, choose the most extreme value

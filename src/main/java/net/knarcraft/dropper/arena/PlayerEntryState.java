@@ -1,6 +1,5 @@
 package net.knarcraft.dropper.arena;
 
-import net.knarcraft.dropper.property.ArenaGameMode;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -22,6 +21,8 @@ public class PlayerEntryState {
     private final boolean originalInvulnerable;
     private final boolean originalIsSwimming;
     private final boolean originalCollideAble;
+    private final boolean makePlayerInvisible;
+    private final boolean disableHitCollision;
     private final ArenaGameMode arenaGameMode;
 
     /**
@@ -29,7 +30,8 @@ public class PlayerEntryState {
      *
      * @param player <p>The player whose state should be stored</p>
      */
-    public PlayerEntryState(@NotNull Player player, @NotNull ArenaGameMode arenaGameMode) {
+    public PlayerEntryState(@NotNull Player player, @NotNull ArenaGameMode arenaGameMode, boolean makePlayerInvisible,
+                            boolean disableHitCollision) {
         this.player = player;
         this.entryLocation = player.getLocation().clone();
         this.originalFlySpeed = player.getFlySpeed();
@@ -40,6 +42,8 @@ public class PlayerEntryState {
         this.originalIsSwimming = player.isSwimming();
         this.arenaGameMode = arenaGameMode;
         this.originalCollideAble = player.isCollidable();
+        this.makePlayerInvisible = makePlayerInvisible;
+        this.disableHitCollision = disableHitCollision;
     }
 
     /**
@@ -52,8 +56,13 @@ public class PlayerEntryState {
         this.player.setFlying(true);
         this.player.setGameMode(GameMode.ADVENTURE);
         this.player.setSwimming(false);
-        this.player.setCollidable(false);
-        this.player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, PotionEffect.INFINITE_DURATION, 3));
+        if (this.disableHitCollision) {
+            this.player.setCollidable(false);
+        }
+        if (this.makePlayerInvisible) {
+            this.player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY,
+                    PotionEffect.INFINITE_DURATION, 3));
+        }
 
         // If playing on the inverted game-mode, negate the horizontal velocity to swap the controls
         if (arenaGameMode == ArenaGameMode.INVERTED) {
@@ -73,8 +82,12 @@ public class PlayerEntryState {
         this.player.setFlySpeed(this.originalFlySpeed);
         this.player.setInvulnerable(this.originalInvulnerable);
         this.player.setSwimming(this.originalIsSwimming);
-        this.player.setCollidable(this.originalCollideAble);
-        this.player.removePotionEffect(PotionEffectType.INVISIBILITY);
+        if (this.disableHitCollision) {
+            this.player.setCollidable(this.originalCollideAble);
+        }
+        if (this.makePlayerInvisible) {
+            this.player.removePotionEffect(PotionEffectType.INVISIBILITY);
+        }
     }
 
     /**

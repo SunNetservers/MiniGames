@@ -1,6 +1,5 @@
-package net.knarcraft.dropper.property;
+package net.knarcraft.dropper.arena;
 
-import net.knarcraft.dropper.arena.DropperArena;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

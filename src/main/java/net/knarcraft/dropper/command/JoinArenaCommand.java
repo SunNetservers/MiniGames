@@ -1,11 +1,12 @@
 package net.knarcraft.dropper.command;
 
 import net.knarcraft.dropper.Dropper;
+import net.knarcraft.dropper.arena.ArenaGameMode;
 import net.knarcraft.dropper.arena.DropperArena;
 import net.knarcraft.dropper.arena.DropperArenaGroup;
 import net.knarcraft.dropper.arena.DropperArenaPlayerRegistry;
 import net.knarcraft.dropper.arena.DropperArenaSession;
-import net.knarcraft.dropper.property.ArenaGameMode;
+import net.knarcraft.dropper.config.DropperConfiguration;
 import net.knarcraft.dropper.util.PlayerTeleporter;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -77,7 +78,8 @@ public class JoinArenaCommand implements CommandExecutor {
         }
 
         // Make sure the player has beaten the arena once in normal mode before playing another mode
-        if (gameMode != ArenaGameMode.DEFAULT &&
+        if (Dropper.getInstance().getDropperConfiguration().mustDoNormalModeFirst() &&
+                gameMode != ArenaGameMode.DEFAULT &&
                 specifiedArena.getData().hasNotCompleted(ArenaGameMode.DEFAULT, player)) {
             player.sendMessage("You must complete this arena in normal mode first!");
             return false;
@@ -113,16 +115,17 @@ public class JoinArenaCommand implements CommandExecutor {
      */
     private boolean doGroupChecks(@NotNull DropperArena dropperArena, @NotNull DropperArenaGroup arenaGroup,
                                   @NotNull ArenaGameMode arenaGameMode, @NotNull Player player) {
+        DropperConfiguration configuration = Dropper.getInstance().getDropperConfiguration();
         // Require that players beat all arenas in the group in the normal game-mode before trying challenge modes
-        if (arenaGameMode != ArenaGameMode.DEFAULT) {
-            if (!arenaGroup.hasBeatenAll(ArenaGameMode.DEFAULT, player)) {
-                player.sendMessage("You have not yet beaten all arenas in this group!");
-                return false;
-            }
+        if (configuration.mustDoNormalModeFirst() && arenaGameMode != ArenaGameMode.DEFAULT &&
+                !arenaGroup.hasBeatenAll(ArenaGameMode.DEFAULT, player)) {
+            player.sendMessage("You have not yet beaten all arenas in this group!");
+            return false;
         }
 
         // Require that the player has beaten the previous arena on the same game-mode before trying this one
-        if (!arenaGroup.canPlay(arenaGameMode, player, dropperArena.getArenaId())) {
+        if (configuration.mustDoGroupedInSequence() &&
+                !arenaGroup.canPlay(arenaGameMode, player, dropperArena.getArenaId())) {
             player.sendMessage("You have not yet beaten the previous arena!");
             return false;
         }

@@ -1,12 +1,12 @@
 package net.knarcraft.dropper.listener;
 
 import net.knarcraft.dropper.Dropper;
+import net.knarcraft.dropper.arena.ArenaGameMode;
 import net.knarcraft.dropper.arena.DropperArenaPlayerRegistry;
 import net.knarcraft.dropper.arena.DropperArenaSession;
-import net.knarcraft.dropper.property.ArenaGameMode;
+import net.knarcraft.dropper.config.DropperConfiguration;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -23,6 +23,17 @@ import java.util.Set;
  * A listener for players moving inside a dropper arena
  */
 public class MoveListener implements Listener {
+
+    private final DropperConfiguration configuration;
+
+    /**
+     * Instantiates a new move listener
+     *
+     * @param configuration <p>The configuration to use</p>
+     */
+    public MoveListener(DropperConfiguration configuration) {
+        this.configuration = configuration;
+    }
 
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
@@ -65,12 +76,8 @@ public class MoveListener implements Listener {
      * @return <p>True if a special block has been hit</p>
      */
     private boolean checkForSpecialBlock(DropperArenaSession arenaSession, Location toLocation) {
-        /* This decides how far inside a non-solid block the player must go before detection triggers. The closer to -1
-           it is, the more accurate it will seem to the player, but the likelihood of not detecting the hit decreases */
-        double liquidDepth = -0.8;
-        /* This decides the distance the player must be from the block below before a hit triggers. If too low, the 
-           likelihood of detecting the hit decreases, but the immersion increases. */
-        double solidDepth = 0.2;
+        double liquidDepth = configuration.getLiquidHitBoxDepth();
+        double solidDepth = configuration.getSolidHitBoxDistance();
 
         // Check if the player enters water
         Material winBlockType = arenaSession.getArena().getWinBlockType();
@@ -84,10 +91,10 @@ public class MoveListener implements Listener {
         }
 
         // Check if the player is about to hit a non-air and non-liquid block
+        Set<Material> whitelisted = configuration.getBlockWhitelist();
         for (Block block : getBlocksBeneathLocation(toLocation, solidDepth)) {
             Material blockType = block.getType();
-            if (!blockType.isAir() && blockType != Material.STRUCTURE_VOID && blockType != Material.WATER &&
-                    blockType != Material.LAVA && !Tag.WALL_SIGNS.isTagged(blockType)) {
+            if (!blockType.isAir() && !whitelisted.contains(blockType)) {
                 arenaSession.triggerLoss();
                 return true;
             }
@@ -118,11 +125,14 @@ public class MoveListener implements Listener {
      * @param session <p>The session to update the velocity for</p>
      */
     private void updatePlayerVelocity(@NotNull DropperArenaSession session) {
-        Player player = session.getPlayer();
-        Vector playerVelocity = player.getVelocity();
-        double arenaVelocity = session.getArena().getPlayerVerticalVelocity();
-        Vector newVelocity = new Vector(playerVelocity.getX(), -arenaVelocity, playerVelocity.getZ());
-        player.setVelocity(newVelocity);
+        // Override the vertical velocity, if enabled
+        if (configuration.overrideVerticalVelocity()) {
+            Player player = session.getPlayer();
+            Vector playerVelocity = player.getVelocity();
+            double arenaVelocity = session.getArena().getPlayerVerticalVelocity();
+            Vector newVelocity = new Vector(playerVelocity.getX(), -arenaVelocity, playerVelocity.getZ());
+            player.setVelocity(newVelocity);
+        }
 
         // Toggle the direction of the player's flying, as necessary
         toggleFlyInversion(session);
@@ -139,7 +149,7 @@ public class MoveListener implements Listener {
         }
         Player player = session.getPlayer();
         float horizontalVelocity = session.getArena().getPlayerHorizontalVelocity();
-        float secondsBetweenToggle = 7;
+        float secondsBetweenToggle = configuration.getRandomlyInvertedTimer();
         int seconds = Calendar.getInstance().get(Calendar.SECOND);
 
         /*

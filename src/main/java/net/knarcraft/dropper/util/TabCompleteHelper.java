@@ -1,8 +1,8 @@
 package net.knarcraft.dropper.util;
 
 import net.knarcraft.dropper.Dropper;
+import net.knarcraft.dropper.arena.ArenaEditableProperty;
 import net.knarcraft.dropper.arena.DropperArena;
-import net.knarcraft.dropper.property.ArenaEditableProperty;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

@@ -1,14 +1,14 @@
 package net.knarcraft.dropper.util;
 
 import net.knarcraft.dropper.Dropper;
+import net.knarcraft.dropper.arena.ArenaGameMode;
+import net.knarcraft.dropper.arena.ArenaStorageKey;
 import net.knarcraft.dropper.arena.DropperArena;
 import net.knarcraft.dropper.arena.DropperArenaData;
 import net.knarcraft.dropper.arena.DropperArenaGroup;
 import net.knarcraft.dropper.arena.DropperArenaRecordsRegistry;
 import net.knarcraft.dropper.container.SerializableMaterial;
 import net.knarcraft.dropper.container.SerializableUUID;
-import net.knarcraft.dropper.property.ArenaGameMode;
-import net.knarcraft.dropper.property.ArenaStorageKey;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;

@@ -1,7 +1,7 @@
 package net.knarcraft.dropper.arena;
 
 import net.knarcraft.dropper.Dropper;
-import net.knarcraft.dropper.property.ArenaGameMode;
+import net.knarcraft.dropper.config.DropperConfiguration;
 import net.knarcraft.dropper.property.RecordResult;
 import net.knarcraft.dropper.util.PlayerTeleporter;
 import org.bukkit.Location;
@@ -37,7 +37,10 @@ public class DropperArenaSession {
         this.deaths = 0;
         this.startTime = System.currentTimeMillis();
 
-        this.entryState = new PlayerEntryState(player, gameMode);
+        DropperConfiguration configuration = Dropper.getInstance().getDropperConfiguration();
+        boolean makeInvisible = configuration.makePlayersInvisible();
+        boolean disableCollision = configuration.disableHitCollision();
+        this.entryState = new PlayerEntryState(player, gameMode, makeInvisible, disableCollision);
         // Make the player fly to improve mobility in the air
         this.entryState.setArenaState(this.arena.getPlayerHorizontalVelocity());
     }
@@ -68,7 +71,12 @@ public class DropperArenaSession {
         stopSession();
 
         // Check for, and display, records
-        registerRecord();
+        Dropper dropper = Dropper.getInstance();
+        boolean ignore = dropper.getDropperConfiguration().ignoreRecordsUntilGroupBeatenOnce();
+        DropperArenaGroup group = dropper.getArenaHandler().getGroup(this.arena.getArenaId());
+        if (!ignore || group == null || group.hasBeatenAll(this.gameMode, this.player)) {
+            registerRecord();
+        }
 
         // Mark the arena as cleared
         if (this.arena.getData().addCompleted(this.gameMode, this.player)) {

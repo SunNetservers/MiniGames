@@ -1,5 +1,6 @@
 package net.knarcraft.dropper;
 
+import net.knarcraft.dropper.arena.ArenaGameMode;
 import net.knarcraft.dropper.arena.DropperArenaData;
 import net.knarcraft.dropper.arena.DropperArenaGroup;
 import net.knarcraft.dropper.arena.DropperArenaHandler;
@@ -21,6 +22,7 @@ import net.knarcraft.dropper.command.ListArenaCommand;
 import net.knarcraft.dropper.command.ReloadCommand;
 import net.knarcraft.dropper.command.RemoveArenaCommand;
 import net.knarcraft.dropper.command.RemoveArenaTabCompleter;
+import net.knarcraft.dropper.config.DropperConfiguration;
 import net.knarcraft.dropper.container.SerializableMaterial;
 import net.knarcraft.dropper.container.SerializableUUID;
 import net.knarcraft.dropper.listener.CommandListener;
@@ -28,7 +30,6 @@ import net.knarcraft.dropper.listener.DamageListener;
 import net.knarcraft.dropper.listener.MoveListener;
 import net.knarcraft.dropper.listener.PlayerLeaveListener;
 import net.knarcraft.dropper.placeholder.DropperRecordExpansion;
-import net.knarcraft.dropper.property.ArenaGameMode;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.PluginCommand;
@@ -49,8 +50,10 @@ import java.util.logging.Level;
 public final class Dropper extends JavaPlugin {
 
     private static Dropper instance;
+    private DropperConfiguration configuration;
     private DropperArenaHandler arenaHandler;
     private DropperArenaPlayerRegistry playerRegistry;
+    private DropperRecordExpansion dropperRecordExpansion;
 
     /**
      * Gets an instance of this plugin
@@ -80,12 +83,38 @@ public final class Dropper extends JavaPlugin {
     }
 
     /**
+     * Gets the dropper configuration
+     *
+     * @return <p>The dropper configuration</p>
+     */
+    public DropperConfiguration getDropperConfiguration() {
+        return this.configuration;
+    }
+
+    /**
+     * Logs a message
+     *
+     * @param level   <p>The message level to log at</p>
+     * @param message <p>The message to log</p>
+     */
+    public static void log(Level level, String message) {
+        Dropper.getInstance().getLogger().log(level, message);
+    }
+
+    /**
      * Reloads all configurations and data from disk
      */
     public void reload() {
         // Load all arenas again
         this.arenaHandler.loadArenas();
         this.arenaHandler.loadGroups();
+
+        // Reload configuration
+        this.reloadConfig();
+        configuration.load();
+
+        // Clear record caches
+        dropperRecordExpansion.clearCaches();
     }
 
     @Override
@@ -106,6 +135,8 @@ public final class Dropper extends JavaPlugin {
     public void onEnable() {
         // Plugin startup logic
         instance = this;
+        this.saveDefaultConfig();
+        this.configuration = new DropperConfiguration(this.getConfig());
         this.playerRegistry = new DropperArenaPlayerRegistry();
         this.arenaHandler = new DropperArenaHandler();
         this.arenaHandler.loadArenas();
@@ -113,7 +144,7 @@ public final class Dropper extends JavaPlugin {
 
         PluginManager pluginManager = getServer().getPluginManager();
         pluginManager.registerEvents(new DamageListener(), this);
-        pluginManager.registerEvents(new MoveListener(), this);
+        pluginManager.registerEvents(new MoveListener(this.configuration), this);
         pluginManager.registerEvents(new PlayerLeaveListener(), this);
         pluginManager.registerEvents(new CommandListener(), this);
 
@@ -122,14 +153,15 @@ public final class Dropper extends JavaPlugin {
         registerCommand("dropperList", new ListArenaCommand(), null);
         registerCommand("dropperJoin", new JoinArenaCommand(), new JoinArenaTabCompleter());
         registerCommand("dropperLeave", new LeaveArenaCommand(), null);
-        registerCommand("dropperEdit", new EditArenaCommand(), new EditArenaTabCompleter());
+        registerCommand("dropperEdit", new EditArenaCommand(this.configuration), new EditArenaTabCompleter());
         registerCommand("dropperRemove", new RemoveArenaCommand(), new RemoveArenaTabCompleter());
         registerCommand("dropperGroupSet", new GroupSetCommand(), null);
         registerCommand("dropperGroupSwap", new GroupSwapCommand(), null);
         registerCommand("dropperGroupList", new GroupListCommand(), null);
 
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
-            if (!new DropperRecordExpansion(this).register()) {
+            this.dropperRecordExpansion = new DropperRecordExpansion(this);
+            if (!this.dropperRecordExpansion.register()) {
                 getLogger().log(Level.WARNING, "Unable to register PlaceholderAPI expansion!");
             }
         }

@@ -1,4 +1,4 @@
-package net.knarcraft.dropper.placeholder.parsing;
+package net.knarcraft.dropper.property;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
