@@ -48,9 +48,11 @@ public class MoveListener implements Listener {
         if (arenaSession == null) {
             return;
         }
-
+        
         // Prevent the player from flying upwards while in flight mode
-        if (event.getFrom().getY() < event.getTo().getY()) {
+        if (event.getFrom().getY() < event.getTo().getY() ||
+                (configuration.blockSneaking() && event.getPlayer().isSneaking()) ||
+                (configuration.blockSprinting() && event.getPlayer().isSprinting())) {
             event.setCancelled(true);
             return;
         }
@@ -125,14 +127,12 @@ public class MoveListener implements Listener {
      * @param session <p>The session to update the velocity for</p>
      */
     private void updatePlayerVelocity(@NotNull DropperArenaSession session) {
-        // Override the vertical velocity, if enabled
-        if (configuration.overrideVerticalVelocity()) {
-            Player player = session.getPlayer();
-            Vector playerVelocity = player.getVelocity();
-            double arenaVelocity = session.getArena().getPlayerVerticalVelocity();
-            Vector newVelocity = new Vector(playerVelocity.getX(), -arenaVelocity, playerVelocity.getZ());
-            player.setVelocity(newVelocity);
-        }
+        // Override the vertical velocity
+        Player player = session.getPlayer();
+        Vector playerVelocity = player.getVelocity();
+        double arenaVelocity = session.getArena().getPlayerVerticalVelocity();
+        Vector newVelocity = new Vector(playerVelocity.getX() * 5, -arenaVelocity, playerVelocity.getZ() * 5);
+        player.setVelocity(newVelocity);
 
         // Toggle the direction of the player's flying, as necessary
         toggleFlyInversion(session);

@@ -109,8 +109,8 @@ public class DropperArenaSession {
         // Remove this session for game sessions to stop listeners from fiddling more with the player
         boolean removedSession = Dropper.getInstance().getPlayerRegistry().removePlayer(player.getUniqueId());
         if (!removedSession) {
-            Dropper.getInstance().getLogger().log(Level.SEVERE, "Unable to remove dropper arena session for " +
-                    player.getName() + ". This will have unintended consequences.");
+            Dropper.log(Level.SEVERE, "Unable to remove dropper arena session for " + player.getName() + ". " +
+                    "This will have unintended consequences.");
         }
     }
 

@@ -1,11 +1,13 @@
 package net.knarcraft.dropper.listener;
 
 import net.knarcraft.dropper.Dropper;
+import net.knarcraft.dropper.arena.DropperArenaPlayerRegistry;
 import net.knarcraft.dropper.arena.DropperArenaSession;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityCombustEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 
 /**
@@ -33,6 +35,20 @@ public class DamageListener implements Listener {
         // Only trigger a loss when a player suffers fall damage
         if (event.getCause() == EntityDamageEvent.DamageCause.FALL) {
             arenaSession.triggerLoss();
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onPlayerCombustion(EntityCombustEvent event) {
+        if (event.getEntityType() != EntityType.PLAYER) {
+            return;
+        }
+
+        DropperArenaPlayerRegistry registry = Dropper.getInstance().getPlayerRegistry();
+        DropperArenaSession arenaSession = registry.getArenaSession(event.getEntity().getUniqueId());
+        if (arenaSession != null) {
+            // Cancel combustion for any player in an arena
+            event.setCancelled(true);
         }
     }
 

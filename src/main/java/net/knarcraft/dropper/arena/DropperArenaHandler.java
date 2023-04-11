@@ -164,8 +164,8 @@ public class DropperArenaHandler {
         this.arenaNameLookup.remove(arena.getArenaNameSanitized());
         this.arenaGroups.remove(arenaId);
         if (!ArenaStorageHelper.removeArenaData(arenaId)) {
-            Dropper.getInstance().getLogger().log(Level.WARNING, "Unable to remove dropper arena data file " +
-                    arenaId + ".yml. You must remove it manually!");
+            Dropper.log(Level.WARNING, "Unable to remove dropper arena data file " + arenaId + ".yml. " +
+                    "You must remove it manually!");
         }
         this.saveArenas();
     }
@@ -179,8 +179,8 @@ public class DropperArenaHandler {
         try {
             ArenaStorageHelper.saveArenaData(this.arenas.get(arenaId).getData());
         } catch (IOException e) {
-            Dropper.getInstance().getLogger().log(Level.SEVERE, "Unable to save arena data! Data loss can occur!");
-            Dropper.getInstance().getLogger().log(Level.SEVERE, e.getMessage());
+            Dropper.log(Level.SEVERE, "Unable to save arena data! Data loss can occur!");
+            Dropper.log(Level.SEVERE, e.getMessage());
         }
     }
 
@@ -191,9 +191,9 @@ public class DropperArenaHandler {
         try {
             ArenaStorageHelper.saveDropperArenaGroups(new HashSet<>(this.arenaGroups.values()));
         } catch (IOException e) {
-            Dropper.getInstance().getLogger().log(Level.SEVERE, "Unable to save current arena groups! " +
+            Dropper.log(Level.SEVERE, "Unable to save current arena groups! " +
                     "Data loss can occur!");
-            Dropper.getInstance().getLogger().log(Level.SEVERE, e.getMessage());
+            Dropper.log(Level.SEVERE, e.getMessage());
         }
     }
 
@@ -218,9 +218,9 @@ public class DropperArenaHandler {
         try {
             ArenaStorageHelper.saveArenas(this.arenas);
         } catch (IOException e) {
-            Dropper.getInstance().getLogger().log(Level.SEVERE, "Unable to save current arenas! " +
+            Dropper.log(Level.SEVERE, "Unable to save current arenas! " +
                     "Data loss can occur!");
-            Dropper.getInstance().getLogger().log(Level.SEVERE, e.getMessage());
+            Dropper.log(Level.SEVERE, e.getMessage());
         }
     }
 

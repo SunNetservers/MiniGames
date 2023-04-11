@@ -111,7 +111,7 @@ public final class Dropper extends JavaPlugin {
 
         // Reload configuration
         this.reloadConfig();
-        this.configuration.load();
+        this.configuration.load(this.getConfig());
 
         // Clear record caches
         this.dropperRecordExpansion.clearCaches();
@@ -136,6 +136,9 @@ public final class Dropper extends JavaPlugin {
         // Plugin startup logic
         instance = this;
         this.saveDefaultConfig();
+        getConfig().options().copyDefaults(true);
+        saveConfig();
+        reloadConfig();
         this.configuration = new DropperConfiguration(this.getConfig());
         this.configuration.load();
         this.playerRegistry = new DropperArenaPlayerRegistry();
@@ -163,7 +166,7 @@ public final class Dropper extends JavaPlugin {
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
             this.dropperRecordExpansion = new DropperRecordExpansion(this);
             if (!this.dropperRecordExpansion.register()) {
-                getLogger().log(Level.WARNING, "Unable to register PlaceholderAPI expansion!");
+                log(Level.WARNING, "Unable to register PlaceholderAPI expansion!");
             }
         }
     }
@@ -195,7 +198,7 @@ public final class Dropper extends JavaPlugin {
                 command.setTabCompleter(tabCompleter);
             }
         } else {
-            getLogger().log(Level.SEVERE, "Unable to register the command " + commandName);
+            log(Level.SEVERE, "Unable to register the command " + commandName);
         }
     }
 

@@ -129,7 +129,7 @@ public class DropperArenaGroup implements ConfigurationSerializable {
             DropperArena dropperArena = arenaHandler.getArena(anArenaId);
             if (dropperArena == null) {
                 // The arena would only be null if the arena has been deleted, but not removed from this group
-                Dropper.getInstance().getLogger().log(Level.WARNING, "The dropper group " + this.getGroupName() +
+                Dropper.log(Level.WARNING, "The dropper group " + this.getGroupName() +
                         " contains the arena id " + anArenaId + " which is not a valid arena id!");
                 continue;
             }
@@ -166,7 +166,7 @@ public class DropperArenaGroup implements ConfigurationSerializable {
             DropperArena dropperArena = arenaHandler.getArena(anArenaId);
             if (dropperArena == null) {
                 // The arena would only be null if the arena has been deleted, but not removed from this group
-                Dropper.getInstance().getLogger().log(Level.WARNING, String.format("The dropper group %s contains the" +
+                Dropper.log(Level.WARNING, String.format("The dropper group %s contains the" +
                         " arena id %s which is not a valid arena id!", this.getGroupName(), anArenaId));
                 continue;
             }

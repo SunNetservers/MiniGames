@@ -15,9 +15,13 @@ import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * The configuration keeping track of the player's current configuration
+ */
 public class DropperConfiguration {
 
-    private final FileConfiguration configuration;
+    private FileConfiguration configuration;
+    private final static String rootNode = "dropper.";
 
     private double verticalVelocity;
     private float horizontalVelocity;
@@ -27,9 +31,10 @@ public class DropperConfiguration {
     private boolean mustDoNormalModeFirst;
     private boolean makePlayersInvisible;
     private boolean disableHitCollision;
-    private boolean overrideVerticalVelocity;
     private double liquidHitBoxDepth;
     private double solidHitBoxDistance;
+    private boolean blockSneaking;
+    private boolean blockSprinting;
     private Set<Material> blockWhitelist;
 
     /**
@@ -39,15 +44,6 @@ public class DropperConfiguration {
      */
     public DropperConfiguration(FileConfiguration configuration) {
         this.configuration = configuration;
-    }
-
-    /**
-     * Gets whether vertical velocity should be overridden
-     *
-     * @return <p>Whether vertical velocity should be overridden</p>
-     */
-    public boolean overrideVerticalVelocity() {
-        return this.overrideVerticalVelocity;
     }
 
     /**
@@ -156,20 +152,49 @@ public class DropperConfiguration {
     }
 
     /**
+     * Gets whether players trying to sneak while in a dropper arena to increase their downwards speed should be blocked
+     *
+     * @return <p>Whether to block sneak to speed up</p>
+     */
+    public boolean blockSneaking() {
+        return blockSneaking;
+    }
+
+    /**
+     * Gets whether players trying to sprint to improve their horizontal speed while in a dropper arena should be blocked
+     *
+     * @return <p>Whether to block sprint to speed up</p>
+     */
+    public boolean blockSprinting() {
+        return this.blockSprinting;
+    }
+
+    /**
+     * Loads all configuration values from disk
+     *
+     * @param configuration <p>The configuration to load</p>
+     */
+    public void load(FileConfiguration configuration) {
+        this.configuration = configuration;
+        this.load();
+    }
+
+    /**
      * Loads all configuration values from disk
      */
     public void load() {
-        this.verticalVelocity = configuration.getDouble("verticalVelocity", 1.0);
-        this.horizontalVelocity = (float) configuration.getDouble("horizontalVelocity", 1.0);
-        this.randomlyInvertedTimer = configuration.getInt("randomlyInvertedTimer", 7);
-        this.mustDoGroupedInSequence = configuration.getBoolean("mustDoGroupedInSequence", true);
-        this.ignoreRecordsUntilGroupBeatenOnce = configuration.getBoolean("ignoreRecordsUntilGroupBeatenOnce", false);
-        this.mustDoNormalModeFirst = configuration.getBoolean("mustDoNormalModeFirst", true);
-        this.makePlayersInvisible = configuration.getBoolean("makePlayersInvisible", false);
-        this.disableHitCollision = configuration.getBoolean("disableHitCollision", true);
-        this.overrideVerticalVelocity = configuration.getBoolean("overrideVerticalVelocity", true);
-        this.liquidHitBoxDepth = configuration.getDouble("liquidHitBoxDepth", -0.8);
-        this.solidHitBoxDistance = configuration.getDouble("solidHitBoxDistance", 0.2);
+        this.verticalVelocity = configuration.getDouble(rootNode + "verticalVelocity", 1.0);
+        this.horizontalVelocity = (float) configuration.getDouble(rootNode + "horizontalVelocity", 1.0);
+        this.randomlyInvertedTimer = configuration.getInt(rootNode + "randomlyInvertedTimer", 7);
+        this.mustDoGroupedInSequence = configuration.getBoolean(rootNode + "mustDoGroupedInSequence", true);
+        this.ignoreRecordsUntilGroupBeatenOnce = configuration.getBoolean(rootNode + "ignoreRecordsUntilGroupBeatenOnce", false);
+        this.mustDoNormalModeFirst = configuration.getBoolean(rootNode + "mustDoNormalModeFirst", true);
+        this.makePlayersInvisible = configuration.getBoolean(rootNode + "makePlayersInvisible", false);
+        this.disableHitCollision = configuration.getBoolean(rootNode + "disableHitCollision", true);
+        this.liquidHitBoxDepth = configuration.getDouble(rootNode + "liquidHitBoxDepth", -0.8);
+        this.solidHitBoxDistance = configuration.getDouble(rootNode + "solidHitBoxDistance", 0.2);
+        this.blockSprinting = configuration.getBoolean(rootNode + "blockSprinting", true);
+        this.blockSneaking = configuration.getBoolean(rootNode + "blockSneaking", true);
         sanitizeValues();
 
         loadBlockWhitelist();
@@ -205,7 +230,7 @@ public class DropperConfiguration {
      */
     private void loadBlockWhitelist() {
         this.blockWhitelist = new HashSet<>();
-        List<?> blockWhitelist = configuration.getList("blockWhiteList", new ArrayList<>());
+        List<?> blockWhitelist = configuration.getList(rootNode + "blockWhitelist", new ArrayList<>());
         for (Object value : blockWhitelist) {
             if (!(value instanceof String string)) {
                 continue;
@@ -247,6 +272,27 @@ public class DropperConfiguration {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder(
+                "Current configuration:" +
+                        "\n" + "Vertical velocity: " + verticalVelocity +
+                        "\n" + "Horizontal velocity: " + horizontalVelocity +
+                        "\n" + "Randomly inverted timer: " + randomlyInvertedTimer +
+                        "\n" + "Must do groups in sequence: " + mustDoGroupedInSequence +
+                        "\n" + "Ignore records until group beaten once: " + ignoreRecordsUntilGroupBeatenOnce +
+                        "\n" + "Must do normal mode first: " + mustDoNormalModeFirst +
+                        "\n" + "Make players invisible: " + makePlayersInvisible +
+                        "\n" + "Disable hit collision: " + disableHitCollision +
+                        "\n" + "Liquid hit box depth: " + liquidHitBoxDepth +
+                        "\n" + "Solid hit box distance: " + solidHitBoxDistance +
+                        "\n" + "Block whitelist: ");
+        for (Material material : blockWhitelist) {
+            builder.append("\n  - ").append(material.name());
+        }
+        return builder.toString();
     }
 
 }

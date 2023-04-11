@@ -1,8 +1,10 @@
 # Configuration values for droppers
 dropper:
-  # Whether the vertical velocity should be overridden, and thus changeable. If not enabled, all horizontalVelocity 
-  # settings, both the global one and per-arena, will be ignored.
-  overrideVerticalVelocity: true
+  # Whether to block using the shift key to drop faster than the intended drop speed
+  blockSneaking: true
+  
+  # Whether to block using the sprint key for slightly improved air speed
+  blockSprinting: true
   
   # The vertical velocity used as default for all arenas. Must be greater than 0. 3.92 is the max speed of a falling
   # player.
@@ -48,3 +50,10 @@ dropper:
     - +WALL_SIGNS
     - +STANDING_SIGNS
     - STRUCTURE_VOID
+    - WALL_TORCH
+    - SOUL_WALL_TORCH
+    - REDSTONE_WALL_TORCH
+    - +BANNERS
+    - +BUTTONS
+    - +CORALS
+    - +WALL_CORALS

@@ -32,7 +32,7 @@ public class PlayerLeaveListener implements Listener {
             return;
         }
 
-        Dropper.getInstance().getLogger().log(Level.WARNING, "Found player " + player.getUniqueId() +
+        Dropper.log(Level.WARNING, "Found player " + player.getUniqueId() +
                 " leaving in the middle of a session!");
         leftSessions.put(player.getUniqueId(), arenaSession);
     }
@@ -42,10 +42,10 @@ public class PlayerLeaveListener implements Listener {
         UUID playerId = event.getPlayer().getUniqueId();
         // Force the player to quit from the session once they re-join
         if (leftSessions.containsKey(playerId)) {
-            Dropper.getInstance().getLogger().log(Level.WARNING, "Found un-exited dropper session!");
+            Dropper.log(Level.WARNING, "Found un-exited dropper session!");
             Bukkit.getScheduler().runTaskLater(Dropper.getInstance(), () -> {
                 leftSessions.get(playerId).triggerQuit(false);
-                Dropper.getInstance().getLogger().log(Level.WARNING, "Triggered a quit!");
+                Dropper.log(Level.WARNING, "Triggered a quit!");
                 leftSessions.remove(playerId);
             }, 80);
         }
