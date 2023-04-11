@@ -170,8 +170,34 @@ public class DropperConfiguration {
         this.overrideVerticalVelocity = configuration.getBoolean("overrideVerticalVelocity", true);
         this.liquidHitBoxDepth = configuration.getDouble("liquidHitBoxDepth", -0.8);
         this.solidHitBoxDistance = configuration.getDouble("solidHitBoxDistance", 0.2);
+        sanitizeValues();
 
         loadBlockWhitelist();
+    }
+
+    /**
+     * Sanitizes configuration values to ensure they are within expected bounds
+     */
+    private void sanitizeValues() {
+        if (this.liquidHitBoxDepth <= -1 || this.liquidHitBoxDepth > 0) {
+            this.liquidHitBoxDepth = -0.8;
+        }
+
+        if (this.solidHitBoxDistance <= 0 || this.solidHitBoxDistance > 1) {
+            this.solidHitBoxDistance = 0.2;
+        }
+
+        if (this.horizontalVelocity > 1 || this.horizontalVelocity <= 0) {
+            this.horizontalVelocity = 1;
+        }
+
+        if (this.verticalVelocity <= 0 || this.verticalVelocity > 75) {
+            this.verticalVelocity = 1;
+        }
+
+        if (this.randomlyInvertedTimer <= 0 || this.randomlyInvertedTimer > 3600) {
+            this.randomlyInvertedTimer = 7;
+        }
     }
 
     /**

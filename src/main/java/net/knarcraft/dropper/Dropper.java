@@ -111,10 +111,10 @@ public final class Dropper extends JavaPlugin {
 
         // Reload configuration
         this.reloadConfig();
-        configuration.load();
+        this.configuration.load();
 
         // Clear record caches
-        dropperRecordExpansion.clearCaches();
+        this.dropperRecordExpansion.clearCaches();
     }
 
     @Override
@@ -137,6 +137,7 @@ public final class Dropper extends JavaPlugin {
         instance = this;
         this.saveDefaultConfig();
         this.configuration = new DropperConfiguration(this.getConfig());
+        this.configuration.load();
         this.playerRegistry = new DropperArenaPlayerRegistry();
         this.arenaHandler = new DropperArenaHandler();
         this.arenaHandler.loadArenas();
