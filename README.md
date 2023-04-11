@@ -21,15 +21,15 @@ To modify
 | Command                                | Alias    | Arguments                   | Description                                                                         |
 |----------------------------------------|----------|-----------------------------|-------------------------------------------------------------------------------------|
 | /dropperList                           | /dlist   |                             | Lists available dropper arenas.                                                     |
-| [/dropperJoin](#dropperJoin)           | /djoin   | \<arena> \[mode]            | Joins the selected arena.                                                           |
+| [/dropperJoin](#dropperjoin)           | /djoin   | \<arena> \[mode]            | Joins the selected arena.                                                           |
 | /dropperLeave                          | /dleave  |                             | Leaves the current dropper arena.                                                   |
 | /dropperCreate                         | /dcreate | \<name>                     | Creates a new dropper arena with the given name. The spawn is set to your location. |
 | /dropperRemove                         | /dremove | \<arena>                    | Removes the specified dropper arena.                                                |
-| [/dropperEdit](#dropperEdit)           | /dedit   | \<arena> \<option> \[value] | Gets or sets a dropper arena option.                                                |
+| [/dropperEdit](#dropperedit)           | /dedit   | \<arena> \<option> \[value] | Gets or sets a dropper arena option.                                                |
 | /dropperReload                         | /dreload |                             | Reloads all data from disk.                                                         |
-| [/dropperGroupSet](#dropperGroupSet)   | /dgset   | \<arena> \<group>           | Puts the given arena in the given group. Use "none" to remove an existing group.    |
+| [/dropperGroupSet](#droppergroupset)   | /dgset   | \<arena> \<group>           | Puts the given arena in the given group. Use "none" to remove an existing group.    |
 | /dropperGroupList                      | /dglist  | \[group]                    | Lists groups, or the stages of a group if a group is specified.                     |
-| [/dropperGroupSwap](#dropperGroupSwap) | /dgswap  | \<arena1> \<arena2>         | Swaps the two arenas in the group's ordered list.                                   |
+| [/dropperGroupSwap](#droppergroupswap) | /dgswap  | \<arena1> \<arena2>         | Swaps the two arenas in the group's ordered list.                                   |
 
 ### Command explanation
 
@@ -98,6 +98,39 @@ You could use `/droppergroupswap Sea Savanna` to change the order to:
 2. Savanna
 3. Nether
 4. Sea
+
+## Configuration options
+
+| Name                              | Type                | Default                             | Description                                                                                                                                                                                                                       |
+|-----------------------------------|---------------------|-------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| blockSneaking                     | true/false          | true                                | Whether to block using the shift key to drop faster than the intended drop speed                                                                                                                                                  |
+| blockSprinting                    | true/false          | true                                | Whether to block using the sprint key for slightly improved air speed                                                                                                                                                             |
+| verticalVelocity                  | 0 < decimal <= 75   | 1.0                                 | The vertical velocity used as default for all arenas. Must be greater than 0. 3.92 is the max speed of a falling player.                                                                                                          |
+| horizontalVelocity                | 0 < decimal <= 1    | 1.0                                 | The horizontal velocity used as default for all arenas (technically fly-speed). Must be between 0 (exclusive) and 1 (inclusive).                                                                                                  |
+| randomlyInvertedTimer             | 0 < integer <= 3600 | 7                                   | The number of seconds before the randomly inverted game-mode switches between normal and inverted movement (0, 3600]                                                                                                              |
+| mustDoGroupedInSequence           | true/false          | true                                | Whether grouped dropper arenas must be played in the correct sequence                                                                                                                                                             |
+| ignoreRecordsUntilGroupBeatenOnce | true/false          | false                               | Whether records won't be registered unless the player has already beaten all arenas in a group. That means players are required to do a second play-through to register a record for a grouped arena.                             |
+| mustDoNormalModeFirst             | true/false          | true                                | Whether a player must do the normal/default game-mode before playing any other game-modes                                                                                                                                         |
+| makePlayersInvisible              | true/false          | false                               | Whether players should be made invisible while playing in a dropper arena                                                                                                                                                         |
+| disableHitCollision               | true/false          | true                                | Whether players should have their entity hit collision disabled while in an arena. This prevents players from pushing each-other if in the same arena.                                                                            |
+| liquidHitBoxDepth                 | -1 < decimal < 0    | -0.8                                | This decides how far inside a non-solid block the player must go before detection triggers (-1, 0). The closer to -1 it is, the more accurate it will seem to the player, but the likelihood of not detecting the hit increases.  | 
+| solidHitBoxDistance               | 0 < decimal < 1     | 0.2                                 | This decides the distance the player must be from a block below them before a hit triggers (0, 1). If too low, the likelihood of detecting the hit decreases, but it won't look like the player hit the block without being near. |
+| blockWhitelist                    | list                | [see this](#blockwhitelist-default) | A whitelist for which blocks won't trigger a loss when hit/passed through. The win block check happens before the loss check, so even blocks on the whitelist can be used as the win-block. "+" denotes a material tag.           |
+
+#### blockWhitelist default:
+
+- WATER
+- LAVA
+- +WALL_SIGNS
+- +STANDING_SIGNS
+- STRUCTURE_VOID
+- WALL_TORCH
+- SOUL_WALL_TORCH
+- REDSTONE_WALL_TORCH
+- +BANNERS
+- +BUTTONS
+- +CORALS
+- +WALL_CORALS
 
 ## Record placeholders
 
