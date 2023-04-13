@@ -1,7 +1,7 @@
 package net.knarcraft.minigames.arena.parkour;
 
 import net.knarcraft.minigames.MiniGames;
-import net.knarcraft.minigames.util.ArenaStorageHelper;
+import net.knarcraft.minigames.util.ParkourArenaStorageHelper;
 import net.knarcraft.minigames.util.StringSanitizer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -163,7 +163,7 @@ public class ParkourArenaHandler {
         this.arenas.remove(arenaId);
         this.arenaNameLookup.remove(arena.getArenaNameSanitized());
         this.arenaGroups.remove(arenaId);
-        if (!ArenaStorageHelper.removeParkourArenaData(arenaId)) {
+        if (!ParkourArenaStorageHelper.removeParkourArenaData(arenaId)) {
             MiniGames.log(Level.WARNING, "Unable to remove parkour arena data file " + arenaId + ".yml. " +
                     "You must remove it manually!");
         }
@@ -177,7 +177,7 @@ public class ParkourArenaHandler {
      */
     public void saveData(UUID arenaId) {
         try {
-            ArenaStorageHelper.saveParkourArenaData(this.arenas.get(arenaId).getData());
+            ParkourArenaStorageHelper.saveParkourArenaData(this.arenas.get(arenaId).getData());
         } catch (IOException e) {
             MiniGames.log(Level.SEVERE, "Unable to save arena data! Data loss can occur!");
             MiniGames.log(Level.SEVERE, e.getMessage());
@@ -189,7 +189,7 @@ public class ParkourArenaHandler {
      */
     public void saveGroups() {
         try {
-            ArenaStorageHelper.saveParkourArenaGroups(new HashSet<>(this.arenaGroups.values()));
+            ParkourArenaStorageHelper.saveParkourArenaGroups(new HashSet<>(this.arenaGroups.values()));
         } catch (IOException e) {
             MiniGames.log(Level.SEVERE, "Unable to save current arena groups! " +
                     "Data loss can occur!");
@@ -209,7 +209,7 @@ public class ParkourArenaHandler {
      * Loads all parkour groups from disk
      */
     private void loadGroups() {
-        Set<ParkourArenaGroup> arenaGroups = ArenaStorageHelper.loadParkourArenaGroups();
+        Set<ParkourArenaGroup> arenaGroups = ParkourArenaStorageHelper.loadParkourArenaGroups();
         Map<UUID, ParkourArenaGroup> arenaGroupMap = new HashMap<>();
         for (ParkourArenaGroup arenaGroup : arenaGroups) {
             for (UUID arenaId : arenaGroup.getArenas()) {
@@ -224,7 +224,7 @@ public class ParkourArenaHandler {
      */
     public void saveArenas() {
         try {
-            ArenaStorageHelper.saveParkourArenas(this.arenas);
+            ParkourArenaStorageHelper.saveParkourArenas(this.arenas);
         } catch (IOException e) {
             MiniGames.log(Level.SEVERE, "Unable to save current arenas! " +
                     "Data loss can occur!");
@@ -236,7 +236,7 @@ public class ParkourArenaHandler {
      * Loads all arenas from disk
      */
     private void loadArenas() {
-        this.arenas = ArenaStorageHelper.loadParkourArenas();
+        this.arenas = ParkourArenaStorageHelper.loadParkourArenas();
 
         // Save a map from arena name to arena id for improved performance
         this.arenaNameLookup = new HashMap<>();

@@ -1,7 +1,7 @@
 package net.knarcraft.minigames.arena.dropper;
 
 import net.knarcraft.minigames.MiniGames;
-import net.knarcraft.minigames.util.ArenaStorageHelper;
+import net.knarcraft.minigames.util.DropperArenaStorageHelper;
 import net.knarcraft.minigames.util.StringSanitizer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -163,7 +163,7 @@ public class DropperArenaHandler {
         this.arenas.remove(arenaId);
         this.arenaNameLookup.remove(arena.getArenaNameSanitized());
         this.arenaGroups.remove(arenaId);
-        if (!ArenaStorageHelper.removeDropperArenaData(arenaId)) {
+        if (!DropperArenaStorageHelper.removeDropperArenaData(arenaId)) {
             MiniGames.log(Level.WARNING, "Unable to remove dropper arena data file " + arenaId + ".yml. " +
                     "You must remove it manually!");
         }
@@ -177,7 +177,7 @@ public class DropperArenaHandler {
      */
     public void saveData(UUID arenaId) {
         try {
-            ArenaStorageHelper.saveDropperArenaData(this.arenas.get(arenaId).getData());
+            DropperArenaStorageHelper.saveDropperArenaData(this.arenas.get(arenaId).getData());
         } catch (IOException e) {
             MiniGames.log(Level.SEVERE, "Unable to save arena data! Data loss can occur!");
             MiniGames.log(Level.SEVERE, e.getMessage());
@@ -189,7 +189,7 @@ public class DropperArenaHandler {
      */
     public void saveGroups() {
         try {
-            ArenaStorageHelper.saveDropperArenaGroups(new HashSet<>(this.arenaGroups.values()));
+            DropperArenaStorageHelper.saveDropperArenaGroups(new HashSet<>(this.arenaGroups.values()));
         } catch (IOException e) {
             MiniGames.log(Level.SEVERE, "Unable to save current arena groups! " +
                     "Data loss can occur!");
@@ -209,7 +209,7 @@ public class DropperArenaHandler {
      * Loads all dropper groups from disk
      */
     private void loadGroups() {
-        Set<DropperArenaGroup> arenaGroups = ArenaStorageHelper.loadDropperArenaGroups();
+        Set<DropperArenaGroup> arenaGroups = DropperArenaStorageHelper.loadDropperArenaGroups();
         Map<UUID, DropperArenaGroup> arenaGroupMap = new HashMap<>();
         for (DropperArenaGroup arenaGroup : arenaGroups) {
             for (UUID arenaId : arenaGroup.getArenas()) {
@@ -224,7 +224,7 @@ public class DropperArenaHandler {
      */
     public void saveArenas() {
         try {
-            ArenaStorageHelper.saveDropperArenas(this.arenas);
+            DropperArenaStorageHelper.saveDropperArenas(this.arenas);
         } catch (IOException e) {
             MiniGames.log(Level.SEVERE, "Unable to save current arenas! " +
                     "Data loss can occur!");
@@ -236,7 +236,7 @@ public class DropperArenaHandler {
      * Loads all arenas from disk
      */
     private void loadArenas() {
-        this.arenas = ArenaStorageHelper.loadDropperArenas();
+        this.arenas = DropperArenaStorageHelper.loadDropperArenas();
 
         // Save a map from arena name to arena id for improved performance
         this.arenaNameLookup = new HashMap<>();

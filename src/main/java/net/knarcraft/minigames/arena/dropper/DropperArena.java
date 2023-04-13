@@ -1,7 +1,6 @@
 package net.knarcraft.minigames.arena.dropper;
 
 import net.knarcraft.minigames.MiniGames;
-import net.knarcraft.minigames.arena.Arena;
 import net.knarcraft.minigames.arena.ArenaGameMode;
 import net.knarcraft.minigames.arena.ArenaRecordsRegistry;
 import net.knarcraft.minigames.config.DropperConfiguration;
@@ -20,7 +19,7 @@ import static net.knarcraft.minigames.util.InputValidationHelper.isInvalid;
 /**
  * A representation of one dropper arena
  */
-public class DropperArena implements Arena {
+public class DropperArena {
 
     /**
      * An unique and persistent identifier for this arena
@@ -134,12 +133,20 @@ public class DropperArena implements Arena {
         return this.dropperArenaData;
     }
 
-    @Override
+    /**
+     * Gets the id of this arena
+     *
+     * @return <p>This arena's identifier</p>
+     */
     public @NotNull UUID getArenaId() {
         return this.arenaId;
     }
 
-    @Override
+    /**
+     * Gets the name of this arena
+     *
+     * @return <p>The name of this arena</p>
+     */
     public @NotNull String getArenaName() {
         return this.arenaName;
     }
@@ -196,7 +203,11 @@ public class DropperArena implements Arena {
         return this.winBlockType;
     }
 
-    @Override
+    /**
+     * Gets this arena's sanitized name
+     *
+     * @return <p>This arena's sanitized name</p>
+     */
     public @NotNull String getArenaNameSanitized() {
         return StringSanitizer.sanitizeArenaName(this.getArenaName());
     }

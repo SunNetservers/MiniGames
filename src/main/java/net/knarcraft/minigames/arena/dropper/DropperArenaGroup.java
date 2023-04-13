@@ -114,7 +114,7 @@ public class DropperArenaGroup extends ArenaGroup {
         String name = (String) data.get("groupName");
         List<SerializableUUID> serializableArenas = (List<SerializableUUID>) data.get("arenas");
         List<UUID> arenas = new ArrayList<>();
-        
+
         SerializableConverter.getRawValue(new ArrayList<>(serializableArenas), arenas);
         return new DropperArenaGroup(id, name, arenas);
     }

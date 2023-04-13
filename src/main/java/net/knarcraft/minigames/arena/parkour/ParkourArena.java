@@ -3,6 +3,7 @@ package net.knarcraft.minigames.arena.parkour;
 import net.knarcraft.minigames.MiniGames;
 import net.knarcraft.minigames.arena.ArenaGameMode;
 import net.knarcraft.minigames.arena.ArenaRecordsRegistry;
+import net.knarcraft.minigames.util.MaterialHelper;
 import net.knarcraft.minigames.util.StringSanitizer;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -56,6 +57,11 @@ public class ParkourArena {
     private @Nullable Location winLocation;
 
     /**
+     * The names of the block types constituting this arena's kill plane
+     */
+    private @Nullable Set<String> killPlaneBlockNames;
+
+    /**
      * The block types constituting this arena's kill plane
      */
     private @Nullable Set<Material> killPlaneBlocks;
@@ -80,19 +86,23 @@ public class ParkourArena {
      * @param spawnLocation    <p>The location players spawn in when entering the arena</p>
      * @param exitLocation     <p>The location the players are teleported to when exiting the arena, or null</p>
      * @param winBlockType     <p>The material of the block players have to hit to win this parkour arena</p>
+     * @param winLocation      <p>The location a player has to reach to win this arena</p>
      * @param parkourArenaData <p>The arena data keeping track of which players have done what in this arena</p>
      * @param arenaHandler     <p>The arena handler used for saving any changes</p>
      */
     public ParkourArena(@NotNull UUID arenaId, @NotNull String arenaName, @NotNull Location spawnLocation,
-                        @Nullable Location exitLocation, @NotNull Material winBlockType,
-                        @Nullable Set<Material> killPlaneBlocks, @NotNull List<Location> checkpoints,
+                        @Nullable Location exitLocation, @NotNull Material winBlockType, @Nullable Location winLocation,
+                        @Nullable Set<String> killPlaneBlockNames, @NotNull List<Location> checkpoints,
                         @NotNull ParkourArenaData parkourArenaData, @NotNull ParkourArenaHandler arenaHandler) {
         this.arenaId = arenaId;
         this.arenaName = arenaName;
         this.spawnLocation = spawnLocation;
         this.exitLocation = exitLocation;
         this.winBlockType = winBlockType;
-        this.killPlaneBlocks = killPlaneBlocks;
+        this.winLocation = winLocation;
+        this.killPlaneBlockNames = killPlaneBlockNames;
+        this.killPlaneBlocks = this.killPlaneBlockNames == null ? null : MaterialHelper.loadMaterialList(
+                new ArrayList<>(killPlaneBlockNames));
         this.checkpoints = checkpoints;
         this.parkourArenaData = parkourArenaData;
         this.parkourArenaHandler = arenaHandler;
@@ -209,6 +219,15 @@ public class ParkourArena {
     }
 
     /**
+     * Gets the names of the block types used for this parkour arena's kill plane
+     *
+     * @return <p>The names of the types of blocks that cause a loss</p>
+     */
+    public @Nullable Set<String> getKillPlaneBlockNames() {
+        return this.killPlaneBlockNames;
+    }
+
+    /**
      * Gets all checkpoint locations for this arena
      *
      * @return <p>All checkpoint locations for this arena</p>
@@ -309,7 +328,7 @@ public class ParkourArena {
         if (isInvalid(newLocation)) {
             return false;
         } else {
-            this.exitLocation = newLocation.clone();
+            this.winLocation = newLocation.clone();
             parkourArenaHandler.saveArenas();
             return true;
         }
@@ -318,19 +337,10 @@ public class ParkourArena {
     /**
      * Sets the type of blocks constituting this arena's kill plane
      *
-     * @param killPlaneBlocks <p>The blocks that will cause players to lose</p>
-     * @return <p>True if successfully changed</p>
+     * @param killPlaneBlockNames <p>The names of the blocks that will cause players to lose</p>
      */
-    public boolean setKillPlaneBlocks(@NotNull Set<Material> killPlaneBlocks) {
-        for (Material material : killPlaneBlocks) {
-            // Make sure no nulls have entered the set
-            if (material == null) {
-                return false;
-            }
-        }
-
-        this.killPlaneBlocks = new HashSet<>(killPlaneBlocks);
-        return true;
+    public void setKillPlaneBlocks(@NotNull Set<String> killPlaneBlockNames) {
+        this.killPlaneBlocks = MaterialHelper.loadMaterialList(new ArrayList<>(killPlaneBlockNames));
     }
 
     /**
