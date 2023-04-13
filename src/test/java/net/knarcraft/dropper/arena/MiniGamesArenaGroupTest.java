@@ -1,5 +1,6 @@
 package net.knarcraft.dropper.arena;
 
+import net.knarcraft.dropper.arena.dropper.DropperArenaGroup;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -10,7 +11,7 @@ import java.util.UUID;
 /**
  * Tests for arena dropper groups
  */
-public class DropperArenaGroupTest {
+public class MiniGamesArenaGroupTest {
 
     @Test
     public void swapTest() {

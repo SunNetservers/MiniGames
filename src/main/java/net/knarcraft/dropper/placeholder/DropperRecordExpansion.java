@@ -1,12 +1,12 @@
 package net.knarcraft.dropper.placeholder;
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
-import net.knarcraft.dropper.Dropper;
-import net.knarcraft.dropper.arena.ArenaGameMode;
-import net.knarcraft.dropper.arena.DropperArena;
-import net.knarcraft.dropper.arena.DropperArenaGroup;
-import net.knarcraft.dropper.arena.DropperArenaHandler;
-import net.knarcraft.dropper.arena.DropperArenaRecordsRegistry;
+import net.knarcraft.dropper.MiniGames;
+import net.knarcraft.dropper.arena.dropper.DropperArena;
+import net.knarcraft.dropper.arena.dropper.DropperArenaGameMode;
+import net.knarcraft.dropper.arena.dropper.DropperArenaGroup;
+import net.knarcraft.dropper.arena.dropper.DropperArenaHandler;
+import net.knarcraft.dropper.arena.dropper.DropperArenaRecordsRegistry;
 import net.knarcraft.dropper.arena.record.ArenaRecord;
 import net.knarcraft.dropper.placeholder.parsing.InfoType;
 import net.knarcraft.dropper.placeholder.parsing.SelectionType;
@@ -33,7 +33,7 @@ import java.util.function.Supplier;
  */
 public class DropperRecordExpansion extends PlaceholderExpansion {
 
-    private final Dropper plugin;
+    private final MiniGames plugin;
     private final Map<UUID, Set<GroupRecordCache<Integer>>> groupRecordDeathsCache;
     private final Map<UUID, Set<GroupRecordCache<Long>>> groupRecordTimeCache;
 
@@ -42,7 +42,7 @@ public class DropperRecordExpansion extends PlaceholderExpansion {
      *
      * @param plugin <p>A reference to the dropper plugin</p>
      */
-    public DropperRecordExpansion(Dropper plugin) {
+    public DropperRecordExpansion(MiniGames plugin) {
         this.plugin = plugin;
         this.groupRecordDeathsCache = new HashMap<>();
         this.groupRecordTimeCache = new HashMap<>();
@@ -76,7 +76,7 @@ public class DropperRecordExpansion extends PlaceholderExpansion {
             return parameters;
         }
         RecordType recordType = RecordType.getFromString(parts[1]);
-        ArenaGameMode gameMode = ArenaGameMode.matchGamemode(parts[2]);
+        DropperArenaGameMode gameMode = DropperArenaGameMode.matchGamemode(parts[2]);
         SelectionType selectionType = SelectionType.getFromString(parts[3]);
         String identifier = parts[4];
         int recordNumber = Integer.parseInt(parts[5]) - 1;
@@ -87,7 +87,7 @@ public class DropperRecordExpansion extends PlaceholderExpansion {
         }
 
         String info = null;
-        DropperArenaHandler arenaHandler = plugin.getArenaHandler();
+        DropperArenaHandler arenaHandler = plugin.getDropperArenaHandler();
         if (selectionType == SelectionType.GROUP) {
             info = getGroupRecord(arenaHandler, identifier, gameMode, recordType, recordNumber, infoType);
         } else if (selectionType == SelectionType.ARENA) {
@@ -117,7 +117,7 @@ public class DropperRecordExpansion extends PlaceholderExpansion {
      * @return <p>The selected information about the record, or null if not found</p>
      */
     private @Nullable String getGroupRecord(@NotNull DropperArenaHandler arenaHandler, @NotNull String identifier,
-                                            @NotNull ArenaGameMode gameMode, @NotNull RecordType recordType,
+                                            @NotNull DropperArenaGameMode gameMode, @NotNull RecordType recordType,
                                             int recordNumber, @NotNull InfoType infoType) {
         // Allow specifying the group UUID or the arena name
         DropperArenaGroup group;
@@ -154,7 +154,7 @@ public class DropperRecordExpansion extends PlaceholderExpansion {
      * @return <p>The record, or null if not found</p>
      */
     private @Nullable ArenaRecord<?> getGroupTimeRecord(@NotNull DropperArenaGroup group,
-                                                        @NotNull ArenaGameMode gameMode, int recordNumber) {
+                                                        @NotNull DropperArenaGameMode gameMode, int recordNumber) {
         return getCachedGroupRecord(group, gameMode, RecordType.TIME, recordNumber, groupRecordTimeCache,
                 () -> DropperGroupRecordHelper.getCombinedTime(group, gameMode));
     }
@@ -168,7 +168,7 @@ public class DropperRecordExpansion extends PlaceholderExpansion {
      * @return <p>The record, or null if not found</p>
      */
     private @Nullable ArenaRecord<?> getGroupDeathRecord(@NotNull DropperArenaGroup group,
-                                                         @NotNull ArenaGameMode gameMode, int recordNumber) {
+                                                         @NotNull DropperArenaGameMode gameMode, int recordNumber) {
         return getCachedGroupRecord(group, gameMode, RecordType.DEATHS, recordNumber, groupRecordDeathsCache,
                 () -> DropperGroupRecordHelper.getCombinedDeaths(group, gameMode));
     }
@@ -186,7 +186,7 @@ public class DropperRecordExpansion extends PlaceholderExpansion {
      * @return <p>The specified record, or null if not found</p>
      */
     private <K extends Comparable<K>> @Nullable ArenaRecord<?> getCachedGroupRecord(@NotNull DropperArenaGroup group,
-                                                                                    @NotNull ArenaGameMode gameMode,
+                                                                                    @NotNull DropperArenaGameMode gameMode,
                                                                                     @NotNull RecordType recordType,
                                                                                     int recordNumber,
                                                                                     @NotNull Map<UUID, Set<GroupRecordCache<K>>> caches,
@@ -233,7 +233,7 @@ public class DropperRecordExpansion extends PlaceholderExpansion {
      * @return <p>The selected information about the record, or null if not found</p>
      */
     private @Nullable String getArenaRecord(@NotNull DropperArenaHandler arenaHandler, @NotNull String identifier,
-                                            @NotNull ArenaGameMode gameMode, @NotNull RecordType recordType,
+                                            @NotNull DropperArenaGameMode gameMode, @NotNull RecordType recordType,
                                             int recordNumber, @NotNull InfoType infoType) {
         // Allow specifying the arena UUID or the arena name
         DropperArena arena;
@@ -245,7 +245,7 @@ public class DropperRecordExpansion extends PlaceholderExpansion {
         if (arena == null) {
             return null;
         }
-        @NotNull Map<ArenaGameMode, DropperArenaRecordsRegistry> registries = arena.getData().recordRegistries();
+        @NotNull Map<DropperArenaGameMode, DropperArenaRecordsRegistry> registries = arena.getData().recordRegistries();
         DropperArenaRecordsRegistry recordsRegistry = registries.get(gameMode);
 
         ArenaRecord<?> record = getRecord(recordsRegistry, recordType, recordNumber);

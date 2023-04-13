@@ -1,4 +1,4 @@
-package net.knarcraft.dropper.arena;
+package net.knarcraft.dropper.arena.dropper;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

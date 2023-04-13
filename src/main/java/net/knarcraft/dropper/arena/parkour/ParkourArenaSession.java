@@ -1,6 +1,6 @@
-package net.knarcraft.dropper.arena;
+package net.knarcraft.dropper.arena.parkour;
 
-import net.knarcraft.dropper.Dropper;
+import net.knarcraft.dropper.MiniGames;
 import net.knarcraft.dropper.config.DropperConfiguration;
 import net.knarcraft.dropper.property.RecordResult;
 import net.knarcraft.dropper.util.PlayerTeleporter;
@@ -13,45 +13,35 @@ import java.util.logging.Level;
 /**
  * A representation of a player's current session in a dropper arena
  */
-public class DropperArenaSession {
+public class ParkourArenaSession {
 
-    private final @NotNull DropperArena arena;
+    private final @NotNull ParkourArena arena;
     private final @NotNull Player player;
-    private final @NotNull ArenaGameMode gameMode;
+    private final @NotNull ParkourArenaGameMode gameMode;
     private int deaths;
     private final long startTime;
-    private final PlayerEntryState entryState;
+    private final ParkourPlayerEntryState entryState;
 
     /**
-     * Instantiates a new dropper arena session
+     * Instantiates a new parkour arena session
      *
      * @param dropperArena <p>The arena that's being played in</p>
      * @param player       <p>The player playing the arena</p>
      * @param gameMode     <p>The game-mode</p>
      */
-    public DropperArenaSession(@NotNull DropperArena dropperArena, @NotNull Player player,
-                               @NotNull ArenaGameMode gameMode) {
+    public ParkourArenaSession(@NotNull ParkourArena dropperArena, @NotNull Player player,
+                               @NotNull ParkourArenaGameMode gameMode) {
         this.arena = dropperArena;
         this.player = player;
         this.gameMode = gameMode;
         this.deaths = 0;
         this.startTime = System.currentTimeMillis();
 
-        DropperConfiguration configuration = Dropper.getInstance().getDropperConfiguration();
+        DropperConfiguration configuration = MiniGames.getInstance().getDropperConfiguration();
         boolean makeInvisible = configuration.makePlayersInvisible();
-        boolean disableCollision = configuration.disableHitCollision();
-        this.entryState = new PlayerEntryState(player, gameMode, makeInvisible, disableCollision);
+        this.entryState = new ParkourPlayerEntryState(player, makeInvisible);
         // Make the player fly to improve mobility in the air
-        this.entryState.setArenaState(this.arena.getPlayerHorizontalVelocity());
-    }
-
-    /**
-     * Gets the game-mode the player is playing in this session
-     *
-     * @return <p>The game-mode for this session</p>
-     */
-    public @NotNull ArenaGameMode getGameMode() {
-        return this.gameMode;
+        this.entryState.setArenaState();
     }
 
     /**
@@ -59,7 +49,7 @@ public class DropperArenaSession {
      *
      * @return <p>The player's entry state</p>
      */
-    public @NotNull PlayerEntryState getEntryState() {
+    public @NotNull ParkourPlayerEntryState getEntryState() {
         return this.entryState;
     }
 
@@ -71,9 +61,9 @@ public class DropperArenaSession {
         stopSession();
 
         // Check for, and display, records
-        Dropper dropper = Dropper.getInstance();
-        boolean ignore = dropper.getDropperConfiguration().ignoreRecordsUntilGroupBeatenOnce();
-        DropperArenaGroup group = dropper.getArenaHandler().getGroup(this.arena.getArenaId());
+        MiniGames miniGames = MiniGames.getInstance();
+        boolean ignore = miniGames.getDropperConfiguration().ignoreRecordsUntilGroupBeatenOnce();
+        ParkourArenaGroup group = miniGames.getParkourArenaHandler().getGroup(this.arena.getArenaId());
         if (!ignore || group == null || group.hasBeatenAll(this.gameMode, this.player)) {
             registerRecord();
         }
@@ -107,9 +97,9 @@ public class DropperArenaSession {
      */
     private void removeSession() {
         // Remove this session for game sessions to stop listeners from fiddling more with the player
-        boolean removedSession = Dropper.getInstance().getPlayerRegistry().removePlayer(player.getUniqueId());
+        boolean removedSession = MiniGames.getInstance().getDropperArenaPlayerRegistry().removePlayer(player.getUniqueId());
         if (!removedSession) {
-            Dropper.log(Level.SEVERE, "Unable to remove dropper arena session for " + player.getName() + ". " +
+            MiniGames.log(Level.SEVERE, "Unable to remove dropper arena session for " + player.getName() + ". " +
                     "This will have unintended consequences.");
         }
     }
@@ -118,7 +108,7 @@ public class DropperArenaSession {
      * Registers the player's record if necessary, and prints record information to the player
      */
     private void registerRecord() {
-        DropperArenaRecordsRegistry recordsRegistry = this.arena.getData().recordRegistries().get(this.gameMode);
+        ParkourArenaRecordsRegistry recordsRegistry = this.arena.getData().recordRegistries().get(this.gameMode);
         long timeElapsed = System.currentTimeMillis() - this.startTime;
         announceRecord(recordsRegistry.registerTimeRecord(this.player.getUniqueId(), timeElapsed), "time");
         announceRecord(recordsRegistry.registerDeathRecord(this.player.getUniqueId(), this.deaths), "least deaths");
@@ -138,8 +128,6 @@ public class DropperArenaSession {
         // Gets a string representation of the played game-mode
         String gameModeString = switch (this.gameMode) {
             case DEFAULT -> "default";
-            case INVERTED -> "inverted";
-            case RANDOM_INVERTED -> "random";
         };
 
         String recordString = "You just set a %s on the %s game-mode!";
@@ -158,7 +146,7 @@ public class DropperArenaSession {
         this.deaths++;
         //Teleport the player back to the top
         PlayerTeleporter.teleportPlayer(this.player, this.arena.getSpawnLocation(), true, false);
-        this.entryState.setArenaState(this.arena.getPlayerHorizontalVelocity());
+        this.entryState.setArenaState();
     }
 
     /**
@@ -189,7 +177,7 @@ public class DropperArenaSession {
      *
      * @return <p>The session's arena</p>
      */
-    public @NotNull DropperArena getArena() {
+    public @NotNull ParkourArena getArena() {
         return this.arena;
     }
 

@@ -1,6 +1,6 @@
 package net.knarcraft.dropper.command;
 
-import net.knarcraft.dropper.Dropper;
+import net.knarcraft.dropper.MiniGames;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -18,7 +18,7 @@ public class ReloadCommand implements TabExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s,
                              @NotNull String[] arguments) {
-        Dropper.getInstance().reload();
+        MiniGames.getInstance().reload();
         commandSender.sendMessage("Plugin reloaded!");
         return true;
     }

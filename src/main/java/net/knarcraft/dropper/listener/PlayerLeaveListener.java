@@ -1,7 +1,7 @@
 package net.knarcraft.dropper.listener;
 
-import net.knarcraft.dropper.Dropper;
-import net.knarcraft.dropper.arena.DropperArenaSession;
+import net.knarcraft.dropper.MiniGames;
+import net.knarcraft.dropper.arena.dropper.DropperArenaSession;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -32,7 +32,7 @@ public class PlayerLeaveListener implements Listener {
             return;
         }
 
-        Dropper.log(Level.WARNING, "Found player " + player.getUniqueId() +
+        MiniGames.log(Level.WARNING, "Found player " + player.getUniqueId() +
                 " leaving in the middle of a session!");
         leftSessions.put(player.getUniqueId(), arenaSession);
     }
@@ -42,10 +42,10 @@ public class PlayerLeaveListener implements Listener {
         UUID playerId = event.getPlayer().getUniqueId();
         // Force the player to quit from the session once they re-join
         if (leftSessions.containsKey(playerId)) {
-            Dropper.log(Level.WARNING, "Found un-exited dropper session!");
-            Bukkit.getScheduler().runTaskLater(Dropper.getInstance(), () -> {
+            MiniGames.log(Level.WARNING, "Found un-exited dropper session!");
+            Bukkit.getScheduler().runTaskLater(MiniGames.getInstance(), () -> {
                 leftSessions.get(playerId).triggerQuit(false);
-                Dropper.log(Level.WARNING, "Triggered a quit!");
+                MiniGames.log(Level.WARNING, "Triggered a quit!");
                 leftSessions.remove(playerId);
             }, 80);
         }
@@ -76,7 +76,7 @@ public class PlayerLeaveListener implements Listener {
      * @return <p>The player's session, or null if not in a session</p>
      */
     private @Nullable DropperArenaSession getSession(@NotNull Player player) {
-        return Dropper.getInstance().getPlayerRegistry().getArenaSession(player.getUniqueId());
+        return MiniGames.getInstance().getDropperArenaPlayerRegistry().getArenaSession(player.getUniqueId());
     }
 
 }

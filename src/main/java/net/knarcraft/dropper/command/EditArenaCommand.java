@@ -1,8 +1,8 @@
 package net.knarcraft.dropper.command;
 
-import net.knarcraft.dropper.Dropper;
-import net.knarcraft.dropper.arena.ArenaEditableProperty;
-import net.knarcraft.dropper.arena.DropperArena;
+import net.knarcraft.dropper.MiniGames;
+import net.knarcraft.dropper.arena.dropper.DropperArena;
+import net.knarcraft.dropper.arena.dropper.DropperArenaEditableProperty;
 import net.knarcraft.dropper.config.DropperConfiguration;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -40,13 +40,13 @@ public class EditArenaCommand implements CommandExecutor {
             return false;
         }
 
-        DropperArena specifiedArena = Dropper.getInstance().getArenaHandler().getArena(arguments[0]);
+        DropperArena specifiedArena = MiniGames.getInstance().getDropperArenaHandler().getArena(arguments[0]);
         if (specifiedArena == null) {
             commandSender.sendMessage("Unable to find the specified dropper arena.");
             return false;
         }
 
-        ArenaEditableProperty editableProperty = ArenaEditableProperty.getFromArgumentString(arguments[1]);
+        DropperArenaEditableProperty editableProperty = DropperArenaEditableProperty.getFromArgumentString(arguments[1]);
         if (editableProperty == null) {
             commandSender.sendMessage("Unknown property specified.");
             return false;
@@ -79,7 +79,7 @@ public class EditArenaCommand implements CommandExecutor {
      * @param player   <p>The player trying to change the value</p>
      * @return <p>True if the value was successfully changed</p>
      */
-    private boolean changeValue(@NotNull DropperArena arena, @NotNull ArenaEditableProperty property,
+    private boolean changeValue(@NotNull DropperArena arena, @NotNull DropperArenaEditableProperty property,
                                 @NotNull String value, @NotNull Player player) {
         return switch (property) {
             case WIN_BLOCK_TYPE -> arena.setWinBlockType(parseMaterial(value));

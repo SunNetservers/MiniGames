@@ -1,7 +1,7 @@
 package net.knarcraft.dropper.command;
 
-import net.knarcraft.dropper.Dropper;
-import net.knarcraft.dropper.arena.DropperArenaSession;
+import net.knarcraft.dropper.MiniGames;
+import net.knarcraft.dropper.arena.dropper.DropperArenaSession;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -25,7 +25,7 @@ public class LeaveArenaCommand implements TabExecutor {
             return false;
         }
 
-        DropperArenaSession existingSession = Dropper.getInstance().getPlayerRegistry().getArenaSession(
+        DropperArenaSession existingSession = MiniGames.getInstance().getDropperArenaPlayerRegistry().getArenaSession(
                 player.getUniqueId());
         if (existingSession == null) {
             commandSender.sendMessage("You are not in a dropper arena!");

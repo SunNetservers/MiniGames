@@ -1,7 +1,7 @@
 package net.knarcraft.dropper.listener;
 
-import net.knarcraft.dropper.Dropper;
-import net.knarcraft.dropper.arena.DropperArenaSession;
+import net.knarcraft.dropper.MiniGames;
+import net.knarcraft.dropper.arena.dropper.DropperArenaSession;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -18,7 +18,7 @@ public class CommandListener implements Listener {
     @EventHandler
     public void onCommand(PlayerCommandPreprocessEvent event) {
         Player player = event.getPlayer();
-        DropperArenaSession existingSession = Dropper.getInstance().getPlayerRegistry().getArenaSession(
+        DropperArenaSession existingSession = MiniGames.getInstance().getDropperArenaPlayerRegistry().getArenaSession(
                 player.getUniqueId());
         if (existingSession == null) {
             return;

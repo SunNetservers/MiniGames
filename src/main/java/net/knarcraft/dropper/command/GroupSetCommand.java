@@ -1,9 +1,9 @@
 package net.knarcraft.dropper.command;
 
-import net.knarcraft.dropper.Dropper;
-import net.knarcraft.dropper.arena.DropperArena;
-import net.knarcraft.dropper.arena.DropperArenaGroup;
-import net.knarcraft.dropper.arena.DropperArenaHandler;
+import net.knarcraft.dropper.MiniGames;
+import net.knarcraft.dropper.arena.dropper.DropperArena;
+import net.knarcraft.dropper.arena.dropper.DropperArenaGroup;
+import net.knarcraft.dropper.arena.dropper.DropperArenaHandler;
 import net.knarcraft.dropper.util.StringSanitizer;
 import net.knarcraft.dropper.util.TabCompleteHelper;
 import org.bukkit.command.Command;
@@ -27,7 +27,7 @@ public class GroupSetCommand implements TabExecutor {
             return false;
         }
 
-        DropperArenaHandler arenaHandler = Dropper.getInstance().getArenaHandler();
+        DropperArenaHandler arenaHandler = MiniGames.getInstance().getDropperArenaHandler();
 
         DropperArena specifiedArena = arenaHandler.getArena(arguments[0]);
         if (specifiedArena == null) {
@@ -67,7 +67,7 @@ public class GroupSetCommand implements TabExecutor {
             List<String> possibleValues = new ArrayList<>();
             possibleValues.add("none");
             possibleValues.add("GroupName");
-            for (DropperArenaGroup group : Dropper.getInstance().getArenaHandler().getAllGroups()) {
+            for (DropperArenaGroup group : MiniGames.getInstance().getDropperArenaHandler().getAllGroups()) {
                 possibleValues.add(group.getGroupName());
             }
             return possibleValues;

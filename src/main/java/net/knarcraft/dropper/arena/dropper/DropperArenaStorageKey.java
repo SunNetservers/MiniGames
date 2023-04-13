@@ -1,11 +1,11 @@
-package net.knarcraft.dropper.arena;
+package net.knarcraft.dropper.arena.dropper;
 
 import org.jetbrains.annotations.NotNull;
 
 /**
  * A representation of each key used for storing arena data
  */
-public enum ArenaStorageKey {
+public enum DropperArenaStorageKey {
 
     /**
      * The key for an arena's id
@@ -55,7 +55,7 @@ public enum ArenaStorageKey {
      *
      * @param key <p>The string path of the configuration key this value represents.</p>
      */
-    ArenaStorageKey(@NotNull String key) {
+    DropperArenaStorageKey(@NotNull String key) {
         this.key = key;
     }
 

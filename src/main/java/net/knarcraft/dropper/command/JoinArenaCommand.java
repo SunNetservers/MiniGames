@@ -1,11 +1,11 @@
 package net.knarcraft.dropper.command;
 
-import net.knarcraft.dropper.Dropper;
-import net.knarcraft.dropper.arena.ArenaGameMode;
-import net.knarcraft.dropper.arena.DropperArena;
-import net.knarcraft.dropper.arena.DropperArenaGroup;
-import net.knarcraft.dropper.arena.DropperArenaPlayerRegistry;
-import net.knarcraft.dropper.arena.DropperArenaSession;
+import net.knarcraft.dropper.MiniGames;
+import net.knarcraft.dropper.arena.dropper.DropperArena;
+import net.knarcraft.dropper.arena.dropper.DropperArenaGameMode;
+import net.knarcraft.dropper.arena.dropper.DropperArenaGroup;
+import net.knarcraft.dropper.arena.dropper.DropperArenaPlayerRegistry;
+import net.knarcraft.dropper.arena.dropper.DropperArenaSession;
 import net.knarcraft.dropper.config.DropperConfiguration;
 import net.knarcraft.dropper.util.PlayerTeleporter;
 import org.bukkit.command.Command;
@@ -32,14 +32,14 @@ public class JoinArenaCommand implements CommandExecutor {
         }
 
         // Disallow joining if the player is already in a dropper arena
-        DropperArenaSession existingSession = Dropper.getInstance().getPlayerRegistry().getArenaSession(player.getUniqueId());
+        DropperArenaSession existingSession = MiniGames.getInstance().getDropperArenaPlayerRegistry().getArenaSession(player.getUniqueId());
         if (existingSession != null) {
             commandSender.sendMessage("You are already in a dropper arena!");
             return false;
         }
 
         // Make sure the arena exists
-        DropperArena specifiedArena = Dropper.getInstance().getArenaHandler().getArena(arguments[0]);
+        DropperArena specifiedArena = MiniGames.getInstance().getDropperArenaHandler().getArena(arguments[0]);
         if (specifiedArena == null) {
             commandSender.sendMessage("Unable to find the specified dropper arena.");
             return false;
@@ -64,30 +64,30 @@ public class JoinArenaCommand implements CommandExecutor {
      */
     private boolean joinArena(DropperArena specifiedArena, Player player, String[] arguments) {
         // Find the specified game-mode
-        ArenaGameMode gameMode;
+        DropperArenaGameMode gameMode;
         if (arguments.length > 1) {
-            gameMode = ArenaGameMode.matchGamemode(arguments[1]);
+            gameMode = DropperArenaGameMode.matchGamemode(arguments[1]);
         } else {
-            gameMode = ArenaGameMode.DEFAULT;
+            gameMode = DropperArenaGameMode.DEFAULT;
         }
 
         // Make sure the player has beaten the necessary levels
-        DropperArenaGroup arenaGroup = Dropper.getInstance().getArenaHandler().getGroup(specifiedArena.getArenaId());
+        DropperArenaGroup arenaGroup = MiniGames.getInstance().getDropperArenaHandler().getGroup(specifiedArena.getArenaId());
         if (arenaGroup != null && !doGroupChecks(specifiedArena, arenaGroup, gameMode, player)) {
             return false;
         }
 
         // Make sure the player has beaten the arena once in normal mode before playing another mode
-        if (Dropper.getInstance().getDropperConfiguration().mustDoNormalModeFirst() &&
-                gameMode != ArenaGameMode.DEFAULT &&
-                specifiedArena.getData().hasNotCompleted(ArenaGameMode.DEFAULT, player)) {
+        if (MiniGames.getInstance().getDropperConfiguration().mustDoNormalModeFirst() &&
+                gameMode != DropperArenaGameMode.DEFAULT &&
+                specifiedArena.getData().hasNotCompleted(DropperArenaGameMode.DEFAULT, player)) {
             player.sendMessage("You must complete this arena in normal mode first!");
             return false;
         }
 
         // Register the player's session
         DropperArenaSession newSession = new DropperArenaSession(specifiedArena, player, gameMode);
-        DropperArenaPlayerRegistry playerRegistry = Dropper.getInstance().getPlayerRegistry();
+        DropperArenaPlayerRegistry playerRegistry = MiniGames.getInstance().getDropperArenaPlayerRegistry();
         playerRegistry.registerPlayer(player.getUniqueId(), newSession);
 
         // Try to teleport the player to the arena
@@ -114,11 +114,11 @@ public class JoinArenaCommand implements CommandExecutor {
      * @return <p>False if any checks failed</p>
      */
     private boolean doGroupChecks(@NotNull DropperArena dropperArena, @NotNull DropperArenaGroup arenaGroup,
-                                  @NotNull ArenaGameMode arenaGameMode, @NotNull Player player) {
-        DropperConfiguration configuration = Dropper.getInstance().getDropperConfiguration();
+                                  @NotNull DropperArenaGameMode arenaGameMode, @NotNull Player player) {
+        DropperConfiguration configuration = MiniGames.getInstance().getDropperConfiguration();
         // Require that players beat all arenas in the group in the normal game-mode before trying challenge modes
-        if (configuration.mustDoNormalModeFirst() && arenaGameMode != ArenaGameMode.DEFAULT &&
-                !arenaGroup.hasBeatenAll(ArenaGameMode.DEFAULT, player)) {
+        if (configuration.mustDoNormalModeFirst() && arenaGameMode != DropperArenaGameMode.DEFAULT &&
+                !arenaGroup.hasBeatenAll(DropperArenaGameMode.DEFAULT, player)) {
             player.sendMessage("You have not yet beaten all arenas in this group!");
             return false;
         }

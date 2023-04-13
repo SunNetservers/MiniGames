@@ -1,12 +1,14 @@
 package net.knarcraft.dropper;
 
-import net.knarcraft.dropper.arena.ArenaGameMode;
-import net.knarcraft.dropper.arena.DropperArenaData;
-import net.knarcraft.dropper.arena.DropperArenaGroup;
-import net.knarcraft.dropper.arena.DropperArenaHandler;
-import net.knarcraft.dropper.arena.DropperArenaPlayerRegistry;
-import net.knarcraft.dropper.arena.DropperArenaRecordsRegistry;
-import net.knarcraft.dropper.arena.DropperArenaSession;
+import net.knarcraft.dropper.arena.dropper.DropperArenaData;
+import net.knarcraft.dropper.arena.dropper.DropperArenaGameMode;
+import net.knarcraft.dropper.arena.dropper.DropperArenaGroup;
+import net.knarcraft.dropper.arena.dropper.DropperArenaHandler;
+import net.knarcraft.dropper.arena.dropper.DropperArenaPlayerRegistry;
+import net.knarcraft.dropper.arena.dropper.DropperArenaRecordsRegistry;
+import net.knarcraft.dropper.arena.dropper.DropperArenaSession;
+import net.knarcraft.dropper.arena.parkour.ParkourArenaHandler;
+import net.knarcraft.dropper.arena.parkour.ParkourArenaPlayerRegistry;
 import net.knarcraft.dropper.arena.record.IntegerRecord;
 import net.knarcraft.dropper.arena.record.LongRecord;
 import net.knarcraft.dropper.command.CreateArenaCommand;
@@ -47,39 +49,59 @@ import java.util.logging.Level;
  * The dropper plugin's main class
  */
 @SuppressWarnings("unused")
-public final class Dropper extends JavaPlugin {
+public final class MiniGames extends JavaPlugin {
 
-    private static Dropper instance;
+    private static MiniGames instance;
     private DropperConfiguration configuration;
-    private DropperArenaHandler arenaHandler;
-    private DropperArenaPlayerRegistry playerRegistry;
+    private DropperArenaHandler dropperArenaHandler;
+    private DropperArenaPlayerRegistry dropperArenaPlayerRegistry;
     private DropperRecordExpansion dropperRecordExpansion;
+    private ParkourArenaHandler parkourArenaHandler;
+    private ParkourArenaPlayerRegistry parkourArenaPlayerRegistry;
 
     /**
      * Gets an instance of this plugin
      *
      * @return <p>An instance of this plugin, or null if not initialized yet.</p>
      */
-    public static Dropper getInstance() {
+    public static MiniGames getInstance() {
         return instance;
     }
 
     /**
-     * Gets the arena handler for this instance
+     * Gets the dropper arena handler for this instance
      *
      * @return <p>A dropper arena handler</p>
      */
-    public DropperArenaHandler getArenaHandler() {
-        return this.arenaHandler;
+    public DropperArenaHandler getDropperArenaHandler() {
+        return this.dropperArenaHandler;
     }
 
     /**
-     * Gets the arena player registry for this instance
+     * Gets the parkour arena handler for this instance
+     *
+     * @return <p>A parkour arena handler</p>
+     */
+    public ParkourArenaHandler getParkourArenaHandler() {
+        return this.parkourArenaHandler;
+    }
+
+    /**
+     * Gets the dropper arena player registry for this instance
      *
      * @return <p>A dropper arena player registry</p>
      */
-    public DropperArenaPlayerRegistry getPlayerRegistry() {
-        return this.playerRegistry;
+    public DropperArenaPlayerRegistry getDropperArenaPlayerRegistry() {
+        return this.dropperArenaPlayerRegistry;
+    }
+
+    /**
+     * Gets the parkour arena player registry for this instance
+     *
+     * @return <p>A parkour arena player registry</p>
+     */
+    public ParkourArenaPlayerRegistry getParkourArenaPlayerRegistry() {
+        return this.parkourArenaPlayerRegistry;
     }
 
     /**
@@ -98,7 +120,7 @@ public final class Dropper extends JavaPlugin {
      * @param message <p>The message to log</p>
      */
     public static void log(Level level, String message) {
-        Dropper.getInstance().getLogger().log(level, message);
+        MiniGames.getInstance().getLogger().log(level, message);
     }
 
     /**
@@ -106,8 +128,8 @@ public final class Dropper extends JavaPlugin {
      */
     public void reload() {
         // Load all arenas again
-        this.arenaHandler.loadArenas();
-        this.arenaHandler.loadGroups();
+        this.dropperArenaHandler.load();
+        this.parkourArenaHandler.load();
 
         // Reload configuration
         this.reloadConfig();
@@ -126,7 +148,7 @@ public final class Dropper extends JavaPlugin {
         ConfigurationSerialization.registerClass(SerializableUUID.class);
         ConfigurationSerialization.registerClass(DropperArenaData.class);
         ConfigurationSerialization.registerClass(DropperArenaGroup.class);
-        ConfigurationSerialization.registerClass(ArenaGameMode.class);
+        ConfigurationSerialization.registerClass(DropperArenaGameMode.class);
         ConfigurationSerialization.registerClass(LongRecord.class);
         ConfigurationSerialization.registerClass(IntegerRecord.class);
     }
@@ -141,10 +163,12 @@ public final class Dropper extends JavaPlugin {
         reloadConfig();
         this.configuration = new DropperConfiguration(this.getConfig());
         this.configuration.load();
-        this.playerRegistry = new DropperArenaPlayerRegistry();
-        this.arenaHandler = new DropperArenaHandler();
-        this.arenaHandler.loadArenas();
-        this.arenaHandler.loadGroups();
+        this.dropperArenaPlayerRegistry = new DropperArenaPlayerRegistry();
+        this.dropperArenaHandler = new DropperArenaHandler();
+        this.dropperArenaHandler.load();
+
+        this.parkourArenaHandler = new ParkourArenaHandler();
+        this.parkourArenaHandler.load();
 
         PluginManager pluginManager = getServer().getPluginManager();
         pluginManager.registerEvents(new DamageListener(), this);
@@ -175,7 +199,7 @@ public final class Dropper extends JavaPlugin {
     public void onDisable() {
         // Throw out currently playing players before exiting
         for (Player player : getServer().getOnlinePlayers()) {
-            DropperArenaSession session = playerRegistry.getArenaSession(player.getUniqueId());
+            DropperArenaSession session = dropperArenaPlayerRegistry.getArenaSession(player.getUniqueId());
             if (session != null) {
                 session.triggerQuit(true);
             }

@@ -1,8 +1,8 @@
 package net.knarcraft.dropper.command;
 
-import net.knarcraft.dropper.Dropper;
-import net.knarcraft.dropper.arena.DropperArena;
-import net.knarcraft.dropper.arena.DropperArenaHandler;
+import net.knarcraft.dropper.MiniGames;
+import net.knarcraft.dropper.arena.dropper.DropperArena;
+import net.knarcraft.dropper.arena.dropper.DropperArenaHandler;
 import net.knarcraft.dropper.util.StringSanitizer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -36,7 +36,7 @@ public class CreateArenaCommand implements CommandExecutor {
             return false;
         }
 
-        DropperArenaHandler arenaHandler = Dropper.getInstance().getArenaHandler();
+        DropperArenaHandler arenaHandler = MiniGames.getInstance().getDropperArenaHandler();
 
         DropperArena existingArena = arenaHandler.getArena(arenaName);
         if (existingArena != null) {

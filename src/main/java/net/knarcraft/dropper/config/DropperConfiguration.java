@@ -1,6 +1,6 @@
 package net.knarcraft.dropper.config;
 
-import net.knarcraft.dropper.Dropper;
+import net.knarcraft.dropper.MiniGames;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -16,11 +16,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * The configuration keeping track of the player's current configuration
+ * The configuration keeping track of dropper settings
  */
-public class DropperConfiguration {
+public class DropperConfiguration extends MiniGameConfiguration {
 
-    private FileConfiguration configuration;
     private final static String rootNode = "dropper.";
 
     private double verticalVelocity;
@@ -31,8 +30,6 @@ public class DropperConfiguration {
     private boolean mustDoNormalModeFirst;
     private boolean makePlayersInvisible;
     private boolean disableHitCollision;
-    private double liquidHitBoxDepth;
-    private double solidHitBoxDistance;
     private boolean blockSneaking;
     private boolean blockSprinting;
     private Set<Material> blockWhitelist;
@@ -43,7 +40,7 @@ public class DropperConfiguration {
      * @param configuration <p>The YAML configuration to use internally</p>
      */
     public DropperConfiguration(FileConfiguration configuration) {
-        this.configuration = configuration;
+        super(configuration);
     }
 
     /**
@@ -128,30 +125,6 @@ public class DropperConfiguration {
     }
 
     /**
-     * Gets the negative depth a player must reach in a liquid block for fail/win detection to trigger
-     *
-     * <p>This decides how far inside a non-solid block the player must go before detection triggers. The closer to -1
-     * it is, the more accurate it will seem to the player, but the likelihood of not detecting the hit increases.</p>
-     *
-     * @return <p>The liquid hit box depth to use</p>
-     */
-    public double getLiquidHitBoxDepth() {
-        return this.liquidHitBoxDepth;
-    }
-
-    /**
-     * Gets the positive distance a player must at most be from a block for fail/win detection to trigger
-     *
-     * <p>This decides the distance the player must be from a block below them before a hit triggers. If too low, the
-     * likelihood of detecting the hit decreases, but it won't look like the player hit the block without being near.</p>
-     *
-     * @return <p>The solid hit box distance to use</p>
-     */
-    public double getSolidHitBoxDistance() {
-        return this.solidHitBoxDistance;
-    }
-
-    /**
      * Gets whether players trying to sneak while in a dropper arena to increase their downwards speed should be blocked
      *
      * @return <p>Whether to block sneak to speed up</p>
@@ -169,19 +142,7 @@ public class DropperConfiguration {
         return this.blockSprinting;
     }
 
-    /**
-     * Loads all configuration values from disk
-     *
-     * @param configuration <p>The configuration to load</p>
-     */
-    public void load(FileConfiguration configuration) {
-        this.configuration = configuration;
-        this.load();
-    }
-
-    /**
-     * Loads all configuration values from disk
-     */
+    @Override
     public void load() {
         this.verticalVelocity = configuration.getDouble(rootNode + "verticalVelocity", 1.0);
         this.horizontalVelocity = (float) configuration.getDouble(rootNode + "horizontalVelocity", 1.0);
@@ -191,8 +152,6 @@ public class DropperConfiguration {
         this.mustDoNormalModeFirst = configuration.getBoolean(rootNode + "mustDoNormalModeFirst", true);
         this.makePlayersInvisible = configuration.getBoolean(rootNode + "makePlayersInvisible", false);
         this.disableHitCollision = configuration.getBoolean(rootNode + "disableHitCollision", true);
-        this.liquidHitBoxDepth = configuration.getDouble(rootNode + "liquidHitBoxDepth", -0.8);
-        this.solidHitBoxDistance = configuration.getDouble(rootNode + "solidHitBoxDistance", 0.2);
         this.blockSprinting = configuration.getBoolean(rootNode + "blockSprinting", true);
         this.blockSneaking = configuration.getBoolean(rootNode + "blockSneaking", true);
         sanitizeValues();
@@ -204,14 +163,6 @@ public class DropperConfiguration {
      * Sanitizes configuration values to ensure they are within expected bounds
      */
     private void sanitizeValues() {
-        if (this.liquidHitBoxDepth <= -1 || this.liquidHitBoxDepth > 0) {
-            this.liquidHitBoxDepth = -0.8;
-        }
-
-        if (this.solidHitBoxDistance <= 0 || this.solidHitBoxDistance > 1) {
-            this.solidHitBoxDistance = 0.2;
-        }
-
         if (this.horizontalVelocity > 1 || this.horizontalVelocity <= 0) {
             this.horizontalVelocity = 1;
         }
@@ -246,7 +197,7 @@ public class DropperConfiguration {
             if (matched != null) {
                 this.blockWhitelist.add(matched);
             } else {
-                Dropper.log(Level.WARNING, "Unable to parse: " + string);
+                MiniGames.log(Level.WARNING, "Unable to parse: " + string);
             }
         }
     }
@@ -267,7 +218,7 @@ public class DropperConfiguration {
             if (tag != null) {
                 this.blockWhitelist.addAll(tag.getValues());
             } else {
-                Dropper.log(Level.WARNING, "Unable to parse: " + materialName);
+                MiniGames.log(Level.WARNING, "Unable to parse: " + materialName);
             }
             return true;
         }
@@ -286,8 +237,6 @@ public class DropperConfiguration {
                         "\n" + "Must do normal mode first: " + mustDoNormalModeFirst +
                         "\n" + "Make players invisible: " + makePlayersInvisible +
                         "\n" + "Disable hit collision: " + disableHitCollision +
-                        "\n" + "Liquid hit box depth: " + liquidHitBoxDepth +
-                        "\n" + "Solid hit box distance: " + solidHitBoxDistance +
                         "\n" + "Block whitelist: ");
         for (Material material : blockWhitelist) {
             builder.append("\n  - ").append(material.name());

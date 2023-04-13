@@ -1,10 +1,10 @@
 package net.knarcraft.dropper.util;
 
-import net.knarcraft.dropper.Dropper;
-import net.knarcraft.dropper.arena.ArenaGameMode;
-import net.knarcraft.dropper.arena.DropperArena;
-import net.knarcraft.dropper.arena.DropperArenaGroup;
-import net.knarcraft.dropper.arena.DropperArenaHandler;
+import net.knarcraft.dropper.MiniGames;
+import net.knarcraft.dropper.arena.dropper.DropperArena;
+import net.knarcraft.dropper.arena.dropper.DropperArenaGameMode;
+import net.knarcraft.dropper.arena.dropper.DropperArenaGroup;
+import net.knarcraft.dropper.arena.dropper.DropperArenaHandler;
 import net.knarcraft.dropper.arena.record.ArenaRecord;
 import net.knarcraft.dropper.arena.record.SummableArenaRecord;
 import org.jetbrains.annotations.NotNull;
@@ -33,9 +33,9 @@ public final class DropperGroupRecordHelper {
      * @return <p>The combined death records</p>
      */
     public static @NotNull Set<ArenaRecord<Integer>> getCombinedDeaths(@NotNull DropperArenaGroup group,
-                                                                       @NotNull ArenaGameMode gameMode) {
+                                                                       @NotNull DropperArenaGameMode gameMode) {
         Map<UUID, SummableArenaRecord<Integer>> records = new HashMap<>();
-        @NotNull BiFunction<DropperArena, ArenaGameMode, Set<SummableArenaRecord<Integer>>> recordSupplier =
+        @NotNull BiFunction<DropperArena, DropperArenaGameMode, Set<SummableArenaRecord<Integer>>> recordSupplier =
                 (arena, aGameMode) -> arena.getData().recordRegistries().get(gameMode).getLeastDeathsRecords();
 
         return getCombined(group, gameMode, records, recordSupplier);
@@ -49,9 +49,9 @@ public final class DropperGroupRecordHelper {
      * @return <p>The combined least-time records</p>
      */
     public static @NotNull Set<ArenaRecord<Long>> getCombinedTime(@NotNull DropperArenaGroup group,
-                                                                  @NotNull ArenaGameMode gameMode) {
+                                                                  @NotNull DropperArenaGameMode gameMode) {
         Map<UUID, SummableArenaRecord<Long>> records = new HashMap<>();
-        @NotNull BiFunction<DropperArena, ArenaGameMode, Set<SummableArenaRecord<Long>>> recordSupplier =
+        @NotNull BiFunction<DropperArena, DropperArenaGameMode, Set<SummableArenaRecord<Long>>> recordSupplier =
                 (arena, aGameMode) -> arena.getData().recordRegistries().get(gameMode).getShortestTimeMilliSecondsRecords();
 
         return getCombined(group, gameMode, records, recordSupplier);
@@ -68,13 +68,13 @@ public final class DropperGroupRecordHelper {
      * @return <p>The combined records</p>
      */
     private static <K extends Comparable<K>> @NotNull Set<ArenaRecord<K>> getCombined(@NotNull DropperArenaGroup group,
-                                                                                      @NotNull ArenaGameMode gameMode,
+                                                                                      @NotNull DropperArenaGameMode gameMode,
                                                                                       @NotNull Map<UUID,
                                                                                               SummableArenaRecord<K>> records,
                                                                                       @NotNull BiFunction<DropperArena,
-                                                                                              ArenaGameMode,
+                                                                                              DropperArenaGameMode,
                                                                                               Set<SummableArenaRecord<K>>> recordSupplier) {
-        DropperArenaHandler arenaHandler = Dropper.getInstance().getArenaHandler();
+        DropperArenaHandler arenaHandler = MiniGames.getInstance().getDropperArenaHandler();
 
         // Get all arenas in the group
         Set<DropperArena> arenas = getArenas(arenaHandler, group);
@@ -137,11 +137,11 @@ public final class DropperGroupRecordHelper {
      * @param <K>             <p>The type of record to combine</p>
      */
     private static <K extends Comparable<K>> void combineRecords(@NotNull Set<DropperArena> arenas,
-                                                                 @NotNull ArenaGameMode gameMode,
+                                                                 @NotNull DropperArenaGameMode gameMode,
                                                                  @NotNull Map<UUID,
                                                                          SummableArenaRecord<K>> combinedRecords,
                                                                  @NotNull Map<UUID, Integer> recordsFound,
-                                                                 @NotNull BiFunction<DropperArena, ArenaGameMode,
+                                                                 @NotNull BiFunction<DropperArena, DropperArenaGameMode,
                                                                          Set<SummableArenaRecord<K>>> recordSupplier) {
         for (DropperArena arena : arenas) {
             Set<SummableArenaRecord<K>> existingRecords = recordSupplier.apply(arena, gameMode);

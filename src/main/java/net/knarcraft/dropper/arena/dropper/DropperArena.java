@@ -1,11 +1,13 @@
-package net.knarcraft.dropper.arena;
+package net.knarcraft.dropper.arena.dropper;
 
-import net.knarcraft.dropper.Dropper;
+import net.knarcraft.dropper.MiniGames;
+import net.knarcraft.dropper.arena.Arena;
+import net.knarcraft.dropper.arena.ArenaGameMode;
+import net.knarcraft.dropper.arena.ArenaRecordsRegistry;
 import net.knarcraft.dropper.config.DropperConfiguration;
 import net.knarcraft.dropper.util.StringSanitizer;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,10 +15,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import static net.knarcraft.dropper.util.InputValidationHelper.isInvalid;
+
 /**
  * A representation of one dropper arena
  */
-public class DropperArena {
+public class DropperArena implements Arena {
 
     /**
      * An unique and persistent identifier for this arena
@@ -103,7 +107,7 @@ public class DropperArena {
      */
     public DropperArena(@NotNull String arenaName, @NotNull Location spawnLocation,
                         @NotNull DropperArenaHandler arenaHandler) {
-        DropperConfiguration configuration = Dropper.getInstance().getDropperConfiguration();
+        DropperConfiguration configuration = MiniGames.getInstance().getDropperConfiguration();
         this.arenaId = UUID.randomUUID();
         this.arenaName = arenaName;
         this.spawnLocation = spawnLocation;
@@ -111,8 +115,8 @@ public class DropperArena {
         this.playerVerticalVelocity = configuration.getVerticalVelocity();
         this.playerHorizontalVelocity = configuration.getHorizontalVelocity();
 
-        Map<ArenaGameMode, DropperArenaRecordsRegistry> recordRegistries = new HashMap<>();
-        for (ArenaGameMode arenaGameMode : ArenaGameMode.values()) {
+        Map<ArenaGameMode, ArenaRecordsRegistry> recordRegistries = new HashMap<>();
+        for (ArenaGameMode arenaGameMode : DropperArenaGameMode.values()) {
             recordRegistries.put(arenaGameMode, new DropperArenaRecordsRegistry(this.arenaId));
         }
 
@@ -130,20 +134,12 @@ public class DropperArena {
         return this.dropperArenaData;
     }
 
-    /**
-     * Gets the id of this arena
-     *
-     * @return <p>This arena's identifier</p>
-     */
+    @Override
     public @NotNull UUID getArenaId() {
         return this.arenaId;
     }
 
-    /**
-     * Gets the name of this arena
-     *
-     * @return <p>The name of this arena</p>
-     */
+    @Override
     public @NotNull String getArenaName() {
         return this.arenaName;
     }
@@ -156,7 +152,7 @@ public class DropperArena {
      * @return <p>This arena's spawn location.</p>
      */
     public @NotNull Location getSpawnLocation() {
-        return this.spawnLocation;
+        return this.spawnLocation.clone();
     }
 
     /**
@@ -165,7 +161,7 @@ public class DropperArena {
      * @return <p>This arena's exit location, or null if no such location is set.</p>
      */
     public @Nullable Location getExitLocation() {
-        return this.exitLocation;
+        return this.exitLocation != null ? this.exitLocation.clone() : null;
     }
 
     /**
@@ -200,11 +196,7 @@ public class DropperArena {
         return this.winBlockType;
     }
 
-    /**
-     * Gets this arena's sanitized name
-     *
-     * @return <p>This arena's sanitized name</p>
-     */
+    @Override
     public @NotNull String getArenaNameSanitized() {
         return StringSanitizer.sanitizeArenaName(this.getArenaName());
     }
@@ -318,17 +310,6 @@ public class DropperArena {
             return false;
         }
         return this.getArenaNameSanitized().equals(otherArena.getArenaNameSanitized());
-    }
-
-    /**
-     * Checks whether the given location is valid
-     *
-     * @param location <p>The location to validate</p>
-     * @return <p>False if the location is valid</p>
-     */
-    private boolean isInvalid(Location location) {
-        World world = location.getWorld();
-        return world == null || !world.getWorldBorder().isInside(location);
     }
 
 }

@@ -1,7 +1,7 @@
 package net.knarcraft.dropper.command;
 
-import net.knarcraft.dropper.Dropper;
-import net.knarcraft.dropper.arena.DropperArena;
+import net.knarcraft.dropper.MiniGames;
+import net.knarcraft.dropper.arena.dropper.DropperArena;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -21,14 +21,14 @@ public class RemoveArenaCommand implements CommandExecutor {
         }
 
         // Get the specified arena
-        DropperArena targetArena = Dropper.getInstance().getArenaHandler().getArena(arguments[0]);
+        DropperArena targetArena = MiniGames.getInstance().getDropperArenaHandler().getArena(arguments[0]);
         if (targetArena == null) {
             commandSender.sendMessage("Unable to find the specified arena");
             return false;
         }
 
         // Remove the arena
-        Dropper.getInstance().getArenaHandler().removeArena(targetArena);
+        MiniGames.getInstance().getDropperArenaHandler().removeArena(targetArena);
         commandSender.sendMessage("The specified arena has been successfully removed");
         return true;
     }

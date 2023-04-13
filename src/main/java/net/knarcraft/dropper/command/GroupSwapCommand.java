@@ -1,9 +1,9 @@
 package net.knarcraft.dropper.command;
 
-import net.knarcraft.dropper.Dropper;
-import net.knarcraft.dropper.arena.DropperArena;
-import net.knarcraft.dropper.arena.DropperArenaGroup;
-import net.knarcraft.dropper.arena.DropperArenaHandler;
+import net.knarcraft.dropper.MiniGames;
+import net.knarcraft.dropper.arena.dropper.DropperArena;
+import net.knarcraft.dropper.arena.dropper.DropperArenaGroup;
+import net.knarcraft.dropper.arena.dropper.DropperArenaHandler;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -26,7 +26,7 @@ public class GroupSwapCommand implements TabExecutor {
             return false;
         }
 
-        DropperArenaHandler arenaHandler = Dropper.getInstance().getArenaHandler();
+        DropperArenaHandler arenaHandler = MiniGames.getInstance().getDropperArenaHandler();
 
         DropperArena arena1 = arenaHandler.getArena(arguments[0]);
         if (arena1 == null) {
@@ -57,7 +57,7 @@ public class GroupSwapCommand implements TabExecutor {
     @Override
     public List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s,
                                       @NotNull String[] arguments) {
-        DropperArenaHandler arenaHandler = Dropper.getInstance().getArenaHandler();
+        DropperArenaHandler arenaHandler = MiniGames.getInstance().getDropperArenaHandler();
         if (arguments.length == 1) {
             List<String> arenaNames = new ArrayList<>();
             for (DropperArena dropperArena : arenaHandler.getArenasInAGroup()) {
@@ -78,7 +78,7 @@ public class GroupSwapCommand implements TabExecutor {
      * @return <p>The names of the arenas in the same group</p>
      */
     private List<String> getArenaNamesInSameGroup(String arenaName) {
-        DropperArenaHandler arenaHandler = Dropper.getInstance().getArenaHandler();
+        DropperArenaHandler arenaHandler = MiniGames.getInstance().getDropperArenaHandler();
         DropperArena arena1 = arenaHandler.getArena(arenaName);
         if (arena1 == null) {
             return new ArrayList<>();

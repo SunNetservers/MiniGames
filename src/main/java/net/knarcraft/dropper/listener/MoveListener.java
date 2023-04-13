@@ -1,9 +1,9 @@
 package net.knarcraft.dropper.listener;
 
-import net.knarcraft.dropper.Dropper;
-import net.knarcraft.dropper.arena.ArenaGameMode;
-import net.knarcraft.dropper.arena.DropperArenaPlayerRegistry;
-import net.knarcraft.dropper.arena.DropperArenaSession;
+import net.knarcraft.dropper.MiniGames;
+import net.knarcraft.dropper.arena.dropper.DropperArenaGameMode;
+import net.knarcraft.dropper.arena.dropper.DropperArenaPlayerRegistry;
+import net.knarcraft.dropper.arena.dropper.DropperArenaSession;
 import net.knarcraft.dropper.config.DropperConfiguration;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -43,12 +43,12 @@ public class MoveListener implements Listener {
         }
 
         Player player = event.getPlayer();
-        DropperArenaPlayerRegistry playerRegistry = Dropper.getInstance().getPlayerRegistry();
+        DropperArenaPlayerRegistry playerRegistry = MiniGames.getInstance().getDropperArenaPlayerRegistry();
         DropperArenaSession arenaSession = playerRegistry.getArenaSession(player.getUniqueId());
         if (arenaSession == null) {
             return;
         }
-        
+
         // Prevent the player from flying upwards while in flight mode
         if (event.getFrom().getY() < event.getTo().getY() ||
                 (configuration.blockSneaking() && event.getPlayer().isSneaking()) ||
@@ -144,7 +144,7 @@ public class MoveListener implements Listener {
      * @param session <p>The session to possibly invert flying for</p>
      */
     private void toggleFlyInversion(@NotNull DropperArenaSession session) {
-        if (session.getGameMode() != ArenaGameMode.RANDOM_INVERTED) {
+        if (session.getGameMode() != DropperArenaGameMode.RANDOM_INVERTED) {
             return;
         }
         Player player = session.getPlayer();

@@ -1,8 +1,8 @@
 package net.knarcraft.dropper.util;
 
-import net.knarcraft.dropper.Dropper;
-import net.knarcraft.dropper.arena.ArenaEditableProperty;
-import net.knarcraft.dropper.arena.DropperArena;
+import net.knarcraft.dropper.MiniGames;
+import net.knarcraft.dropper.arena.dropper.DropperArena;
+import net.knarcraft.dropper.arena.dropper.DropperArenaEditableProperty;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -24,7 +24,7 @@ public final class TabCompleteHelper {
      */
     public static @NotNull List<String> getArenas() {
         List<String> arenaNames = new ArrayList<>();
-        for (DropperArena dropperArena : Dropper.getInstance().getArenaHandler().getArenas().values()) {
+        for (DropperArena dropperArena : MiniGames.getInstance().getDropperArenaHandler().getArenas().values()) {
             arenaNames.add(dropperArena.getArenaName());
         }
         return arenaNames;
@@ -37,7 +37,7 @@ public final class TabCompleteHelper {
      */
     public static @NotNull List<String> getArenaProperties() {
         List<String> arenaProperties = new ArrayList<>();
-        for (ArenaEditableProperty property : ArenaEditableProperty.values()) {
+        for (DropperArenaEditableProperty property : DropperArenaEditableProperty.values()) {
             arenaProperties.add(property.getArgumentString());
         }
         return arenaProperties;

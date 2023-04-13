@@ -1,9 +1,9 @@
 package net.knarcraft.dropper.command;
 
-import net.knarcraft.dropper.Dropper;
-import net.knarcraft.dropper.arena.DropperArena;
-import net.knarcraft.dropper.arena.DropperArenaGroup;
-import net.knarcraft.dropper.arena.DropperArenaHandler;
+import net.knarcraft.dropper.MiniGames;
+import net.knarcraft.dropper.arena.dropper.DropperArena;
+import net.knarcraft.dropper.arena.dropper.DropperArenaGroup;
+import net.knarcraft.dropper.arena.dropper.DropperArenaHandler;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -22,7 +22,7 @@ public class GroupListCommand implements TabExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s,
                              @NotNull String[] arguments) {
-        DropperArenaHandler arenaHandler = Dropper.getInstance().getArenaHandler();
+        DropperArenaHandler arenaHandler = MiniGames.getInstance().getDropperArenaHandler();
         if (arguments.length == 0) {
             displayExistingGroups(arenaHandler, commandSender);
             return true;
@@ -81,7 +81,7 @@ public class GroupListCommand implements TabExecutor {
                                       @NotNull String[] arguments) {
         if (arguments.length == 1) {
             List<String> groupNames = new ArrayList<>();
-            for (DropperArenaGroup group : Dropper.getInstance().getArenaHandler().getAllGroups()) {
+            for (DropperArenaGroup group : MiniGames.getInstance().getDropperArenaHandler().getAllGroups()) {
                 groupNames.add(group.getGroupName());
             }
             return groupNames;

@@ -1,20 +1,21 @@
-# Dropper
+# MiniGames
 
-This is a plugin for a dropper mini-game (try to reach the bottom without hitting any obstacles).
-To create an arena, simply use `/droppercreate <name>`, where \<name> is simply the name used to differentiate and
+This plugin adds several mini-games.
+To create a dropper arena, simply use `/droppercreate <name>`, where \<name> is simply the name used to differentiate
+and
 recognize the arena. Your location will be used as the spawn location for anyone joining the dropper arena. To start
 playing, simply use `/dropperjoin <name>`, where \<name> is the same as you specified upon creation.
-To modify
+To modify the arena, use `/dropperedit <name> <property> <value>`.
 
 ## Permissions
 
-| Node           | Description                                        |
-|----------------|----------------------------------------------------|
-| dropper.admin  | Gives all permissions.                             |
-| dropper.join   | Allows a player to participate in dropper arenas.  |
-| dropper.create | Allows a player to create a new dropper arena.     |
-| dropper.edit   | Allows a player to edit an existing dropper arena. |
-| dropper.remove | Allows a player to remove a dropper arena.         |
+| Node             | Description                                          |
+|------------------|------------------------------------------------------|
+| minigames.admin  | Gives all permissions.                               |
+| minigames.join   | Allows a player to participate in mini-game arenas.  |
+| minigames.create | Allows a player to create a new mini-game arena.     |
+| minigames.edit   | Allows a player to edit an existing mini-game arena. |
+| minigames.remove | Allows a player to remove a mini-game arena.         |
 
 ## Commands
 

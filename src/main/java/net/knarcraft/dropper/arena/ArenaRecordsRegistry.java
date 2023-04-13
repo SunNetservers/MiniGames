@@ -1,4 +1,4 @@
 package net.knarcraft.dropper.arena;
 
-public interface ArenaGameMode {
+public interface ArenaRecordsRegistry {
 }

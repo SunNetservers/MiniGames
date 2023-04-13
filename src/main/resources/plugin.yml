@@ -1,8 +1,8 @@
 name: Dropper
 version: '${project.version}'
-main: net.knarcraft.dropper.Dropper
+main: net.knarcraft.dropper.MiniGames
 api-version: 1.19
-description: A plugin for dropper mini-games
+description: A plugin that adds various mini-games
 softdepend:
   - PlaceholderAPI
 

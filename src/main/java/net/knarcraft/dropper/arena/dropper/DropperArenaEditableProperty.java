@@ -1,4 +1,4 @@
-package net.knarcraft.dropper.arena;
+package net.knarcraft.dropper.arena.dropper;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -8,7 +8,7 @@ import java.util.function.Function;
 /**
  * All editable properties of a dropper arena
  */
-public enum ArenaEditableProperty {
+public enum DropperArenaEditableProperty {
 
     /**
      * The name of the arena
@@ -49,7 +49,7 @@ public enum ArenaEditableProperty {
      *
      * @param argumentString <p>The argument string used to specify this property</p>
      */
-    ArenaEditableProperty(@NotNull String argumentString, Function<DropperArena, String> currentValueProvider) {
+    DropperArenaEditableProperty(@NotNull String argumentString, Function<DropperArena, String> currentValueProvider) {
         this.argumentString = argumentString;
         this.currentValueProvider = currentValueProvider;
     }
@@ -79,8 +79,8 @@ public enum ArenaEditableProperty {
      * @param argumentString <p>The argument string used to specify an editable property</p>
      * @return <p>The corresponding editable property, or null if not found</p>
      */
-    public static @Nullable ArenaEditableProperty getFromArgumentString(String argumentString) {
-        for (ArenaEditableProperty property : ArenaEditableProperty.values()) {
+    public static @Nullable DropperArenaEditableProperty getFromArgumentString(String argumentString) {
+        for (DropperArenaEditableProperty property : DropperArenaEditableProperty.values()) {
             if (property.argumentString.equalsIgnoreCase(argumentString)) {
                 return property;
             }

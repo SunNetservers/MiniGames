@@ -1,6 +1,7 @@
-package net.knarcraft.dropper.arena;
+package net.knarcraft.dropper.arena.dropper;
 
-import net.knarcraft.dropper.Dropper;
+import net.knarcraft.dropper.MiniGames;
+import net.knarcraft.dropper.arena.ArenaRecordsRegistry;
 import net.knarcraft.dropper.arena.record.ArenaRecord;
 import net.knarcraft.dropper.arena.record.IntegerRecord;
 import net.knarcraft.dropper.arena.record.LongRecord;
@@ -23,7 +24,7 @@ import java.util.function.Consumer;
 /**
  * A registry keeping track of all records
  */
-public class DropperArenaRecordsRegistry implements ConfigurationSerializable {
+public class DropperArenaRecordsRegistry implements ConfigurationSerializable, ArenaRecordsRegistry {
 
     private final UUID arenaId;
     private final @NotNull Set<IntegerRecord> leastDeaths;
@@ -105,7 +106,7 @@ public class DropperArenaRecordsRegistry implements ConfigurationSerializable {
      * Saves changed records
      */
     private void save() {
-        Dropper.getInstance().getArenaHandler().saveData(this.arenaId);
+        MiniGames.getInstance().getDropperArenaHandler().saveData(this.arenaId);
     }
 
     /**
