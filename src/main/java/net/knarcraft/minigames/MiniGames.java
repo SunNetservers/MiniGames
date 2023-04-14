@@ -191,10 +191,10 @@ public final class MiniGames extends JavaPlugin {
         this.dropperConfiguration = new DropperConfiguration(this.getConfig());
         this.parkourConfiguration = new ParkourConfiguration(this.getConfig());
         this.dropperArenaPlayerRegistry = new DropperArenaPlayerRegistry();
-        this.dropperArenaHandler = new DropperArenaHandler();
+        this.dropperArenaHandler = new DropperArenaHandler(this.dropperArenaPlayerRegistry);
         this.dropperArenaHandler.load();
 
-        this.parkourArenaHandler = new ParkourArenaHandler();
+        this.parkourArenaHandler = new ParkourArenaHandler(this.parkourArenaPlayerRegistry);
         this.parkourArenaHandler.load();
 
         PluginManager pluginManager = getServer().getPluginManager();

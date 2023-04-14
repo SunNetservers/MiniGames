@@ -1,15 +1,18 @@
 package net.knarcraft.minigames.arena.dropper;
 
 import net.knarcraft.minigames.MiniGames;
+import net.knarcraft.minigames.arena.Arena;
 import net.knarcraft.minigames.arena.ArenaGameMode;
 import net.knarcraft.minigames.arena.ArenaRecordsRegistry;
 import net.knarcraft.minigames.config.DropperConfiguration;
+import net.knarcraft.minigames.util.DropperArenaStorageHelper;
 import net.knarcraft.minigames.util.StringSanitizer;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -19,7 +22,7 @@ import static net.knarcraft.minigames.util.InputValidationHelper.isInvalid;
 /**
  * A representation of one dropper arena
  */
-public class DropperArena {
+public class DropperArena implements Arena {
 
     /**
      * An unique and persistent identifier for this arena
@@ -210,6 +213,21 @@ public class DropperArena {
      */
     public @NotNull String getArenaNameSanitized() {
         return StringSanitizer.sanitizeArenaName(this.getArenaName());
+    }
+
+    @Override
+    public boolean removeData() {
+        return DropperArenaStorageHelper.removeDropperArenaData(getArenaId());
+    }
+
+    @Override
+    public boolean saveData() {
+        try {
+            DropperArenaStorageHelper.saveDropperArenaData(getData());
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
     }
 
     /**

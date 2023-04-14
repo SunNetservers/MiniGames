@@ -1,5 +1,6 @@
 package net.knarcraft.minigames.arena.parkour;
 
+import net.knarcraft.minigames.arena.ArenaPlayerRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -10,7 +11,7 @@ import java.util.UUID;
 /**
  * A registry to keep track of which players are playing in which arenas
  */
-public class ParkourArenaPlayerRegistry {
+public class ParkourArenaPlayerRegistry implements ArenaPlayerRegistry<ParkourArena> {
 
     private final Map<UUID, ParkourArenaSession> arenaPlayers = new HashMap<>();
 

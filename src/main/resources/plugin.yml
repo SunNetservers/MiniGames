@@ -34,9 +34,9 @@ commands:
       - Existing groups will be listed if used without an argument
       - Supplying a group shows the group's arenas
     description: Lists existing groups and their arenas
-  dropperReload:
+  miniGamesReload:
     aliases:
-      - dreload
+      - mreload
     permission: dropper.admin
     usage: /<command>
     description: Reloads all data from disk
@@ -56,9 +56,9 @@ commands:
       - inverted = A game-mode where the WASD buttons are inverted
       - random = A game-mode where the WASD buttons toggle between being inverted and not
     description: Used to join a dropper arena
-  dropperLeave:
+  miniGamesLeave:
     aliases:
-      - dleave
+      - mleave
     permission: dropper.join
     usage: /<command>
     description: Used to leave the current dropper arena
@@ -83,28 +83,28 @@ commands:
     usage: /<command> <arena>
     description: Used to remove an existing dropper arena
 permissions:
-  dropper.*:
+  minigames.*:
     description: Gives all permissions
     default: false
     children:
-      - dropper.admin
-  dropper.admin:
+      - minigames.admin
+  minigames.admin:
     description: Gives all permissions
     default: op
     children:
-      - dropper.join
-      - dropper.create
-      - dropper.edit
-      - dropper.remove
-  dropper.join:
-    description: Allows a player to participate in dropper arenas
+      - minigames.join
+      - minigames.create
+      - minigames.edit
+      - minigames.remove
+  minigames.join:
+    description: Allows a player to participate in mini-games arenas
     default: true
-  dropper.create:
-    description: Allows a player to create a new dropper arena
+  minigames.create:
+    description: Allows a player to create a new mini-games arena
     default: false
-  dropper.edit:
-    description: Allows a player to edit an existing dropper arena
+  minigames.edit:
+    description: Allows a player to edit an existing mini-games arena
     default: false
-  dropper.remove:
-    description: Allows a player to remove a dropper arena
+  minigames.remove:
+    description: Allows a player to remove a mini-games arena
     default: false

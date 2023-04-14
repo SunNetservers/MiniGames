@@ -25,8 +25,8 @@ public class CommandListener implements Listener {
         }
 
         List<String> allowedCommands = new ArrayList<>();
-        allowedCommands.add("/dropperleave");
-        allowedCommands.add("/dleave");
+        allowedCommands.add("/miniGamesLeave");
+        allowedCommands.add("/mLeave");
 
         String message = event.getMessage();
         if (!message.startsWith("/")) {
@@ -34,7 +34,7 @@ public class CommandListener implements Listener {
         }
 
         for (String command : allowedCommands) {
-            if (message.equals(command)) {
+            if (message.equalsIgnoreCase(command)) {
                 return;
             }
         }

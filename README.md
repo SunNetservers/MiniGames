@@ -21,13 +21,13 @@ To modify the arena, use `/dropperedit <name> <property> <value>`.
 
 | Command                                | Alias    | Arguments                   | Description                                                                         |
 |----------------------------------------|----------|-----------------------------|-------------------------------------------------------------------------------------|
+| /miniGamesReload                       | /mreload |                             | Reloads all data from disk.                                                         |
+| /miniGamesLeave                        | /mleave  |                             | Leaves the current mini-game.                                                       |
 | /dropperList                           | /dlist   |                             | Lists available dropper arenas.                                                     |
 | [/dropperJoin](#dropperjoin)           | /djoin   | \<arena> \[mode]            | Joins the selected arena.                                                           |
-| /dropperLeave                          | /dleave  |                             | Leaves the current dropper arena.                                                   |
 | /dropperCreate                         | /dcreate | \<name>                     | Creates a new dropper arena with the given name. The spawn is set to your location. |
 | /dropperRemove                         | /dremove | \<arena>                    | Removes the specified dropper arena.                                                |
 | [/dropperEdit](#dropperedit)           | /dedit   | \<arena> \<option> \[value] | Gets or sets a dropper arena option.                                                |
-| /dropperReload                         | /dreload |                             | Reloads all data from disk.                                                         |
 | [/dropperGroupSet](#droppergroupset)   | /dgset   | \<arena> \<group>           | Puts the given arena in the given group. Use "none" to remove an existing group.    |
 | /dropperGroupList                      | /dglist  | \[group]                    | Lists groups, or the stages of a group if a group is specified.                     |
 | [/dropperGroupSwap](#droppergroupswap) | /dgswap  | \<arena1> \<arena2>         | Swaps the two arenas in the group's ordered list.                                   |

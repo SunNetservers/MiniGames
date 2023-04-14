@@ -1,15 +1,18 @@
 package net.knarcraft.minigames.arena.parkour;
 
 import net.knarcraft.minigames.MiniGames;
+import net.knarcraft.minigames.arena.Arena;
 import net.knarcraft.minigames.arena.ArenaGameMode;
 import net.knarcraft.minigames.arena.ArenaRecordsRegistry;
 import net.knarcraft.minigames.util.MaterialHelper;
+import net.knarcraft.minigames.util.ParkourArenaStorageHelper;
 import net.knarcraft.minigames.util.StringSanitizer;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -23,7 +26,7 @@ import static net.knarcraft.minigames.util.InputValidationHelper.isInvalid;
 /**
  * A representation of one parkour arena
  */
-public class ParkourArena {
+public class ParkourArena implements Arena {
 
     /**
      * An unique and persistent identifier for this arena
@@ -247,6 +250,21 @@ public class ParkourArena {
      */
     public @NotNull String getArenaNameSanitized() {
         return StringSanitizer.sanitizeArenaName(this.getArenaName());
+    }
+
+    @Override
+    public boolean removeData() {
+        return ParkourArenaStorageHelper.removeParkourArenaData(getArenaId());
+    }
+
+    @Override
+    public boolean saveData() {
+        try {
+            ParkourArenaStorageHelper.saveParkourArenaData(getData());
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
     }
 
     /**
