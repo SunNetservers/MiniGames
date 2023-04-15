@@ -43,6 +43,14 @@ The only permission normal players will need is `minigames.join` which is set to
 | [/dropperGroupSet](#droppergroupset)   | /dgset   | \<arena> \<group>           | Puts the given arena in the given group. Use "none" to remove an existing group.    |
 | /dropperGroupList                      | /dglist  | \[group]                    | Lists groups, or the stages of a group if a group is specified.                     |
 | [/dropperGroupSwap](#droppergroupswap) | /dgswap  | \<arena1> \<arena2>         | Swaps the two arenas in the group's ordered list.                                   |
+| /parkourList                           | /plist   |                             | Lists available parkour arenas.                                                     |
+| /parkourJoin                           | /pjoin   | \<arena> \[mode]            | Joins the selected arena.                                                           |
+| /parkourCreate                         | /pcreate | \<name>                     | Creates a new parkour arena with the given name. The spawn is set to your location. |
+| /parkourRemove                         | /premove | \<arena>                    | Removes the specified parkour arena.                                                |
+| /parkourEdit                           | /pedit   | \<arena> \<option> \[value] | Gets or sets a parkour arena option.                                                |
+| /parkourGroupSet                       | /pgset   | \<arena> \<group>           | Puts the given arena in the given group. Use "none" to remove an existing group.    |
+| /parkourGroupList                      | /pglist  | \[group]                    | Lists groups, or the stages of a group if a group is specified.                     |
+| /parkourGroupSwap                      | /pgswap  | \<arena1> \<arena2>         | Swaps the two arenas in the group's ordered list.                                   |
 
 ### Command explanation
 
@@ -114,6 +122,15 @@ You could use `/droppergroupswap Sea Savanna` to change the order to:
 
 ## Configuration options
 
+### Shared
+
+| Name                              | Type                | Default                             | Description                                                                                                                                                                                                                       |
+|-----------------------------------|---------------------|-------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| liquidHitBoxDepth                 | -1 < decimal < 0    | -0.8                                | This decides how far inside a non-solid block the player must go before detection triggers (-1, 0). The closer to -1 it is, the more accurate it will seem to the player, but the likelihood of not detecting the hit increases.  | 
+| solidHitBoxDistance               | 0 < decimal < 1     | 0.2                                 | This decides the distance the player must be from a block below them before a hit triggers (0, 1). If too low, the likelihood of detecting the hit decreases, but it won't look like the player hit the block without being near. |
+
+### Dropper
+
 | Name                              | Type                | Default                             | Description                                                                                                                                                                                                                       |
 |-----------------------------------|---------------------|-------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | blockSneaking                     | true/false          | true                                | Whether to block using the shift key to drop faster than the intended drop speed                                                                                                                                                  |
@@ -130,6 +147,15 @@ You could use `/droppergroupswap Sea Savanna` to change the order to:
 | solidHitBoxDistance               | 0 < decimal < 1     | 0.2                                 | This decides the distance the player must be from a block below them before a hit triggers (0, 1). If too low, the likelihood of detecting the hit decreases, but it won't look like the player hit the block without being near. |
 | blockWhitelist                    | list                | [see this](#blockwhitelist-default) | A whitelist for which blocks won't trigger a loss when hit/passed through. The win block check happens before the loss check, so even blocks on the whitelist can be used as the win-block. "+" denotes a material tag.           |
 
+### Parkour
+
+| Name                              | Type       | Default                              | Description                                                                                                                                                                                           |
+|-----------------------------------|------------|--------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| mustDoGroupedInSequence           | true/false | true                                 | Whether grouped dropper arenas must be played in the correct sequence                                                                                                                                 |
+| ignoreRecordsUntilGroupBeatenOnce | true/false | false                                | Whether records won't be registered unless the player has already beaten all arenas in a group. That means players are required to do a second play-through to register a record for a grouped arena. |
+| makePlayersInvisible              | true/false | false                                | Whether players should be made invisible while playing in a dropper arena                                                                                                                             |
+| killPlaneBlocks                   | list       | [see this](#killplaneblocks-default) | The blocks compromising parkour arenas' kill planes. Add any materials you want to use for the "bottom" of your parkour arenas.                                                                       |
+
 #### blockWhitelist default:
 
 - WATER
@@ -144,6 +170,11 @@ You could use `/droppergroupswap Sea Savanna` to change the order to:
 - +BUTTONS
 - +CORALS
 - +WALL_CORALS
+
+#### killPlaneBlocks default:
+
+- LAVA
+- MAGMA_BLOCK
 
 ## Record placeholders
 
