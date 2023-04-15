@@ -17,6 +17,8 @@ commands:
   miniGamesLeave:
     aliases:
       - mleave
+      - dleave
+      - pleave
     permission: minigames.join
     usage: /<command>
     description: Used to leave the current dropper arena

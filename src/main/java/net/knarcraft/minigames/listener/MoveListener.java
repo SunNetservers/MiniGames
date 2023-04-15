@@ -63,7 +63,7 @@ public class MoveListener implements Listener {
         if (event.getTo() == null || event.getFrom().getBlock() == event.getTo().getBlock()) {
             return;
         }
-        
+
         // Only do block type checking if the block beneath the player changes
         if (checkForSpecialBlock(arenaSession, event.getTo())) {
             return;
@@ -71,8 +71,10 @@ public class MoveListener implements Listener {
 
         // Check if the player reached one of the checkpoints for the arena
         for (Location checkpoint : arenaSession.getArena().getCheckpoints()) {
-            if (checkpoint.getBlock().equals(event.getTo().getBlock())) {
+            if (checkpoint.getBlock().equals(event.getTo().getBlock()) &&
+                    !checkpoint.equals(arenaSession.getRegisteredCheckpoint())) {
                 arenaSession.registerCheckpoint(checkpoint.clone());
+                event.getPlayer().sendMessage("Checkpoint reached!");
                 return;
             }
         }

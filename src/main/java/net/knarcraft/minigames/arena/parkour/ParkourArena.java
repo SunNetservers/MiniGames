@@ -32,7 +32,7 @@ public class ParkourArena implements Arena {
     /**
      * An unique and persistent identifier for this arena
      */
-    private final UUID arenaId;
+    private final @NotNull UUID arenaId;
 
     /**
      * A name used when listing and storing this arena.
@@ -78,9 +78,9 @@ public class ParkourArena implements Arena {
     /**
      * The arena data for this arena
      */
-    private final ParkourArenaData parkourArenaData;
+    private final @NotNull ParkourArenaData parkourArenaData;
 
-    private final ParkourArenaHandler parkourArenaHandler;
+    private final @NotNull ParkourArenaHandler parkourArenaHandler;
 
     /**
      * Instantiates a new parkour arena
@@ -278,7 +278,7 @@ public class ParkourArena implements Arena {
             return false;
         } else {
             this.spawnLocation = newLocation;
-            parkourArenaHandler.saveArenas();
+            this.parkourArenaHandler.saveArenas();
             return true;
         }
     }
@@ -294,7 +294,7 @@ public class ParkourArena implements Arena {
             return false;
         } else {
             this.exitLocation = newLocation;
-            parkourArenaHandler.saveArenas();
+            this.parkourArenaHandler.saveArenas();
             return true;
         }
     }
@@ -310,8 +310,8 @@ public class ParkourArena implements Arena {
             String oldName = this.getArenaNameSanitized();
             this.arenaName = arenaName;
             // Update the arena lookup map to make sure the new name can be used immediately
-            parkourArenaHandler.updateLookupName(oldName, this.getArenaNameSanitized());
-            parkourArenaHandler.saveArenas();
+            this.parkourArenaHandler.updateLookupName(oldName, this.getArenaNameSanitized());
+            this.parkourArenaHandler.saveArenas();
             return true;
         } else {
             return false;
@@ -331,7 +331,7 @@ public class ParkourArena implements Arena {
             return false;
         } else {
             this.winBlockType = material;
-            parkourArenaHandler.saveArenas();
+            this.parkourArenaHandler.saveArenas();
             return true;
         }
     }
@@ -347,7 +347,7 @@ public class ParkourArena implements Arena {
             return false;
         } else {
             this.winLocation = newLocation.clone();
-            parkourArenaHandler.saveArenas();
+            this.parkourArenaHandler.saveArenas();
             return true;
         }
     }
@@ -367,6 +367,7 @@ public class ParkourArena implements Arena {
             }
             this.killPlaneBlocks = parsed;
         }
+        this.parkourArenaHandler.saveArenas();
         return true;
     }
 
@@ -382,6 +383,7 @@ public class ParkourArena implements Arena {
         }
 
         this.checkpoints.add(checkpoint.clone());
+        this.parkourArenaHandler.saveArenas();
         return true;
     }
 
@@ -392,6 +394,7 @@ public class ParkourArena implements Arena {
      */
     public boolean clearCheckpoints() {
         this.checkpoints.clear();
+        this.parkourArenaHandler.saveArenas();
         return true;
     }
 
