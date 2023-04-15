@@ -1,5 +1,6 @@
 package net.knarcraft.minigames;
 
+import net.knarcraft.minigames.arena.ArenaSession;
 import net.knarcraft.minigames.arena.dropper.DropperArenaData;
 import net.knarcraft.minigames.arena.dropper.DropperArenaGameMode;
 import net.knarcraft.minigames.arena.dropper.DropperArenaGroup;
@@ -7,23 +8,38 @@ import net.knarcraft.minigames.arena.dropper.DropperArenaHandler;
 import net.knarcraft.minigames.arena.dropper.DropperArenaPlayerRegistry;
 import net.knarcraft.minigames.arena.dropper.DropperArenaRecordsRegistry;
 import net.knarcraft.minigames.arena.dropper.DropperArenaSession;
+import net.knarcraft.minigames.arena.parkour.ParkourArenaData;
+import net.knarcraft.minigames.arena.parkour.ParkourArenaGameMode;
+import net.knarcraft.minigames.arena.parkour.ParkourArenaGroup;
 import net.knarcraft.minigames.arena.parkour.ParkourArenaHandler;
 import net.knarcraft.minigames.arena.parkour.ParkourArenaPlayerRegistry;
+import net.knarcraft.minigames.arena.parkour.ParkourArenaRecordsRegistry;
 import net.knarcraft.minigames.arena.record.IntegerRecord;
 import net.knarcraft.minigames.arena.record.LongRecord;
-import net.knarcraft.minigames.command.CreateArenaCommand;
-import net.knarcraft.minigames.command.EditArenaCommand;
-import net.knarcraft.minigames.command.EditArenaTabCompleter;
-import net.knarcraft.minigames.command.GroupListCommand;
-import net.knarcraft.minigames.command.GroupSetCommand;
-import net.knarcraft.minigames.command.GroupSwapCommand;
-import net.knarcraft.minigames.command.JoinArenaCommand;
-import net.knarcraft.minigames.command.JoinArenaTabCompleter;
 import net.knarcraft.minigames.command.LeaveArenaCommand;
-import net.knarcraft.minigames.command.ListArenaCommand;
 import net.knarcraft.minigames.command.ReloadCommand;
-import net.knarcraft.minigames.command.RemoveArenaCommand;
-import net.knarcraft.minigames.command.RemoveArenaTabCompleter;
+import net.knarcraft.minigames.command.dropper.CreateDropperArenaCommand;
+import net.knarcraft.minigames.command.dropper.DropperGroupListCommand;
+import net.knarcraft.minigames.command.dropper.DropperGroupSetCommand;
+import net.knarcraft.minigames.command.dropper.DropperGroupSwapCommand;
+import net.knarcraft.minigames.command.dropper.EditDropperArenaCommand;
+import net.knarcraft.minigames.command.dropper.EditDropperArenaTabCompleter;
+import net.knarcraft.minigames.command.dropper.JoinDropperArenaCommand;
+import net.knarcraft.minigames.command.dropper.JoinDropperArenaTabCompleter;
+import net.knarcraft.minigames.command.dropper.ListDropperArenaCommand;
+import net.knarcraft.minigames.command.dropper.RemoveDropperArenaCommand;
+import net.knarcraft.minigames.command.dropper.RemoveDropperArenaTabCompleter;
+import net.knarcraft.minigames.command.parkour.CreateParkourArenaCommand;
+import net.knarcraft.minigames.command.parkour.EditParkourArenaCommand;
+import net.knarcraft.minigames.command.parkour.EditParkourArenaTabCompleter;
+import net.knarcraft.minigames.command.parkour.JoinParkourArenaCommand;
+import net.knarcraft.minigames.command.parkour.JoinParkourArenaTabCompleter;
+import net.knarcraft.minigames.command.parkour.ListParkourArenaCommand;
+import net.knarcraft.minigames.command.parkour.ParkourGroupListCommand;
+import net.knarcraft.minigames.command.parkour.ParkourGroupSetCommand;
+import net.knarcraft.minigames.command.parkour.ParkourGroupSwapCommand;
+import net.knarcraft.minigames.command.parkour.RemoveParkourArenaCommand;
+import net.knarcraft.minigames.command.parkour.RemoveParkourArenaTabCompleter;
 import net.knarcraft.minigames.config.DropperConfiguration;
 import net.knarcraft.minigames.config.ParkourConfiguration;
 import net.knarcraft.minigames.config.SharedConfiguration;
@@ -45,6 +61,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.UUID;
 import java.util.logging.Level;
 
 /**
@@ -138,6 +155,21 @@ public final class MiniGames extends JavaPlugin {
     }
 
     /**
+     * Gets the current session of the given player
+     *
+     * @param playerId <p>The id of the player to get a session for</p>
+     * @return <p>The player's current session, or null if not found</p>
+     */
+    public @Nullable ArenaSession getSession(@NotNull UUID playerId) {
+        DropperArenaSession dropperArenaSession = dropperArenaPlayerRegistry.getArenaSession(playerId);
+        if (dropperArenaSession != null) {
+            return dropperArenaSession;
+        }
+
+        return parkourArenaPlayerRegistry.getArenaSession(playerId);
+    }
+
+    /**
      * Logs a message
      *
      * @param level   <p>The message level to log at</p>
@@ -177,6 +209,10 @@ public final class MiniGames extends JavaPlugin {
         ConfigurationSerialization.registerClass(DropperArenaGameMode.class);
         ConfigurationSerialization.registerClass(LongRecord.class);
         ConfigurationSerialization.registerClass(IntegerRecord.class);
+        ConfigurationSerialization.registerClass(ParkourArenaRecordsRegistry.class);
+        ConfigurationSerialization.registerClass(ParkourArenaData.class);
+        ConfigurationSerialization.registerClass(ParkourArenaGroup.class);
+        ConfigurationSerialization.registerClass(ParkourArenaGameMode.class);
     }
 
     @Override
@@ -203,16 +239,26 @@ public final class MiniGames extends JavaPlugin {
         pluginManager.registerEvents(new PlayerLeaveListener(), this);
         pluginManager.registerEvents(new CommandListener(), this);
 
-        registerCommand("dropperReload", new ReloadCommand(), null);
-        registerCommand("dropperCreate", new CreateArenaCommand(), null);
-        registerCommand("dropperList", new ListArenaCommand(), null);
-        registerCommand("dropperJoin", new JoinArenaCommand(), new JoinArenaTabCompleter());
-        registerCommand("dropperLeave", new LeaveArenaCommand(), null);
-        registerCommand("dropperEdit", new EditArenaCommand(this.dropperConfiguration), new EditArenaTabCompleter());
-        registerCommand("dropperRemove", new RemoveArenaCommand(), new RemoveArenaTabCompleter());
-        registerCommand("dropperGroupSet", new GroupSetCommand(), null);
-        registerCommand("dropperGroupSwap", new GroupSwapCommand(), null);
-        registerCommand("dropperGroupList", new GroupListCommand(), null);
+        registerCommand("miniGamesReload", new ReloadCommand(), null);
+        registerCommand("miniGamesLeave", new LeaveArenaCommand(), null);
+
+        registerCommand("dropperCreate", new CreateDropperArenaCommand(), null);
+        registerCommand("dropperList", new ListDropperArenaCommand(), null);
+        registerCommand("dropperJoin", new JoinDropperArenaCommand(), new JoinDropperArenaTabCompleter());
+        registerCommand("dropperEdit", new EditDropperArenaCommand(this.dropperConfiguration), new EditDropperArenaTabCompleter());
+        registerCommand("dropperRemove", new RemoveDropperArenaCommand(), new RemoveDropperArenaTabCompleter());
+        registerCommand("dropperGroupSet", new DropperGroupSetCommand(), null);
+        registerCommand("dropperGroupSwap", new DropperGroupSwapCommand(), null);
+        registerCommand("dropperGroupList", new DropperGroupListCommand(), null);
+
+        registerCommand("parkourCreate", new CreateParkourArenaCommand(), null);
+        registerCommand("parkourList", new ListParkourArenaCommand(), null);
+        registerCommand("parkourJoin", new JoinParkourArenaCommand(), new JoinParkourArenaTabCompleter());
+        registerCommand("parkourEdit", new EditParkourArenaCommand(), new EditParkourArenaTabCompleter());
+        registerCommand("parkourRemove", new RemoveParkourArenaCommand(), new RemoveParkourArenaTabCompleter());
+        registerCommand("parkourGroupSet", new ParkourGroupSetCommand(), null);
+        registerCommand("parkourGroupSwap", new ParkourGroupSwapCommand(), null);
+        registerCommand("parkourGroupList", new ParkourGroupListCommand(), null);
 
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
             this.dropperRecordExpansion = new DropperRecordExpansion(this);

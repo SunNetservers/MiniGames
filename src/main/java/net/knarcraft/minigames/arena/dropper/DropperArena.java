@@ -9,6 +9,7 @@ import net.knarcraft.minigames.util.DropperArenaStorageHelper;
 import net.knarcraft.minigames.util.StringSanitizer;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -69,6 +70,8 @@ public class DropperArena implements Arena {
 
     private final DropperArenaHandler dropperArenaHandler;
 
+    private static final DropperConfiguration dropperConfiguration = MiniGames.getInstance().getDropperConfiguration();
+
     /**
      * Instantiates a new dropper arena
      *
@@ -127,40 +130,22 @@ public class DropperArena implements Arena {
         this.dropperArenaHandler = arenaHandler;
     }
 
-    /**
-     * Gets this arena's data
-     *
-     * @return <p>This arena's data</p>
-     */
+    @Override
     public @NotNull DropperArenaData getData() {
         return this.dropperArenaData;
     }
 
-    /**
-     * Gets the id of this arena
-     *
-     * @return <p>This arena's identifier</p>
-     */
+    @Override
     public @NotNull UUID getArenaId() {
         return this.arenaId;
     }
 
-    /**
-     * Gets the name of this arena
-     *
-     * @return <p>The name of this arena</p>
-     */
+    @Override
     public @NotNull String getArenaName() {
         return this.arenaName;
     }
 
-    /**
-     * Gets this arena's spawn location
-     *
-     * <p>The spawn location is the location every player starts from when entering the dropper.</p>
-     *
-     * @return <p>This arena's spawn location.</p>
-     */
+    @Override
     public @NotNull Location getSpawnLocation() {
         return this.spawnLocation.clone();
     }
@@ -228,6 +213,21 @@ public class DropperArena implements Arena {
         } catch (IOException e) {
             return false;
         }
+    }
+
+    @Override
+    public boolean willCauseWin(Block block) {
+        return block.getType() == winBlockType;
+    }
+
+    @Override
+    public boolean willCauseLoss(Block block) {
+        return !dropperConfiguration.getBlockWhitelist().contains(block.getType());
+    }
+
+    @Override
+    public boolean winLocationIsSolid() {
+        return winBlockType.isSolid();
     }
 
     /**

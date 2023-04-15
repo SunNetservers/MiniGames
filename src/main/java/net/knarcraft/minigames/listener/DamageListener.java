@@ -1,7 +1,7 @@
 package net.knarcraft.minigames.listener;
 
 import net.knarcraft.minigames.MiniGames;
-import net.knarcraft.minigames.arena.dropper.DropperArenaPlayerRegistry;
+import net.knarcraft.minigames.arena.ArenaSession;
 import net.knarcraft.minigames.arena.dropper.DropperArenaSession;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -25,15 +25,15 @@ public class DamageListener implements Listener {
         Player player = (Player) event.getEntity();
 
         // We don't care about damage outside arenas
-        DropperArenaSession arenaSession = MiniGames.getInstance().getDropperArenaPlayerRegistry().getArenaSession(player.getUniqueId());
+        ArenaSession arenaSession = MiniGames.getInstance().getSession(player.getUniqueId());
         if (arenaSession == null) {
             return;
         }
 
         event.setCancelled(true);
 
-        // Only trigger a loss when a player suffers fall damage
-        if (event.getCause() == EntityDamageEvent.DamageCause.FALL) {
+        // Only trigger a loss when a player suffers fall damage in a dropper arena
+        if (arenaSession instanceof DropperArenaSession && event.getCause() == EntityDamageEvent.DamageCause.FALL) {
             arenaSession.triggerLoss();
         }
     }
@@ -44,8 +44,7 @@ public class DamageListener implements Listener {
             return;
         }
 
-        DropperArenaPlayerRegistry registry = MiniGames.getInstance().getDropperArenaPlayerRegistry();
-        DropperArenaSession arenaSession = registry.getArenaSession(event.getEntity().getUniqueId());
+        ArenaSession arenaSession = MiniGames.getInstance().getSession(event.getEntity().getUniqueId());
         if (arenaSession != null) {
             // Cancel combustion for any player in an arena
             event.setCancelled(true);

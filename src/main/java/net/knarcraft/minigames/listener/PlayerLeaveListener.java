@@ -1,7 +1,7 @@
 package net.knarcraft.minigames.listener;
 
 import net.knarcraft.minigames.MiniGames;
-import net.knarcraft.minigames.arena.dropper.DropperArenaSession;
+import net.knarcraft.minigames.arena.ArenaSession;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -9,8 +9,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,12 +20,13 @@ import java.util.logging.Level;
  */
 public class PlayerLeaveListener implements Listener {
 
-    private final Map<UUID, DropperArenaSession> leftSessions = new HashMap<>();
+    private final Map<UUID, ArenaSession> leftSessions = new HashMap<>();
 
     @EventHandler
     public void onPlayerLeave(PlayerQuitEvent event) {
         Player player = event.getPlayer();
-        DropperArenaSession arenaSession = getSession(player);
+
+        ArenaSession arenaSession = MiniGames.getInstance().getSession(event.getPlayer().getUniqueId());
         if (arenaSession == null) {
             return;
         }
@@ -57,7 +56,7 @@ public class PlayerLeaveListener implements Listener {
             return;
         }
 
-        DropperArenaSession arenaSession = getSession(event.getPlayer());
+        ArenaSession arenaSession = MiniGames.getInstance().getSession(event.getPlayer().getUniqueId());
         if (arenaSession == null) {
             return;
         }
@@ -67,16 +66,6 @@ public class PlayerLeaveListener implements Listener {
         }
 
         arenaSession.triggerQuit(false);
-    }
-
-    /**
-     * Gets the arena session for the given player
-     *
-     * @param player <p>The player to get the arena session for</p>
-     * @return <p>The player's session, or null if not in a session</p>
-     */
-    private @Nullable DropperArenaSession getSession(@NotNull Player player) {
-        return MiniGames.getInstance().getDropperArenaPlayerRegistry().getArenaSession(player.getUniqueId());
     }
 
 }

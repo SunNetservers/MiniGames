@@ -64,4 +64,9 @@ public enum DropperArenaGameMode implements ConfigurationSerializable, ArenaGame
         return DropperArenaGameMode.valueOf((String) data.get("name"));
     }
 
+    @Override
+    public @NotNull DropperArenaGameMode[] getValues() {
+        return DropperArenaGameMode.values();
+    }
+
 }

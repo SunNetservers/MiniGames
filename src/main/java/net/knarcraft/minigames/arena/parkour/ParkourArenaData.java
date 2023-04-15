@@ -4,7 +4,6 @@ import net.knarcraft.minigames.MiniGames;
 import net.knarcraft.minigames.arena.ArenaData;
 import net.knarcraft.minigames.arena.ArenaGameMode;
 import net.knarcraft.minigames.arena.ArenaRecordsRegistry;
-import net.knarcraft.minigames.arena.dropper.DropperArenaRecordsRegistry;
 import net.knarcraft.minigames.container.SerializableContainer;
 import net.knarcraft.minigames.container.SerializableUUID;
 import net.knarcraft.minigames.util.SerializableConverter;
@@ -39,10 +38,10 @@ public class ParkourArenaData extends ArenaData {
     }
 
     /**
-     * Deserializes a dropper arena data from the given data
+     * Deserializes a parkour arena data from the given data
      *
      * @param data <p>The data to deserialize</p>
-     * @return <p>The deserialized dropper arena data</p>
+     * @return <p>The deserialized parkour arena data</p>
      */
     @SuppressWarnings({"unused", "unchecked"})
     public static @NotNull ParkourArenaData deserialize(@NotNull Map<String, Object> data) {
@@ -64,7 +63,7 @@ public class ParkourArenaData extends ArenaData {
 
         for (ArenaGameMode arenaGameMode : playersCompletedData.keySet()) {
             if (!recordsRegistry.containsKey(arenaGameMode) || recordsRegistry.get(arenaGameMode) == null) {
-                recordsRegistry.put(arenaGameMode, new DropperArenaRecordsRegistry(serializableUUID.getRawValue()));
+                recordsRegistry.put(arenaGameMode, new ParkourArenaRecordsRegistry(serializableUUID.getRawValue()));
             }
         }
         return new ParkourArenaData(serializableUUID.getRawValue(), recordsRegistry, allPlayersCompleted);

@@ -1,4 +1,4 @@
-package net.knarcraft.minigames.command;
+package net.knarcraft.minigames.command.dropper;
 
 import net.knarcraft.minigames.MiniGames;
 import net.knarcraft.minigames.arena.dropper.DropperArena;
@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * The command for editing an existing dropper arena
  */
-public class EditArenaCommand implements CommandExecutor {
+public class EditDropperArenaCommand implements CommandExecutor {
 
     private final DropperConfiguration configuration;
 
@@ -24,7 +24,7 @@ public class EditArenaCommand implements CommandExecutor {
      *
      * @param configuration <p>The configuration to use</p>
      */
-    public EditArenaCommand(DropperConfiguration configuration) {
+    public EditDropperArenaCommand(DropperConfiguration configuration) {
         this.configuration = configuration;
     }
 

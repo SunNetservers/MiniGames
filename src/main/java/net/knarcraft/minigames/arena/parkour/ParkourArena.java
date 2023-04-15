@@ -9,6 +9,7 @@ import net.knarcraft.minigames.util.ParkourArenaStorageHelper;
 import net.knarcraft.minigames.util.StringSanitizer;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -72,7 +73,7 @@ public class ParkourArena implements Arena {
     /**
      * The checkpoints for this arena. Entering a checkpoint overrides the player's spawn location.
      */
-    private @NotNull List<Location> checkpoints;
+    private final @NotNull List<Location> checkpoints;
 
     /**
      * The arena data for this arena
@@ -141,40 +142,22 @@ public class ParkourArena implements Arena {
         this.parkourArenaHandler = arenaHandler;
     }
 
-    /**
-     * Gets this arena's data
-     *
-     * @return <p>This arena's data</p>
-     */
+    @Override
     public @NotNull ParkourArenaData getData() {
         return this.parkourArenaData;
     }
 
-    /**
-     * Gets the id of this arena
-     *
-     * @return <p>This arena's identifier</p>
-     */
+    @Override
     public @NotNull UUID getArenaId() {
         return this.arenaId;
     }
 
-    /**
-     * Gets the name of this arena
-     *
-     * @return <p>The name of this arena</p>
-     */
+    @Override
     public @NotNull String getArenaName() {
         return this.arenaName;
     }
 
-    /**
-     * Gets this arena's spawn location
-     *
-     * <p>The spawn location is the location every player starts from when entering the parkour arena.</p>
-     *
-     * @return <p>This arena's spawn location.</p>
-     */
+    @Override
     public @NotNull Location getSpawnLocation() {
         return this.spawnLocation;
     }
@@ -213,7 +196,7 @@ public class ParkourArena implements Arena {
      *
      * @return <p>The types of blocks that cause a loss</p>
      */
-    public Set<Material> getKillPlaneBlocks() {
+    public @NotNull Set<Material> getKillPlaneBlocks() {
         if (this.killPlaneBlocks != null) {
             return new HashSet<>(this.killPlaneBlocks);
         } else {
@@ -265,6 +248,23 @@ public class ParkourArena implements Arena {
         } catch (IOException e) {
             return false;
         }
+    }
+
+    @Override
+    public boolean willCauseWin(Block block) {
+        return (this.winLocation != null && this.winLocation.getBlock().equals(block)) ||
+                this.winBlockType == block.getType();
+    }
+
+    @Override
+    public boolean willCauseLoss(Block block) {
+        return this.getKillPlaneBlocks().contains(block.getType());
+    }
+
+    @Override
+    public boolean winLocationIsSolid() {
+        return (this.winLocation != null && this.winLocation.getBlock().getType().isSolid()) ||
+                this.winBlockType.isSolid();
     }
 
     /**
@@ -357,26 +357,41 @@ public class ParkourArena implements Arena {
      *
      * @param killPlaneBlockNames <p>The names of the blocks that will cause players to lose</p>
      */
-    public void setKillPlaneBlocks(@NotNull Set<String> killPlaneBlockNames) {
-        this.killPlaneBlocks = MaterialHelper.loadMaterialList(new ArrayList<>(killPlaneBlockNames));
+    public boolean setKillPlaneBlocks(@NotNull Set<String> killPlaneBlockNames) {
+        if (killPlaneBlockNames.isEmpty()) {
+            this.killPlaneBlocks = null;
+        } else {
+            Set<Material> parsed = MaterialHelper.loadMaterialList(new ArrayList<>(killPlaneBlockNames));
+            if (parsed.isEmpty()) {
+                return false;
+            }
+            this.killPlaneBlocks = parsed;
+        }
+        return true;
     }
 
     /**
-     * Sets the checkpoints of this arena
+     * Adds a checkpoint to this arena
      *
-     * @param checkpoints <p>The checkpoints to use</p>
-     * @return <p>True if successfully changed</p>
+     * @param checkpoint <p>The checkpoint to add</p>
+     * @return <p>True if successfully added</p>
      */
-    public boolean setCheckpoints(@NotNull List<Location> checkpoints) {
-        List<Location> copy = new ArrayList<>(checkpoints.size());
-        for (Location location : checkpoints) {
-            if (isInvalid(location)) {
-                return false;
-            }
-
-            copy.add(location.clone());
+    public boolean addCheckpoint(@NotNull Location checkpoint) {
+        if (isInvalid(checkpoint)) {
+            return false;
         }
-        this.checkpoints = copy;
+
+        this.checkpoints.add(checkpoint.clone());
+        return true;
+    }
+
+    /**
+     * Clears all checkpoints from this arena
+     *
+     * @return <p>True if successfully cleared</p>
+     */
+    public boolean clearCheckpoints() {
+        this.checkpoints.clear();
         return true;
     }
 

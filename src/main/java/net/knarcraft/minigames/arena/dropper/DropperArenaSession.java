@@ -2,6 +2,8 @@ package net.knarcraft.minigames.arena.dropper;
 
 import net.knarcraft.minigames.MiniGames;
 import net.knarcraft.minigames.arena.ArenaRecordsRegistry;
+import net.knarcraft.minigames.arena.ArenaSession;
+import net.knarcraft.minigames.arena.PlayerEntryState;
 import net.knarcraft.minigames.config.DropperConfiguration;
 import net.knarcraft.minigames.property.RecordResult;
 import net.knarcraft.minigames.util.PlayerTeleporter;
@@ -14,14 +16,14 @@ import java.util.logging.Level;
 /**
  * A representation of a player's current session in a dropper arena
  */
-public class DropperArenaSession {
+public class DropperArenaSession implements ArenaSession {
 
     private final @NotNull DropperArena arena;
     private final @NotNull Player player;
     private final @NotNull DropperArenaGameMode gameMode;
     private int deaths;
     private final long startTime;
-    private final DropperPlayerEntryState entryState;
+    private final PlayerEntryState entryState;
 
     /**
      * Instantiates a new dropper arena session
@@ -41,9 +43,10 @@ public class DropperArenaSession {
         DropperConfiguration configuration = MiniGames.getInstance().getDropperConfiguration();
         boolean makeInvisible = configuration.makePlayersInvisible();
         boolean disableCollision = configuration.disableHitCollision();
-        this.entryState = new DropperPlayerEntryState(player, gameMode, makeInvisible, disableCollision);
+        this.entryState = new DropperPlayerEntryState(player, gameMode, makeInvisible, disableCollision,
+                dropperArena.getPlayerHorizontalVelocity());
         // Make the player fly to improve mobility in the air
-        this.entryState.setArenaState(this.arena.getPlayerHorizontalVelocity());
+        this.entryState.setArenaState();
     }
 
     /**
@@ -60,7 +63,7 @@ public class DropperArenaSession {
      *
      * @return <p>The player's entry state</p>
      */
-    public @NotNull DropperPlayerEntryState getEntryState() {
+    public @NotNull PlayerEntryState getEntryState() {
         return this.entryState;
     }
 
@@ -91,6 +94,8 @@ public class DropperArenaSession {
 
     /**
      * Teleports the playing player out of the arena
+     *
+     * @param immediately <p>Whether to to the teleportation immediately, not using any timers</p>
      */
     private void teleportToExit(boolean immediately) {
         // Teleport the player out of the arena
@@ -159,11 +164,13 @@ public class DropperArenaSession {
         this.deaths++;
         //Teleport the player back to the top
         PlayerTeleporter.teleportPlayer(this.player, this.arena.getSpawnLocation(), true, false);
-        this.entryState.setArenaState(this.arena.getPlayerHorizontalVelocity());
+        this.entryState.setArenaState();
     }
 
     /**
      * Triggers a quit for the player playing in this session
+     *
+     * @param immediately <p>Whether to to the teleportation immediately, not using any timers</p>
      */
     public void triggerQuit(boolean immediately) {
         // Stop this session

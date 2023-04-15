@@ -1,4 +1,4 @@
-package net.knarcraft.minigames.command;
+package net.knarcraft.minigames.command.dropper;
 
 import net.knarcraft.minigames.MiniGames;
 import net.knarcraft.minigames.arena.dropper.DropperArena;
@@ -17,7 +17,7 @@ import java.util.UUID;
 /**
  * The command for swapping the order of two arenas in a group
  */
-public class GroupSwapCommand implements TabExecutor {
+public class DropperGroupSwapCommand implements TabExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s,

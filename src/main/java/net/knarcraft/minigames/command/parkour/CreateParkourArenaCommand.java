@@ -1,8 +1,8 @@
-package net.knarcraft.minigames.command;
+package net.knarcraft.minigames.command.parkour;
 
 import net.knarcraft.minigames.MiniGames;
-import net.knarcraft.minigames.arena.dropper.DropperArena;
-import net.knarcraft.minigames.arena.dropper.DropperArenaHandler;
+import net.knarcraft.minigames.arena.parkour.ParkourArena;
+import net.knarcraft.minigames.arena.parkour.ParkourArenaHandler;
 import net.knarcraft.minigames.util.StringSanitizer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -11,9 +11,9 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * The command for creating a new dropper arena
+ * The command for creating a new parkour arena
  */
-public class CreateArenaCommand implements CommandExecutor {
+public class CreateParkourArenaCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s,
@@ -36,15 +36,15 @@ public class CreateArenaCommand implements CommandExecutor {
             return false;
         }
 
-        DropperArenaHandler arenaHandler = MiniGames.getInstance().getDropperArenaHandler();
+        ParkourArenaHandler arenaHandler = MiniGames.getInstance().getParkourArenaHandler();
 
-        DropperArena existingArena = arenaHandler.getArena(arenaName);
+        ParkourArena existingArena = arenaHandler.getArena(arenaName);
         if (existingArena != null) {
-            commandSender.sendMessage("There already exists a dropper arena with that name!");
+            commandSender.sendMessage("There already exists a parkour arena with that name!");
             return false;
         }
 
-        DropperArena arena = new DropperArena(arenaName, player.getLocation(), arenaHandler);
+        ParkourArena arena = new ParkourArena(arenaName, player.getLocation(), arenaHandler);
         arenaHandler.addArena(arena);
         commandSender.sendMessage("The arena was successfully created!");
         return true;

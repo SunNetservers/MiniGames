@@ -14,6 +14,12 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Level;
 
+/**
+ * A group containing a list of arenas
+ *
+ * @param <K> <p>The type of arena stored</p>
+ * @param <S> <p>The type of arena group stored in the given arena handler</p>
+ */
 public abstract class ArenaGroup<K extends Arena, S extends ArenaGroup<K, S>> implements ConfigurationSerializable {
 
     /**

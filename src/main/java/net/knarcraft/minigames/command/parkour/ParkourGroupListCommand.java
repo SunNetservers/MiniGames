@@ -1,9 +1,9 @@
-package net.knarcraft.minigames.command;
+package net.knarcraft.minigames.command.parkour;
 
 import net.knarcraft.minigames.MiniGames;
-import net.knarcraft.minigames.arena.dropper.DropperArena;
-import net.knarcraft.minigames.arena.dropper.DropperArenaGroup;
-import net.knarcraft.minigames.arena.dropper.DropperArenaHandler;
+import net.knarcraft.minigames.arena.parkour.ParkourArena;
+import net.knarcraft.minigames.arena.parkour.ParkourArenaGroup;
+import net.knarcraft.minigames.arena.parkour.ParkourArenaHandler;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -12,17 +12,18 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 /**
  * The command for listing groups and the stages within
  */
-public class GroupListCommand implements TabExecutor {
+public class ParkourGroupListCommand implements TabExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s,
                              @NotNull String[] arguments) {
-        DropperArenaHandler arenaHandler = MiniGames.getInstance().getDropperArenaHandler();
+        ParkourArenaHandler arenaHandler = MiniGames.getInstance().getParkourArenaHandler();
         if (arguments.length == 0) {
             displayExistingGroups(arenaHandler, commandSender);
             return true;
@@ -34,13 +35,13 @@ public class GroupListCommand implements TabExecutor {
     }
 
     /**
-     * Displays all currently existing dropper arena groups
+     * Displays all currently existing parkour arena groups
      *
      * @param arenaHandler <p>The arena handler to get groups from</p>
      * @param sender       <p>The command sender to display the groups to</p>
      */
-    private void displayExistingGroups(@NotNull DropperArenaHandler arenaHandler, @NotNull CommandSender sender) {
-        StringBuilder builder = new StringBuilder("Dropper arena groups:").append("\n");
+    private void displayExistingGroups(@NotNull ParkourArenaHandler arenaHandler, @NotNull CommandSender sender) {
+        StringBuilder builder = new StringBuilder("Parkour arena groups:").append("\n");
         arenaHandler.getAllGroups().stream().sorted().forEachOrdered((group) ->
                 builder.append(group.getGroupName()).append("\n"));
         sender.sendMessage(builder.toString());
@@ -54,9 +55,9 @@ public class GroupListCommand implements TabExecutor {
      * @param groupName    <p>The name of the group to display stages for</p>
      * @return <p>True if the stages were successfully displayed</p>
      */
-    private boolean displayOrderedArenaNames(@NotNull DropperArenaHandler arenaHandler, @NotNull CommandSender sender,
+    private boolean displayOrderedArenaNames(@NotNull ParkourArenaHandler arenaHandler, @NotNull CommandSender sender,
                                              @NotNull String groupName) {
-        DropperArenaGroup arenaGroup = arenaHandler.getGroup(groupName);
+        ParkourArenaGroup arenaGroup = arenaHandler.getGroup(groupName);
         if (arenaGroup == null) {
             sender.sendMessage("Unable to find the specified group!");
             return false;
@@ -66,7 +67,7 @@ public class GroupListCommand implements TabExecutor {
         StringBuilder builder = new StringBuilder(groupName).append("'s stages:").append("\n");
         int counter = 1;
         for (UUID arenaId : arenaGroup.getArenas()) {
-            DropperArena arena = arenaHandler.getArena(arenaId);
+            ParkourArena arena = arenaHandler.getArena(arenaId);
             if (arena != null) {
                 builder.append(counter++).append(". ").append(arena.getArenaName()).append("\n");
             }
@@ -81,7 +82,8 @@ public class GroupListCommand implements TabExecutor {
                                       @NotNull String[] arguments) {
         if (arguments.length == 1) {
             List<String> groupNames = new ArrayList<>();
-            for (DropperArenaGroup group : MiniGames.getInstance().getDropperArenaHandler().getAllGroups()) {
+            Set<ParkourArenaGroup> arenaGroups = MiniGames.getInstance().getParkourArenaHandler().getAllGroups();
+            for (ParkourArenaGroup group : arenaGroups) {
                 groupNames.add(group.getGroupName());
             }
             return groupNames;

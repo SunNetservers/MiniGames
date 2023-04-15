@@ -1,7 +1,10 @@
 package net.knarcraft.minigames.arena.parkour;
 
 import net.knarcraft.minigames.MiniGames;
+import net.knarcraft.minigames.arena.ArenaGameMode;
 import net.knarcraft.minigames.arena.ArenaRecordsRegistry;
+import net.knarcraft.minigames.arena.ArenaSession;
+import net.knarcraft.minigames.arena.PlayerEntryState;
 import net.knarcraft.minigames.config.ParkourConfiguration;
 import net.knarcraft.minigames.property.RecordResult;
 import net.knarcraft.minigames.util.PlayerTeleporter;
@@ -14,14 +17,14 @@ import java.util.logging.Level;
 /**
  * A representation of a player's current session in a parkour arena
  */
-public class ParkourArenaSession {
+public class ParkourArenaSession implements ArenaSession {
 
     private final @NotNull ParkourArena arena;
     private final @NotNull Player player;
     private final @NotNull ParkourArenaGameMode gameMode;
     private int deaths;
     private final long startTime;
-    private final ParkourPlayerEntryState entryState;
+    private final PlayerEntryState entryState;
 
     /**
      * Instantiates a new parkour arena session
@@ -45,12 +48,17 @@ public class ParkourArenaSession {
         this.entryState.setArenaState();
     }
 
+    @Override
+    public @NotNull ArenaGameMode getGameMode() {
+        return this.gameMode;
+    }
+
     /**
      * Gets the state of the player when they joined the session
      *
      * @return <p>The player's entry state</p>
      */
-    public @NotNull ParkourPlayerEntryState getEntryState() {
+    public @NotNull PlayerEntryState getEntryState() {
         return this.entryState;
     }
 
@@ -63,7 +71,7 @@ public class ParkourArenaSession {
 
         // Check for, and display, records
         MiniGames miniGames = MiniGames.getInstance();
-        boolean ignore = miniGames.getDropperConfiguration().ignoreRecordsUntilGroupBeatenOnce();
+        boolean ignore = miniGames.getParkourConfiguration().ignoreRecordsUntilGroupBeatenOnce();
         ParkourArenaGroup group = miniGames.getParkourArenaHandler().getGroup(this.arena.getArenaId());
         if (!ignore || group == null || group.hasBeatenAll(this.gameMode, this.player)) {
             registerRecord();
@@ -98,9 +106,9 @@ public class ParkourArenaSession {
      */
     private void removeSession() {
         // Remove this session for game sessions to stop listeners from fiddling more with the player
-        boolean removedSession = MiniGames.getInstance().getDropperArenaPlayerRegistry().removePlayer(player.getUniqueId());
+        boolean removedSession = MiniGames.getInstance().getParkourArenaPlayerRegistry().removePlayer(player.getUniqueId());
         if (!removedSession) {
-            MiniGames.log(Level.SEVERE, "Unable to remove dropper arena session for " + player.getName() + ". " +
+            MiniGames.log(Level.SEVERE, "Unable to remove parkour arena session for " + player.getName() + ". " +
                     "This will have unintended consequences.");
         }
     }

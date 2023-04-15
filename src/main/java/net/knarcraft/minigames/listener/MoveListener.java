@@ -1,13 +1,14 @@
 package net.knarcraft.minigames.listener;
 
 import net.knarcraft.minigames.MiniGames;
+import net.knarcraft.minigames.arena.Arena;
+import net.knarcraft.minigames.arena.ArenaSession;
 import net.knarcraft.minigames.arena.dropper.DropperArenaGameMode;
-import net.knarcraft.minigames.arena.dropper.DropperArenaPlayerRegistry;
 import net.knarcraft.minigames.arena.dropper.DropperArenaSession;
+import net.knarcraft.minigames.arena.parkour.ParkourArenaSession;
 import net.knarcraft.minigames.config.DropperConfiguration;
 import net.knarcraft.minigames.config.SharedConfiguration;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -43,13 +44,40 @@ public class MoveListener implements Listener {
             return;
         }
 
-        Player player = event.getPlayer();
-        DropperArenaPlayerRegistry playerRegistry = MiniGames.getInstance().getDropperArenaPlayerRegistry();
-        DropperArenaSession arenaSession = playerRegistry.getArenaSession(player.getUniqueId());
-        if (arenaSession == null) {
+        ArenaSession session = MiniGames.getInstance().getSession(event.getPlayer().getUniqueId());
+        if (session instanceof DropperArenaSession dropperSession) {
+            doDropperArenaChecks(event, dropperSession);
+        } else if (session instanceof ParkourArenaSession parkourSession) {
+            doParkourArenaChecks(event, parkourSession);
+        }
+    }
+
+    /**
+     * Performs the necessary checks and tasks for the player's session
+     *
+     * @param event        <p>The move event triggered</p>
+     * @param arenaSession <p>The dropper session of the player triggering the event</p>
+     */
+    private void doParkourArenaChecks(@NotNull PlayerMoveEvent event, ParkourArenaSession arenaSession) {
+        if (event.getTo() == null) {
             return;
         }
+        // Only do block type checking if the block beneath the player changes
+        if (event.getFrom().getBlock() != event.getTo().getBlock()) {
+            checkForSpecialBlock(arenaSession, event.getTo());
+        }
+    }
 
+    /**
+     * Performs the necessary checks and tasks for the player's session
+     *
+     * @param event        <p>The move event triggered</p>
+     * @param arenaSession <p>The dropper session of the player triggering the event</p>
+     */
+    private void doDropperArenaChecks(@NotNull PlayerMoveEvent event, @NotNull DropperArenaSession arenaSession) {
+        if (event.getTo() == null) {
+            return;
+        }
         // Prevent the player from flying upwards while in flight mode
         if (event.getFrom().getY() < event.getTo().getY() ||
                 (configuration.blockSneaking() && event.getPlayer().isSneaking()) ||
@@ -78,27 +106,25 @@ public class MoveListener implements Listener {
      * @param toLocation   <p>The location the player's session is about to hit</p>
      * @return <p>True if a special block has been hit</p>
      */
-    private boolean checkForSpecialBlock(DropperArenaSession arenaSession, Location toLocation) {
+    private boolean checkForSpecialBlock(ArenaSession arenaSession, Location toLocation) {
         SharedConfiguration sharedConfiguration = MiniGames.getInstance().getSharedConfiguration();
         double liquidDepth = sharedConfiguration.getLiquidHitBoxDepth();
         double solidDepth = sharedConfiguration.getSolidHitBoxDistance();
 
-        // Check if the player enters water
-        Material winBlockType = arenaSession.getArena().getWinBlockType();
+        Arena arena = arenaSession.getArena();
+
         // For water, only trigger when the player enters the water, but trigger earlier for everything else
-        double depth = !winBlockType.isSolid() ? liquidDepth : solidDepth;
+        double depth = arena.winLocationIsSolid() ? solidDepth : liquidDepth;
         for (Block block : getBlocksBeneathLocation(toLocation, depth)) {
-            if (block.getType() == winBlockType) {
+            if (arena.willCauseWin(block)) {
                 arenaSession.triggerWin();
                 return true;
             }
         }
 
         // Check if the player is about to hit a non-air and non-liquid block
-        Set<Material> whitelisted = configuration.getBlockWhitelist();
         for (Block block : getBlocksBeneathLocation(toLocation, solidDepth)) {
-            Material blockType = block.getType();
-            if (!blockType.isAir() && !whitelisted.contains(blockType)) {
+            if (!block.getType().isAir() && arena.willCauseLoss(block)) {
                 arenaSession.triggerLoss();
                 return true;
             }

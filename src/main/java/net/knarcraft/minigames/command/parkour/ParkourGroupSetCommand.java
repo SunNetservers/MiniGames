@@ -1,9 +1,9 @@
-package net.knarcraft.minigames.command;
+package net.knarcraft.minigames.command.parkour;
 
 import net.knarcraft.minigames.MiniGames;
-import net.knarcraft.minigames.arena.dropper.DropperArena;
-import net.knarcraft.minigames.arena.dropper.DropperArenaGroup;
-import net.knarcraft.minigames.arena.dropper.DropperArenaHandler;
+import net.knarcraft.minigames.arena.parkour.ParkourArena;
+import net.knarcraft.minigames.arena.parkour.ParkourArenaGroup;
+import net.knarcraft.minigames.arena.parkour.ParkourArenaHandler;
 import net.knarcraft.minigames.util.StringSanitizer;
 import net.knarcraft.minigames.util.TabCompleteHelper;
 import org.bukkit.command.Command;
@@ -18,7 +18,7 @@ import java.util.List;
 /**
  * The command for setting the group of an arena
  */
-public class GroupSetCommand implements TabExecutor {
+public class ParkourGroupSetCommand implements TabExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s,
@@ -27,11 +27,11 @@ public class GroupSetCommand implements TabExecutor {
             return false;
         }
 
-        DropperArenaHandler arenaHandler = MiniGames.getInstance().getDropperArenaHandler();
+        ParkourArenaHandler arenaHandler = MiniGames.getInstance().getParkourArenaHandler();
 
-        DropperArena specifiedArena = arenaHandler.getArena(arguments[0]);
+        ParkourArena specifiedArena = arenaHandler.getArena(arguments[0]);
         if (specifiedArena == null) {
-            commandSender.sendMessage("Unable to find the specified dropper arena.");
+            commandSender.sendMessage("Unable to find the specified parkour arena.");
             return false;
         }
 
@@ -41,13 +41,13 @@ public class GroupSetCommand implements TabExecutor {
             return false;
         }
 
-        DropperArenaGroup arenaGroup;
+        ParkourArenaGroup arenaGroup;
         if (groupName.equalsIgnoreCase("null") || groupName.equalsIgnoreCase("none")) {
             arenaGroup = null;
         } else {
             arenaGroup = arenaHandler.getGroup(groupName);
             if (arenaGroup == null) {
-                arenaGroup = new DropperArenaGroup(groupName);
+                arenaGroup = new ParkourArenaGroup(groupName);
             }
         }
 
@@ -62,12 +62,12 @@ public class GroupSetCommand implements TabExecutor {
     public List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s,
                                       @NotNull String[] arguments) {
         if (arguments.length == 1) {
-            return TabCompleteHelper.getArenas();
+            return TabCompleteHelper.getParkourArenas();
         } else if (arguments.length == 2) {
             List<String> possibleValues = new ArrayList<>();
             possibleValues.add("none");
             possibleValues.add("GroupName");
-            for (DropperArenaGroup group : MiniGames.getInstance().getDropperArenaHandler().getAllGroups()) {
+            for (ParkourArenaGroup group : MiniGames.getInstance().getParkourArenaHandler().getAllGroups()) {
                 possibleValues.add(group.getGroupName());
             }
             return possibleValues;

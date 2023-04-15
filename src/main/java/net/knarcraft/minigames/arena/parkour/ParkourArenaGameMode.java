@@ -47,4 +47,9 @@ public enum ParkourArenaGameMode implements ConfigurationSerializable, ArenaGame
         return ParkourArenaGameMode.valueOf((String) data.get("name"));
     }
 
+    @Override
+    public @NotNull ParkourArenaGameMode[] getValues() {
+        return ParkourArenaGameMode.values();
+    }
+
 }

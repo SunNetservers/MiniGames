@@ -1,4 +1,4 @@
-package net.knarcraft.minigames.command;
+package net.knarcraft.minigames.command.parkour;
 
 import net.knarcraft.minigames.util.TabCompleteHelper;
 import org.bukkit.command.Command;
@@ -13,14 +13,14 @@ import java.util.List;
 /**
  * The tab-completer for the remove arena command
  */
-public class RemoveArenaTabCompleter implements TabCompleter {
+public class RemoveParkourArenaTabCompleter implements TabCompleter {
 
     @Nullable
     @Override
     public List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s,
                                       @NotNull String[] arguments) {
         if (arguments.length == 1) {
-            return TabCompleteHelper.getArenas();
+            return TabCompleteHelper.getParkourArenas();
         } else {
             return new ArrayList<>();
         }

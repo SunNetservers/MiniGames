@@ -1,28 +1,18 @@
 package net.knarcraft.minigames.arena.dropper;
 
+import net.knarcraft.minigames.arena.AbstractPlayerEntryState;
 import org.bukkit.GameMode;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * The state of a player before entering a dropper arena
  */
-public class DropperPlayerEntryState {
+public class DropperPlayerEntryState extends AbstractPlayerEntryState {
 
-    private final Player player;
-    private final Location entryLocation;
-    private final boolean originalIsFlying;
     private final float originalFlySpeed;
-    private final GameMode originalGameMode;
-    private final boolean originalAllowFlight;
-    private final boolean originalInvulnerable;
-    private final boolean originalIsSwimming;
-    private final boolean originalCollideAble;
-    private final boolean makePlayerInvisible;
     private final boolean disableHitCollision;
+    private final float horizontalVelocity;
     private final DropperArenaGameMode arenaGameMode;
 
     /**
@@ -30,28 +20,18 @@ public class DropperPlayerEntryState {
      *
      * @param player <p>The player whose state should be stored</p>
      */
-    public DropperPlayerEntryState(@NotNull Player player, @NotNull DropperArenaGameMode arenaGameMode, boolean makePlayerInvisible,
-                                   boolean disableHitCollision) {
-        this.player = player;
-        this.entryLocation = player.getLocation().clone();
+    public DropperPlayerEntryState(@NotNull Player player, @NotNull DropperArenaGameMode arenaGameMode,
+                                   boolean makePlayerInvisible, boolean disableHitCollision, float horizontalVelocity) {
+        super(player, makePlayerInvisible);
         this.originalFlySpeed = player.getFlySpeed();
-        this.originalIsFlying = player.isFlying();
-        this.originalGameMode = player.getGameMode();
-        this.originalAllowFlight = player.getAllowFlight();
-        this.originalInvulnerable = player.isInvulnerable();
-        this.originalIsSwimming = player.isSwimming();
         this.arenaGameMode = arenaGameMode;
-        this.originalCollideAble = player.isCollidable();
-        this.makePlayerInvisible = makePlayerInvisible;
         this.disableHitCollision = disableHitCollision;
+        this.horizontalVelocity = horizontalVelocity;
     }
 
-    /**
-     * Sets the state of the stored player to the state used by arenas
-     *
-     * @param horizontalVelocity <p>The horizontal velocity to apply to the player</p>
-     */
-    public void setArenaState(float horizontalVelocity) {
+    @Override
+    public void setArenaState() {
+        super.setArenaState();
         this.player.setAllowFlight(true);
         this.player.setFlying(true);
         this.player.setGameMode(GameMode.ADVENTURE);
@@ -59,44 +39,19 @@ public class DropperPlayerEntryState {
         if (this.disableHitCollision) {
             this.player.setCollidable(false);
         }
-        if (this.makePlayerInvisible) {
-            this.player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY,
-                    PotionEffect.INFINITE_DURATION, 3));
-        }
 
         // If playing on the inverted game-mode, negate the horizontal velocity to swap the controls
-        if (arenaGameMode == DropperArenaGameMode.INVERTED) {
-            this.player.setFlySpeed(-horizontalVelocity);
+        if (this.arenaGameMode == DropperArenaGameMode.INVERTED) {
+            this.player.setFlySpeed(-this.horizontalVelocity);
         } else {
-            this.player.setFlySpeed(horizontalVelocity);
+            this.player.setFlySpeed(this.horizontalVelocity);
         }
     }
 
-    /**
-     * Restores the stored state for the stored player
-     */
+    @Override
     public void restore() {
-        this.player.setFlying(this.originalIsFlying);
-        this.player.setGameMode(this.originalGameMode);
-        this.player.setAllowFlight(this.originalAllowFlight);
+        super.restore();
         this.player.setFlySpeed(this.originalFlySpeed);
-        this.player.setInvulnerable(this.originalInvulnerable);
-        this.player.setSwimming(this.originalIsSwimming);
-        if (this.disableHitCollision) {
-            this.player.setCollidable(this.originalCollideAble);
-        }
-        if (this.makePlayerInvisible) {
-            this.player.removePotionEffect(PotionEffectType.INVISIBILITY);
-        }
-    }
-
-    /**
-     * Gets the location the player entered from
-     *
-     * @return <p>The location the player entered from</p>
-     */
-    public Location getEntryLocation() {
-        return this.entryLocation;
     }
 
 }

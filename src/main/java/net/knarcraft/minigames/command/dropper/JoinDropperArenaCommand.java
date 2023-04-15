@@ -1,4 +1,4 @@
-package net.knarcraft.minigames.command;
+package net.knarcraft.minigames.command.dropper;
 
 import net.knarcraft.minigames.MiniGames;
 import net.knarcraft.minigames.arena.dropper.DropperArena;
@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * The command used to join a dropper arena
  */
-public class JoinArenaCommand implements CommandExecutor {
+public class JoinDropperArenaCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s,
@@ -31,10 +31,9 @@ public class JoinArenaCommand implements CommandExecutor {
             return false;
         }
 
-        // Disallow joining if the player is already in a dropper arena
-        DropperArenaSession existingSession = MiniGames.getInstance().getDropperArenaPlayerRegistry().getArenaSession(player.getUniqueId());
-        if (existingSession != null) {
-            commandSender.sendMessage("You are already in a dropper arena!");
+        // Disallow joining if the player is already in a mini-game arena
+        if (MiniGames.getInstance().getSession(player.getUniqueId()) != null) {
+            commandSender.sendMessage("You are already playing a mini-game!");
             return false;
         }
 
@@ -99,7 +98,7 @@ public class JoinArenaCommand implements CommandExecutor {
             return false;
         } else {
             // Make sure to update the state again in the air to remove a potential swimming state
-            newSession.getEntryState().setArenaState(specifiedArena.getPlayerHorizontalVelocity());
+            newSession.getEntryState().setArenaState();
             return true;
         }
     }
