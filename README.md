@@ -9,13 +9,25 @@ To modify the arena, use `/dropperedit <name> <property> <value>`.
 
 ## Permissions
 
-| Node             | Description                                          |
-|------------------|------------------------------------------------------|
-| minigames.admin  | Gives all permissions.                               |
-| minigames.join   | Allows a player to participate in mini-game arenas.  |
-| minigames.create | Allows a player to create a new mini-game arena.     |
-| minigames.edit   | Allows a player to edit an existing mini-game arena. |
-| minigames.remove | Allows a player to remove a mini-game arena.         |
+The only permission normal players will need is `minigames.join` which is set to true by default.
+
+| Node                     | Description                                          |
+|--------------------------|------------------------------------------------------|
+| minigames.admin          | Gives all permissions.                               |
+| minigames.dropper        | Gives all dropper-related permissions.               |
+| minigames.parkour        | Gives all parkour-related permissions.               |
+| minigames.join           | Allows a player to participate in mini-game arenas.  |
+| minigames.join.dropper   | Allows a player to participate in dropper arenas.    |
+| minigames.join.parkour   | Allows a player to participate in parkour arenas.    |
+| minigames.create         | Allows a player to create a new mini-game arena.     |
+| minigames.create.dropper | Allows a player to create a new dropper arena.       |
+| minigames.create.parkour | Allows a player to create a new parkour arena.       |
+| minigames.edit           | Allows a player to edit an existing mini-game arena. |
+| minigames.edit.dropper   | Allows a player to edit an existing dropper arena.   |
+| minigames.edit.parkour   | Allows a player to edit an existing parkour arena.   |
+| minigames.remove         | Allows a player to remove a mini-game arena.         |
+| minigames.remove.dropper | Allows a player to remove a dropper arena.           |
+| minigames.remove.parkour | Allows a player to remove a parkour arena.           |
 
 ## Commands
 

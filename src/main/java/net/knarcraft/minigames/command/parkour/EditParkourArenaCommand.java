@@ -28,7 +28,6 @@ public class EditParkourArenaCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s,
                              @NotNull String[] arguments) {
-        //TODO: Checkpoints are quite different from everything else, so some custom code is needed for dealing with them
         if (!(commandSender instanceof Player player)) {
             commandSender.sendMessage("This command must be used by a player");
             return false;
