@@ -171,7 +171,7 @@ public abstract class ArenaGroup<K extends Arena, S extends ArenaGroup<K, S>> im
      * @return <p>True if the player is allowed to play the arena</p>
      * @throws IllegalArgumentException <p>If checking an arena not in this group</p>
      */
-    public boolean canPlay(ArenaGameMode gameMode, Player player, UUID arenaId) throws IllegalArgumentException {
+    public boolean cannotPlay(ArenaGameMode gameMode, Player player, UUID arenaId) throws IllegalArgumentException {
         if (!this.arenas.contains(arenaId)) {
             throw new IllegalArgumentException("Cannot check for playability for arena not in this group!");
         }
@@ -179,7 +179,7 @@ public abstract class ArenaGroup<K extends Arena, S extends ArenaGroup<K, S>> im
         for (UUID anArenaId : this.getArenas()) {
             // If the target arena is reached, allow, as all previous arenas must have been cleared
             if (arenaId.equals(anArenaId)) {
-                return true;
+                return false;
             }
 
             K arena = this.arenaHandler.getArena(anArenaId);
@@ -192,11 +192,11 @@ public abstract class ArenaGroup<K extends Arena, S extends ArenaGroup<K, S>> im
 
             // This is a lower-numbered arena the player has yet to complete
             if (arena.getData().hasNotCompleted(gameMode, player)) {
-                return false;
+                return true;
             }
         }
 
-        return false;
+        return true;
     }
 
     /**

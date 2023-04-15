@@ -151,11 +151,12 @@ Player records can be displayed on a leaderboard by using PlaceholderAPI. If you
 leaderboard, you can use the [Placeholder Signs](https://git.knarcraft.net/EpicKnarvik97/PlaceholderSigns) plugin. The
 format for the built-in placeholders is as follows:
 
-`%dropper_record_recordType_gameModeType_identifierType_identifier_recordPlacing_infoType%`
+`%gameMode_record_recordType_gameModeType_identifierType_identifier_recordPlacing_infoType%`
 
 | Variable       | Values                      | Description                                                                                                                        |
 |----------------|-----------------------------|------------------------------------------------------------------------------------------------------------------------------------|
-| dropper_record |                             | Denotes that it's a placeholder for a dropper record. Must be present as-is.                                                       |
+| gameMode       | dropper / parkour           | A selection of which game-mode you are getting a record for                                                                        |
+| record         |                             | This must be as-is. It's a selector in case placeholders are added for more than records.                                          |
 | recordType     | deaths / time               | Selects the type of record to get (deaths or time).                                                                                |
 | gameModeType   | default / inverted / random | Selects the game-mode to get the record for.                                                                                       |
 | identifierType | arena / group               | The type of thing the following identifier points to (an arena or an arena group).                                                 |

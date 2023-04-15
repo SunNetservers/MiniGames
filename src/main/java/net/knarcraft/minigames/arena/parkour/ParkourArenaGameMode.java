@@ -25,7 +25,11 @@ public enum ParkourArenaGameMode implements ConfigurationSerializable, ArenaGame
      * @return <p>The specified arena game-mode</p>
      */
     public static @NotNull ParkourArenaGameMode matchGamemode(@NotNull String gameMode) {
-        return ParkourArenaGameMode.DEFAULT;
+        try {
+            return ParkourArenaGameMode.valueOf(gameMode.toUpperCase());
+        } catch (IllegalArgumentException exception) {
+            return ParkourArenaGameMode.DEFAULT;
+        }
     }
 
     @NotNull

@@ -110,7 +110,7 @@ public class JoinParkourArenaCommand implements CommandExecutor {
 
         // Require that the player has beaten the previous arena on the same game-mode before trying this one
         if (configuration.mustDoGroupedInSequence() &&
-                !arenaGroup.canPlay(arenaGameMode, player, parkourArena.getArenaId())) {
+                arenaGroup.cannotPlay(arenaGameMode, player, parkourArena.getArenaId())) {
             player.sendMessage("You have not yet beaten the previous arena!");
             return false;
         }

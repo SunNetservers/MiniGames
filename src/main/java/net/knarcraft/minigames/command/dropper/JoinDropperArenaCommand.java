@@ -124,7 +124,7 @@ public class JoinDropperArenaCommand implements CommandExecutor {
 
         // Require that the player has beaten the previous arena on the same game-mode before trying this one
         if (configuration.mustDoGroupedInSequence() &&
-                !arenaGroup.canPlay(arenaGameMode, player, dropperArena.getArenaId())) {
+                arenaGroup.cannotPlay(arenaGameMode, player, dropperArena.getArenaId())) {
             player.sendMessage("You have not yet beaten the previous arena!");
             return false;
         }
