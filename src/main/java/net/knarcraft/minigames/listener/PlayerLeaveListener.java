@@ -2,7 +2,9 @@ package net.knarcraft.minigames.listener;
 
 import net.knarcraft.minigames.MiniGames;
 import net.knarcraft.minigames.arena.ArenaSession;
+import net.knarcraft.minigames.arena.parkour.ParkourArenaSession;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -52,7 +54,8 @@ public class PlayerLeaveListener implements Listener {
 
     @EventHandler
     public void onPlayerTeleport(PlayerTeleportEvent event) {
-        if (event.getTo() == null || event.isCancelled()) {
+        Location targetLocation = event.getTo();
+        if (targetLocation == null || event.isCancelled()) {
             return;
         }
 
@@ -61,7 +64,12 @@ public class PlayerLeaveListener implements Listener {
             return;
         }
 
-        if (event.getTo().equals(arenaSession.getArena().getSpawnLocation())) {
+        if (targetLocation.equals(arenaSession.getArena().getSpawnLocation())) {
+            return;
+        }
+
+        if (arenaSession instanceof ParkourArenaSession parkourArenaSession &&
+                targetLocation.equals(parkourArenaSession.getRegisteredCheckpoint())) {
             return;
         }
 

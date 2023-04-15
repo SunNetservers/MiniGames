@@ -59,12 +59,22 @@ public class MoveListener implements Listener {
      * @param arenaSession <p>The dropper session of the player triggering the event</p>
      */
     private void doParkourArenaChecks(@NotNull PlayerMoveEvent event, ParkourArenaSession arenaSession) {
-        if (event.getTo() == null) {
+        // Ignore movement which won't cause the player's block to change
+        if (event.getTo() == null || event.getFrom().getBlock() == event.getTo().getBlock()) {
             return;
         }
+        
         // Only do block type checking if the block beneath the player changes
-        if (event.getFrom().getBlock() != event.getTo().getBlock()) {
-            checkForSpecialBlock(arenaSession, event.getTo());
+        if (checkForSpecialBlock(arenaSession, event.getTo())) {
+            return;
+        }
+
+        // Check if the player reached one of the checkpoints for the arena
+        for (Location checkpoint : arenaSession.getArena().getCheckpoints()) {
+            if (checkpoint.getBlock().equals(event.getTo().getBlock())) {
+                arenaSession.registerCheckpoint(checkpoint.clone());
+                return;
+            }
         }
     }
 

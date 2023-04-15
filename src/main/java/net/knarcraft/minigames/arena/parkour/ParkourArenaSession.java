@@ -11,6 +11,7 @@ import net.knarcraft.minigames.util.PlayerTeleporter;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.logging.Level;
 
@@ -25,6 +26,7 @@ public class ParkourArenaSession implements ArenaSession {
     private int deaths;
     private final long startTime;
     private final PlayerEntryState entryState;
+    private Location reachedCheckpoint = null;
 
     /**
      * Instantiates a new parkour arena session
@@ -60,6 +62,24 @@ public class ParkourArenaSession implements ArenaSession {
      */
     public @NotNull PlayerEntryState getEntryState() {
         return this.entryState;
+    }
+
+    /**
+     * Registers the checkpoint this session's player has reached
+     *
+     * @param location <p>The location of the checkpoint</p>
+     */
+    public void registerCheckpoint(@NotNull Location location) {
+        this.reachedCheckpoint = location;
+    }
+
+    /**
+     * Gets the checkpoint currently registered as the player's spawn location
+     *
+     * @return <p>The registered checkpoint, or null if not set</p>
+     */
+    public @Nullable Location getRegisteredCheckpoint() {
+        return this.reachedCheckpoint;
     }
 
     /**
@@ -154,7 +174,8 @@ public class ParkourArenaSession implements ArenaSession {
     public void triggerLoss() {
         this.deaths++;
         //Teleport the player back to the top
-        PlayerTeleporter.teleportPlayer(this.player, this.arena.getSpawnLocation(), true, false);
+        Location spawnLocation = this.reachedCheckpoint != null ? this.reachedCheckpoint : this.arena.getSpawnLocation();
+        PlayerTeleporter.teleportPlayer(this.player, spawnLocation, true, false);
         this.entryState.setArenaState();
     }
 

@@ -44,13 +44,13 @@ The only permission normal players will need is `minigames.join` which is set to
 | /dropperGroupList                      | /dglist  | \[group]                    | Lists groups, or the stages of a group if a group is specified.                     |
 | [/dropperGroupSwap](#droppergroupswap) | /dgswap  | \<arena1> \<arena2>         | Swaps the two arenas in the group's ordered list.                                   |
 | /parkourList                           | /plist   |                             | Lists available parkour arenas.                                                     |
-| /parkourJoin                           | /pjoin   | \<arena> \[mode]            | Joins the selected arena.                                                           |
+| /parkourJoin                           | /pjoin   | \<arena>                    | Joins the selected arena.                                                           |
 | /parkourCreate                         | /pcreate | \<name>                     | Creates a new parkour arena with the given name. The spawn is set to your location. |
 | /parkourRemove                         | /premove | \<arena>                    | Removes the specified parkour arena.                                                |
 | /parkourEdit                           | /pedit   | \<arena> \<option> \[value] | Gets or sets a parkour arena option.                                                |
 | /parkourGroupSet                       | /pgset   | \<arena> \<group>           | Puts the given arena in the given group. Use "none" to remove an existing group.    |
 | /parkourGroupList                      | /pglist  | \[group]                    | Lists groups, or the stages of a group if a group is specified.                     |
-| /parkourGroupSwap                      | /pgswap  | \<arena1> \<arena2>         | Swaps the two arenas in the group's ordered list.                                   |
+| [/parkourGroupSwap](#droppergroupswap) | /pgswap  | \<arena1> \<arena2>         | Swaps the two arenas in the group's ordered list.                                   |
 
 ### Command explanation
 
@@ -154,7 +154,7 @@ You could use `/droppergroupswap Sea Savanna` to change the order to:
 | mustDoGroupedInSequence           | true/false | true                                 | Whether grouped dropper arenas must be played in the correct sequence                                                                                                                                 |
 | ignoreRecordsUntilGroupBeatenOnce | true/false | false                                | Whether records won't be registered unless the player has already beaten all arenas in a group. That means players are required to do a second play-through to register a record for a grouped arena. |
 | makePlayersInvisible              | true/false | false                                | Whether players should be made invisible while playing in a dropper arena                                                                                                                             |
-| killPlaneBlocks                   | list       | [see this](#killplaneblocks-default) | The blocks compromising parkour arenas' kill planes. Add any materials you want to use for the "bottom" of your parkour arenas.                                                                       |
+| killPlaneBlocks                   | list       | [see this](#killplaneblocks-default) | The types of blocks compromising parkour arenas' kill planes. Add any materials you want to use for the "bottom" of your parkour arenas. +WOOL and other block tags are supported.                    |
 
 #### blockWhitelist default:
 
