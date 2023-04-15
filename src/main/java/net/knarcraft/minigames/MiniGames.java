@@ -279,7 +279,7 @@ public final class MiniGames extends JavaPlugin {
     public void onDisable() {
         // Throw out currently playing players before exiting
         for (Player player : getServer().getOnlinePlayers()) {
-            DropperArenaSession session = dropperArenaPlayerRegistry.getArenaSession(player.getUniqueId());
+            ArenaSession session = getSession(player.getUniqueId());
             if (session != null) {
                 session.triggerQuit(true);
             }

@@ -253,7 +253,7 @@ public class ParkourArena implements Arena {
     @Override
     public boolean willCauseWin(Block block) {
         return (this.winLocation != null && this.winLocation.getBlock().equals(block)) ||
-                this.winBlockType == block.getType();
+                (this.winLocation == null && this.winBlockType == block.getType());
     }
 
     @Override
