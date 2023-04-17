@@ -1,11 +1,17 @@
 # MiniGames
 
 This plugin adds several mini-games.
+
 To create a dropper arena, simply use `/droppercreate <name>`, where \<name> is simply the name used to differentiate
-and
-recognize the arena. Your location will be used as the spawn location for anyone joining the dropper arena. To start
+and recognize the arena. Your location will be used as the spawn location for anyone joining the dropper arena. To start
 playing, simply use `/dropperjoin <name>`, where \<name> is the same as you specified upon creation.
 To modify the arena, use `/dropperedit <name> <property> <value>`.
+
+To create a parkour arena, simply use `/parkourcreate <name>`, where \<name> is simply the name used to differentiate
+and recognize the arena. Your location will be used as the spawn location for anyone joining the dropper arena. To start
+playing, simply use `/parkourjoin <name>`, where \<name> is the same as you specified upon creation.
+To modify the arena, use `/parkouredit <name> <property> <value>`. Use `/parkouredit checkpointAdd here` to add a
+checkpoint at your current location.
 
 ## Permissions
 
