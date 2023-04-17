@@ -52,28 +52,36 @@ public class PlayerLeaveListener implements Listener {
         }
     }
 
-    @EventHandler
+    /**
+     * Prevent the player from teleporting away from an arena for any reason
+     *
+     * @param event <p>The triggered teleport event</p>
+     */
+    @EventHandler(ignoreCancelled = true)
     public void onPlayerTeleport(PlayerTeleportEvent event) {
         Location targetLocation = event.getTo();
-        if (targetLocation == null || event.isCancelled()) {
+        if (targetLocation == null) {
             return;
         }
 
+        // Ignore if not in an arena session
         ArenaSession arenaSession = MiniGames.getInstance().getSession(event.getPlayer().getUniqueId());
         if (arenaSession == null) {
             return;
         }
 
+        // If teleported to the arena's spawn, it's fine
         if (targetLocation.equals(arenaSession.getArena().getSpawnLocation())) {
             return;
         }
 
+        // If teleported to the arena's checkpoint, it's fine
         if (arenaSession instanceof ParkourArenaSession parkourArenaSession &&
                 targetLocation.equals(parkourArenaSession.getRegisteredCheckpoint())) {
             return;
         }
 
-        arenaSession.triggerQuit(false);
+        event.setCancelled(true);
     }
 
 }

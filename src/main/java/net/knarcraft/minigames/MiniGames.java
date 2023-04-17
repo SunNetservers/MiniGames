@@ -1,6 +1,7 @@
 package net.knarcraft.minigames;
 
 import net.knarcraft.minigames.arena.ArenaSession;
+import net.knarcraft.minigames.arena.dropper.DropperArena;
 import net.knarcraft.minigames.arena.dropper.DropperArenaData;
 import net.knarcraft.minigames.arena.dropper.DropperArenaGameMode;
 import net.knarcraft.minigames.arena.dropper.DropperArenaGroup;
@@ -8,6 +9,7 @@ import net.knarcraft.minigames.arena.dropper.DropperArenaHandler;
 import net.knarcraft.minigames.arena.dropper.DropperArenaPlayerRegistry;
 import net.knarcraft.minigames.arena.dropper.DropperArenaRecordsRegistry;
 import net.knarcraft.minigames.arena.dropper.DropperArenaSession;
+import net.knarcraft.minigames.arena.parkour.ParkourArena;
 import net.knarcraft.minigames.arena.parkour.ParkourArenaData;
 import net.knarcraft.minigames.arena.parkour.ParkourArenaGameMode;
 import net.knarcraft.minigames.arena.parkour.ParkourArenaGroup;
@@ -56,7 +58,6 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
@@ -277,12 +278,12 @@ public final class MiniGames extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        // Throw out currently playing players before exiting
-        for (Player player : getServer().getOnlinePlayers()) {
-            ArenaSession session = getSession(player.getUniqueId());
-            if (session != null) {
-                session.triggerQuit(true);
-            }
+        // Kill all sessions before exiting
+        for (DropperArena arena : dropperArenaHandler.getArenas().values()) {
+            dropperArenaPlayerRegistry.removeForArena(arena);
+        }
+        for (ParkourArena arena : parkourArenaHandler.getArenas().values()) {
+            parkourArenaPlayerRegistry.removeForArena(arena);
         }
     }
 
