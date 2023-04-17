@@ -5,13 +5,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>net.knarcraft</groupId>
-    <artifactId>Dropper</artifactId>
+    <artifactId>MiniGames</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>Dropper</name>
+    <name>MiniGames</name>
 
-    <description>A plugin for dropper mini-games</description>
+    <description>A plugin which adds various mini-games</description>
     <properties>
         <java.version>16</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

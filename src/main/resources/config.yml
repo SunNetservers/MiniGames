@@ -1,4 +1,25 @@
-# Configuration values for droppers
+# Configuration values for mini-games
+parkour:
+  # Whether to enforce the order in which a player must reach checkpoints. Enabling this ensures that a player cannot
+  # trigger a previous checkpoint by accident. It also ensures players cannot skip a checkpoint, even if the arena
+  # layout makes it possible.
+  enforceCheckpointOrder: false
+  
+  # Whether grouped dropper arenas must be played in the correct sequence
+  mustDoGroupedInSequence: true
+  
+  # Whether records won't be registered unless the player has already beaten all arenas in a group. That means players
+  # are required to do a second play-through to register a record for a grouped arena.
+  ignoreRecordsUntilGroupBeatenOnce: false
+  
+  # Whether players should be made invisible while playing in a dropper arena
+  makePlayersInvisible: false
+  
+  # The blocks compromising parkour arenas' kill planes. Add any materials you want to use for the "bottom" of your
+  # parkour arenas.
+  killPlaneBlocks:
+    - LAVA
+    - MAGMA_BLOCK
 dropper:
   # Whether to block using the shift key to drop faster than the intended drop speed
   blockSneaking: true
@@ -34,14 +55,6 @@ dropper:
   # pushing each-other if in the same arena.
   disableHitCollision: true
   
-  # This decides how far inside a non-solid block the player must go before detection triggers (-1, 0). The closer to -1
-  # it is, the more accurate it will seem to the player, but the likelihood of not detecting the hit increases.
-  liquidHitBoxDepth: -0.8
-  
-  # This decides the distance the player must be from a block below them before a hit triggers (0, 1). If too low, the 
-  # likelihood of detecting the hit decreases, but it won't look like the player hit the block without being near.
-  solidHitBoxDistance: 0.2
-  
   # A whitelist for which blocks won't trigger a loss when hit/passed through. The win block check happens before the
   # loss check, so even blocks on the whitelist can be used as the win-block. "+" denotes a material tag.
   blockWhitelist:
@@ -57,3 +70,11 @@ dropper:
     - +BUTTONS
     - +CORALS
     - +WALL_CORALS
+shared:
+  # This decides how far inside a non-solid block the player must go before detection triggers (-1, 0). The closer to -1
+  # it is, the more accurate it will seem to the player, but the likelihood of not detecting the hit increases.
+  liquidHitBoxDepth: -0.8
+
+  # This decides the distance the player must be from a block below them before a hit triggers (0, 1). If too low, the 
+  # likelihood of detecting the hit decreases, but it won't look like the player hit the block without being near.
+  solidHitBoxDistance: 0.2
