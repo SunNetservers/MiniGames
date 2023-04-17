@@ -47,12 +47,12 @@ The only permission normal players will need is `minigames.join` which is set to
 | /parkourJoin                           | /pjoin   | \<arena>                    | Joins the selected arena.                                                           |
 | /parkourCreate                         | /pcreate | \<name>                     | Creates a new parkour arena with the given name. The spawn is set to your location. |
 | /parkourRemove                         | /premove | \<arena>                    | Removes the specified parkour arena.                                                |
-| /parkourEdit                           | /pedit   | \<arena> \<option> \[value] | Gets or sets a parkour arena option.                                                |
+| [/parkourEdit](#parkouredit)           | /pedit   | \<arena> \<option> \[value] | Gets or sets a parkour arena option.                                                |
 | /parkourGroupSet                       | /pgset   | \<arena> \<group>           | Puts the given arena in the given group. Use "none" to remove an existing group.    |
 | /parkourGroupList                      | /pglist  | \[group]                    | Lists groups, or the stages of a group if a group is specified.                     |
 | [/parkourGroupSwap](#droppergroupswap) | /pgswap  | \<arena1> \<arena2>         | Swaps the two arenas in the group's ordered list.                                   |
 
-### Command explanation
+### Command explanation dropper
 
 #### /dropperJoin
 
@@ -120,6 +120,33 @@ You could use `/droppergroupswap Sea Savanna` to change the order to:
 3. Nether
 4. Sea
 
+### Command explanation parkour
+
+#### /parkourEdit
+
+This command allows editing the specified property for the specified parkour arena.
+
+`/parkouredit <arena> <option> [value]`
+
+| Argument | Usage                                 |
+|----------|---------------------------------------|
+| arena    | The name of the arena to edit.        |
+| option   | The option to display or change.      |
+| value    | The new value of the selected option. |
+
+These are all the options that can be changed for an arena.
+
+| Option          | Details                                                                                                                                                                     |
+|-----------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| name            | The name of the arena. Used mainly to select the arena in commands.                                                                                                         |
+| spawnLocation   | The spawn location of any player joining the arena. Use `56.546,64.0,44.45` to specify coordinates, or `here`, `this` or any other string to select your current location.  |
+| exitLocation    | The location players will be sent to when exiting the arena. If not set, the player will be sent to where they joined from. Valid values are the same as for spawnLocation. |
+| winBlockType    | The type of block players must hit to win the arena. It can be any material as long as it's a block, and not a type of air.                                                 |
+| winLocation     | The location players must reach to win the arena (see spawnLocation for valid values). If set, this overrides, and is used instead of, the win block type.                  |
+| checkpointAdd   | Adds a new checkpoint to the arena's checkpoints (see spawnLocation for valid values).                                                                                      |
+| checkpointClear | Clears all current checkpoints. Give any value to execute. If not given a value, current checkpoints are shown.                                                             |
+| killPlaneBlocks | A comma-separated list of materials which will force a loss on hit. +WOOL and other [material tags](#notes-about-material-tags) are supported as well.                      |
+
 ## Configuration options
 
 ### Shared
@@ -131,21 +158,21 @@ You could use `/droppergroupswap Sea Savanna` to change the order to:
 
 ### Dropper
 
-| Name                              | Type                | Default                             | Description                                                                                                                                                                                                                       |
-|-----------------------------------|---------------------|-------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| blockSneaking                     | true/false          | true                                | Whether to block using the shift key to drop faster than the intended drop speed                                                                                                                                                  |
-| blockSprinting                    | true/false          | true                                | Whether to block using the sprint key for slightly improved air speed                                                                                                                                                             |
-| verticalVelocity                  | 0 < decimal <= 75   | 1.0                                 | The vertical velocity used as default for all arenas. Must be greater than 0. 3.92 is the max speed of a falling player.                                                                                                          |
-| horizontalVelocity                | 0 < decimal <= 1    | 1.0                                 | The horizontal velocity used as default for all arenas (technically fly-speed). Must be between 0 (exclusive) and 1 (inclusive).                                                                                                  |
-| randomlyInvertedTimer             | 0 < integer <= 3600 | 7                                   | The number of seconds before the randomly inverted game-mode switches between normal and inverted movement (0, 3600]                                                                                                              |
-| mustDoGroupedInSequence           | true/false          | true                                | Whether grouped dropper arenas must be played in the correct sequence                                                                                                                                                             |
-| ignoreRecordsUntilGroupBeatenOnce | true/false          | false                               | Whether records won't be registered unless the player has already beaten all arenas in a group. That means players are required to do a second play-through to register a record for a grouped arena.                             |
-| mustDoNormalModeFirst             | true/false          | true                                | Whether a player must do the normal/default game-mode before playing any other game-modes                                                                                                                                         |
-| makePlayersInvisible              | true/false          | false                               | Whether players should be made invisible while playing in a dropper arena                                                                                                                                                         |
-| disableHitCollision               | true/false          | true                                | Whether players should have their entity hit collision disabled while in an arena. This prevents players from pushing each-other if in the same arena.                                                                            |
-| liquidHitBoxDepth                 | -1 < decimal < 0    | -0.8                                | This decides how far inside a non-solid block the player must go before detection triggers (-1, 0). The closer to -1 it is, the more accurate it will seem to the player, but the likelihood of not detecting the hit increases.  | 
-| solidHitBoxDistance               | 0 < decimal < 1     | 0.2                                 | This decides the distance the player must be from a block below them before a hit triggers (0, 1). If too low, the likelihood of detecting the hit decreases, but it won't look like the player hit the block without being near. |
-| blockWhitelist                    | list                | [see this](#blockwhitelist-default) | A whitelist for which blocks won't trigger a loss when hit/passed through. The win block check happens before the loss check, so even blocks on the whitelist can be used as the win-block. "+" denotes a material tag.           |
+| Name                              | Type                | Default                             | Description                                                                                                                                                                                                                                           |
+|-----------------------------------|---------------------|-------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| blockSneaking                     | true/false          | true                                | Whether to block using the shift key to drop faster than the intended drop speed                                                                                                                                                                      |
+| blockSprinting                    | true/false          | true                                | Whether to block using the sprint key for slightly improved air speed                                                                                                                                                                                 |
+| verticalVelocity                  | 0 < decimal <= 75   | 1.0                                 | The vertical velocity used as default for all arenas. Must be greater than 0. 3.92 is the max speed of a falling player.                                                                                                                              |
+| horizontalVelocity                | 0 < decimal <= 1    | 1.0                                 | The horizontal velocity used as default for all arenas (technically fly-speed). Must be between 0 (exclusive) and 1 (inclusive).                                                                                                                      |
+| randomlyInvertedTimer             | 0 < integer <= 3600 | 7                                   | The number of seconds before the randomly inverted game-mode switches between normal and inverted movement (0, 3600]                                                                                                                                  |
+| mustDoGroupedInSequence           | true/false          | true                                | Whether grouped dropper arenas must be played in the correct sequence                                                                                                                                                                                 |
+| ignoreRecordsUntilGroupBeatenOnce | true/false          | false                               | Whether records won't be registered unless the player has already beaten all arenas in a group. That means players are required to do a second play-through to register a record for a grouped arena.                                                 |
+| mustDoNormalModeFirst             | true/false          | true                                | Whether a player must do the normal/default game-mode before playing any other game-modes                                                                                                                                                             |
+| makePlayersInvisible              | true/false          | false                               | Whether players should be made invisible while playing in a dropper arena                                                                                                                                                                             |
+| disableHitCollision               | true/false          | true                                | Whether players should have their entity hit collision disabled while in an arena. This prevents players from pushing each-other if in the same arena.                                                                                                |
+| liquidHitBoxDepth                 | -1 < decimal < 0    | -0.8                                | This decides how far inside a non-solid block the player must go before detection triggers (-1, 0). The closer to -1 it is, the more accurate it will seem to the player, but the likelihood of not detecting the hit increases.                      | 
+| solidHitBoxDistance               | 0 < decimal < 1     | 0.2                                 | This decides the distance the player must be from a block below them before a hit triggers (0, 1). If too low, the likelihood of detecting the hit decreases, but it won't look like the player hit the block without being near.                     |
+| blockWhitelist                    | list                | [see this](#blockwhitelist-default) | A whitelist for which blocks won't trigger a loss when hit/passed through. The win block check happens before the loss check, so even blocks on the whitelist can be used as the win-block. "+" denotes a [material tag](#notes-about-material-tags). |
 
 ### Parkour
 
@@ -155,7 +182,7 @@ You could use `/droppergroupswap Sea Savanna` to change the order to:
 | mustDoGroupedInSequence           | true/false | true                                 | Whether grouped dropper arenas must be played in the correct sequence                                                                                                                                                                                      |
 | ignoreRecordsUntilGroupBeatenOnce | true/false | false                                | Whether records won't be registered unless the player has already beaten all arenas in a group. That means players are required to do a second play-through to register a record for a grouped arena.                                                      |
 | makePlayersInvisible              | true/false | false                                | Whether players should be made invisible while playing in a dropper arena                                                                                                                                                                                  |
-| killPlaneBlocks                   | list       | [see this](#killplaneblocks-default) | The types of blocks compromising parkour arenas' kill planes. Add any materials you want to use for the "bottom" of your parkour arenas. +WOOL and other block tags are supported.                                                                         |
+| killPlaneBlocks                   | list       | [see this](#killplaneblocks-default) | The types of blocks compromising parkour arenas' kill planes. Add any materials you want to use for the "bottom" of your parkour arenas. +WOOL and other [material tags](#notes-about-material-tags) are supported.                                        |
 
 #### blockWhitelist default:
 
@@ -195,3 +222,24 @@ format for the built-in placeholders is as follows:
 | identifier     | ?                           | An identifier (the name or UUID) for an arena or a group (whichever was chosen as identifierType).                                 |
 | recordPlacing  | 1 / 2 / 3 / ...             | The position of the record to get (1 = first place, 2 = second place, etc.).                                                       |
 | infoType       | player / value / combined   | The type of info to get. Player gets the player name, Value gets the value of the achieved record. Combined gets "Player: Record". |
+
+## Notes about material tags
+
+Where a list of material is allowed, this plugin supports using material tags that specify a set of blocks. This makes
+it much easier to add a lot of blocks without ending up with hundreds of individual materials. To specify
+such a tag, use a `+` character, and then the tag name.
+See <a href="https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Tag.html">the documentation</a> for a complete overview
+of all tags. Only those with type `Tag<Material>` can be used.
+
+Example tags:
+
+- +WOOL
+- +WALL_SIGNS
+- +ACACIA_LOGS
+- +ALL_SIGNS
+- +DIAMOND_ORES
+- +DIRT
+- +DOORS
+- +DRAGON_IMMUNE
+- +FENCE_GATES
+- +FENCES
