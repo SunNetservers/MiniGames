@@ -396,7 +396,7 @@ public class ParkourArena implements Arena {
         if (checkpoints.isEmpty()) {
             return false;
         }
-        
+
         this.checkpoints.clear();
         this.parkourArenaHandler.saveArenas();
         return true;
