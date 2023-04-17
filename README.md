@@ -249,3 +249,8 @@ Example tags:
 - +DRAGON_IMMUNE
 - +FENCE_GATES
 - +FENCES
+
+## License
+
+MiniGames is licensed under the GNU Public License Version 3.0. This includes every source and resource file. See the
+HEADER file for a more detailed license description.
