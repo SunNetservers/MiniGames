@@ -26,6 +26,8 @@ public class CommandListener implements Listener {
         List<String> allowedCommands = new ArrayList<>();
         allowedCommands.add("/miniGamesLeave");
         allowedCommands.add("/mLeave");
+        allowedCommands.add("/dLeave");
+        allowedCommands.add("/pLeave");
 
         String message = event.getMessage();
         if (!message.startsWith("/")) {

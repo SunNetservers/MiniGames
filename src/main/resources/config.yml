@@ -1,5 +1,10 @@
 # Configuration values for mini-games
 parkour:
+  # Whether to enforce the order in which a player must reach checkpoints. Enabling this ensures that a player cannot
+  # trigger a previous checkpoint by accident. It also ensures players cannot skip a checkpoint, even if the arena
+  # layout makes it possible.
+  enforceCheckpointOrder: false
+  
   # Whether grouped dropper arenas must be played in the correct sequence
   mustDoGroupedInSequence: true
   

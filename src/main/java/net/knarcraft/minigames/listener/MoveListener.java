@@ -5,8 +5,10 @@ import net.knarcraft.minigames.arena.Arena;
 import net.knarcraft.minigames.arena.ArenaSession;
 import net.knarcraft.minigames.arena.dropper.DropperArenaGameMode;
 import net.knarcraft.minigames.arena.dropper.DropperArenaSession;
+import net.knarcraft.minigames.arena.parkour.ParkourArena;
 import net.knarcraft.minigames.arena.parkour.ParkourArenaSession;
 import net.knarcraft.minigames.config.DropperConfiguration;
+import net.knarcraft.minigames.config.ParkourConfiguration;
 import net.knarcraft.minigames.config.SharedConfiguration;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -19,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Calendar;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -26,15 +29,18 @@ import java.util.Set;
  */
 public class MoveListener implements Listener {
 
-    private final DropperConfiguration configuration;
+    private final DropperConfiguration dropperConfiguration;
+    private final ParkourConfiguration parkourConfiguration;
 
     /**
      * Instantiates a new move listener
      *
-     * @param configuration <p>The configuration to use</p>
+     * @param dropperConfiguration <p>The dropper configuration to use</p>
+     * @param parkourConfiguration <p>The parkour configuration to use</p>
      */
-    public MoveListener(DropperConfiguration configuration) {
-        this.configuration = configuration;
+    public MoveListener(DropperConfiguration dropperConfiguration, ParkourConfiguration parkourConfiguration) {
+        this.dropperConfiguration = dropperConfiguration;
+        this.parkourConfiguration = parkourConfiguration;
     }
 
     @EventHandler
@@ -70,9 +76,19 @@ public class MoveListener implements Listener {
         }
 
         // Check if the player reached one of the checkpoints for the arena
-        for (Location checkpoint : arenaSession.getArena().getCheckpoints()) {
-            if (checkpoint.getBlock().equals(event.getTo().getBlock()) &&
-                    !checkpoint.equals(arenaSession.getRegisteredCheckpoint())) {
+        ParkourArena arena = arenaSession.getArena();
+        List<Location> checkpoints = arena.getCheckpoints();
+        for (Location checkpoint : checkpoints) {
+            Location previousCheckpoint = arenaSession.getRegisteredCheckpoint();
+            if (checkpoint.getBlock().equals(event.getTo().getBlock()) && !checkpoint.equals(previousCheckpoint)) {
+                if (parkourConfiguration.enforceCheckpointOrder()) {
+                    int checkpointIndex = checkpoints.indexOf(checkpoint);
+                    int previousIndex = previousCheckpoint == null ? -1 : checkpoints.indexOf(previousCheckpoint);
+                    if (checkpointIndex - previousIndex != 1) {
+                        continue;
+                    }
+                }
+
                 arenaSession.registerCheckpoint(checkpoint.clone());
                 event.getPlayer().sendMessage("Checkpoint reached!");
                 return;
@@ -92,8 +108,8 @@ public class MoveListener implements Listener {
         }
         // Prevent the player from flying upwards while in flight mode
         if (event.getFrom().getY() < event.getTo().getY() ||
-                (configuration.blockSneaking() && event.getPlayer().isSneaking()) ||
-                (configuration.blockSprinting() && event.getPlayer().isSprinting())) {
+                (dropperConfiguration.blockSneaking() && event.getPlayer().isSneaking()) ||
+                (dropperConfiguration.blockSprinting() && event.getPlayer().isSprinting())) {
             event.setCancelled(true);
             return;
         }
@@ -189,7 +205,7 @@ public class MoveListener implements Listener {
         }
         Player player = session.getPlayer();
         float horizontalVelocity = session.getArena().getPlayerHorizontalVelocity();
-        float secondsBetweenToggle = configuration.getRandomlyInvertedTimer();
+        float secondsBetweenToggle = dropperConfiguration.getRandomlyInvertedTimer();
         int seconds = Calendar.getInstance().get(Calendar.SECOND);
 
         /*

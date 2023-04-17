@@ -13,6 +13,7 @@ public class ParkourConfiguration extends MiniGameConfiguration {
 
     private final static String rootNode = "parkour.";
 
+    private boolean enforceCheckpointOrder;
     private boolean mustDoGroupedInSequence;
     private boolean ignoreRecordsUntilGroupBeatenOnce;
     private boolean makePlayersInvisible;
@@ -25,6 +26,15 @@ public class ParkourConfiguration extends MiniGameConfiguration {
      */
     public ParkourConfiguration(FileConfiguration configuration) {
         super(configuration);
+    }
+
+    /**
+     * Gets whether all checkpoints must be triggered in the order they are set when configuring the parkour arena
+     *
+     * @return <p>Whether checkpoints must be triggered in order</p>
+     */
+    public boolean enforceCheckpointOrder() {
+        return this.enforceCheckpointOrder;
     }
 
     /**
@@ -65,6 +75,7 @@ public class ParkourConfiguration extends MiniGameConfiguration {
 
     @Override
     protected void load() {
+        this.enforceCheckpointOrder = configuration.getBoolean(rootNode + "enforceCheckpointOrder", false);
         this.mustDoGroupedInSequence = configuration.getBoolean(rootNode + "mustDoGroupedInSequence", true);
         this.ignoreRecordsUntilGroupBeatenOnce = configuration.getBoolean(rootNode + "ignoreRecordsUntilGroupBeatenOnce", false);
         this.makePlayersInvisible = configuration.getBoolean(rootNode + "makePlayersInvisible", false);

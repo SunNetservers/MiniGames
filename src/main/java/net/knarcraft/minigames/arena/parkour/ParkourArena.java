@@ -393,6 +393,10 @@ public class ParkourArena implements Arena {
      * @return <p>True if successfully cleared</p>
      */
     public boolean clearCheckpoints() {
+        if (checkpoints.isEmpty()) {
+            return false;
+        }
+        
         this.checkpoints.clear();
         this.parkourArenaHandler.saveArenas();
         return true;
