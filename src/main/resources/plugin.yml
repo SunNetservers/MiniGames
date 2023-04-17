@@ -1,17 +1,31 @@
-name: Dropper
+name: MiniGames
 version: '${project.version}'
-main: net.knarcraft.dropper.Dropper
+main: net.knarcraft.minigames.MiniGames
 api-version: 1.19
-description: A plugin for dropper mini-games
+description: A plugin that adds various mini-games
 softdepend:
   - PlaceholderAPI
 
 # Note to self: Aliases must be lowercase!
 commands:
+  miniGamesReload:
+    aliases:
+      - mreload
+    permission: minigames.admin
+    usage: /<command>
+    description: Reloads all data from disk
+  miniGamesLeave:
+    aliases:
+      - mleave
+      - dleave
+      - pleave
+    permission: minigames.join
+    usage: /<command>
+    description: Used to leave the current dropper arena
   dropperGroupSet:
     aliases:
       - dgset
-    permission: dropper.edit
+    permission: minigames.edit
     usage: |
       /<command> <arena> <group>
       - The group will be created if it doesn't already exist
@@ -20,7 +34,7 @@ commands:
   dropperGroupSwap:
     aliases:
       - dgswap
-    permission: dropper.edit
+    permission: minigames.edit
     usage: |
       /<command> <arena1> <arena2>
       - The two arenas must be in the same group
@@ -28,44 +42,32 @@ commands:
   dropperGroupList:
     aliases:
       - dglist
-    permission: dropper.edit
+    permission: minigames.edit
     usage: |
       /<command> [group]
       - Existing groups will be listed if used without an argument
       - Supplying a group shows the group's arenas
     description: Lists existing groups and their arenas
-  dropperReload:
-    aliases:
-      - dreload
-    permission: dropper.admin
-    usage: /<command>
-    description: Reloads all data from disk
   dropperList:
     aliases:
       - dlist
-    permission: dropper.join
+    permission: minigames.join
     usage: /<command>
     description: Used to list all current dropper arenas
   dropperJoin:
     aliases:
       - djoin
-    permission: dropper.join
+    permission: minigames.join
     usage: |
       /<command> <arena> [mode]
       - Mode can be used to select challenge modes which can be played after beating the arena.
       - inverted = A game-mode where the WASD buttons are inverted
       - random = A game-mode where the WASD buttons toggle between being inverted and not
     description: Used to join a dropper arena
-  dropperLeave:
-    aliases:
-      - dleave
-    permission: dropper.join
-    usage: /<command>
-    description: Used to leave the current dropper arena
   dropperCreate:
     aliases:
       - dcreate
-    permission: dropper.create
+    permission: minigames.create
     usage: |
       /<command> <arena> <property> [new value]
       - Valid properties: name, spawnLocation, exitLocation, verticalVelocity, horizontalVelocity, winBlockType
@@ -73,38 +75,149 @@ commands:
   dropperEdit:
     aliases:
       - dedit
-    permission: dropper.edit
+    permission: minigames.edit
     usage: /<command> (Details not finalized)
     description: Used to edit an existing dropper arena
   dropperRemove:
     aliases:
       - dremove
-    permission: dropper.remove
+    permission: minigames.remove
     usage: /<command> <arena>
     description: Used to remove an existing dropper arena
+  parkourGroupSet:
+    aliases:
+      - pgset
+    permission: minigames.edit.parkour
+    usage: |
+      /<command> <arena> <group>
+      - The group will be created if it doesn't already exist
+      - Use "none" or "null" as the group to release the arena from its group
+    description: Sets the group of the given arena
+  parkourGroupSwap:
+    aliases:
+      - pgswap
+    permission: minigames.edit
+    usage: |
+      /<command> <arena1> <arena2>
+      - The two arenas must be in the same group
+    description: Swaps the order of two arenas in the same group
+  parkourGroupList:
+    aliases:
+      - pglist
+    permission: minigames.edit
+    usage: |
+      /<command> [group]
+      - Existing groups will be listed if used without an argument
+      - Supplying a group shows the group's arenas
+    description: Lists existing groups and their arenas
+  parkourList:
+    aliases:
+      - plist
+    permission: minigames.join
+    usage: /<command>
+    description: Used to list all current parkour arenas
+  parkourJoin:
+    aliases:
+      - pjoin
+    permission: minigames.join
+    usage: |
+      /<command> <arena>
+    description: Used to join a parkour arena
+  parkourCreate:
+    aliases:
+      - pcreate
+    permission: minigames.create
+    usage: |
+      /<command> <arena> <property> [new value]
+      - Valid properties: name, spawnLocation, exitLocation, winBlockType, winLocation, checkpointAdd, checkpointClear, killPlaneBlocks
+    description: Used to create a new parkour arena
+  parkourEdit:
+    aliases:
+      - pedit
+    permission: minigames.edit
+    usage: /<command> (Details not finalized)
+    description: Used to edit an existing parkour arena
+  parkourRemove:
+    aliases:
+      - dremove
+    permission: minigames.remove
+    usage: /<command> <arena>
+    description: Used to remove an existing parkour arena
 permissions:
-  dropper.*:
+  minigames.*:
     description: Gives all permissions
     default: false
     children:
-      - dropper.admin
-  dropper.admin:
+      - minigames.admin
+  minigames.admin:
     description: Gives all permissions
     default: op
     children:
-      - dropper.join
-      - dropper.create
-      - dropper.edit
-      - dropper.remove
-  dropper.join:
-    description: Allows a player to participate in dropper arenas
+      - minigames.join
+      - minigames.create
+      - minigames.edit
+      - minigames.remove
+  minigames.dropper:
+    description: Gives all dropper-related permissions
+    default: false
+    children:
+      - minigames.join.dropper
+      - minigames.create.dropper
+      - minigames.edit.dropper
+      - minigames.remove.dropper
+  minigames.parkour:
+    description: Gives all parkour-related permissions
+    default: false
+    children:
+      - minigames.join.parkour
+      - minigames.create.parkour
+      - minigames.edit.parkour
+      - minigames.remove.parkour
+  minigames.join:
+    description: Allows a player to participate in mini-games arenas
     default: true
-  dropper.create:
+    children:
+      - minigames.join.dropper
+      - minigames.join.parkour
+  minigames.join.dropper:
+    description: Allows a player to participate in dropper arenas
+    default: false
+  minigames.join.parkour:
+    description: Allows a player to participate in parkour arenas
+    default: false
+  minigames.create:
+    description: Allows a player to create a new mini-games arena
+    default: false
+    children:
+      - minigames.create.dropper
+      - minigames.create.parkour
+  minigames.create.dropper:
     description: Allows a player to create a new dropper arena
     default: false
-  dropper.edit:
+  minigames.create.parkour:
+    description: Allows a player to create a new parkour arena
+    default: false
+  minigames.edit:
+    description: Allows a player to edit an existing mini-games arena
+    default: false
+    children:
+      - minigames.edit.dropper
+      - minigames.edit.parkour
+  minigames.edit.dropper:
     description: Allows a player to edit an existing dropper arena
     default: false
-  dropper.remove:
+  minigames.edit.parkour:
+    description: Allows a player to edit an existing parkour arena
+    default: false
+  minigames.remove:
+    description: Allows a player to remove a mini-games arena
+    default: false
+    children:
+      - minigames.remove.dropper
+      - minigames.remove.parkour
+  minigames.remove.dropper:
     description: Allows a player to remove a dropper arena
+    default: false
+  minigames.remove.parkour:
+    description: Allows a player to remove a parkour arena
     default: false
