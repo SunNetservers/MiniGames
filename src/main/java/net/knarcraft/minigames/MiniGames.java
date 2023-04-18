@@ -280,10 +280,10 @@ public final class MiniGames extends JavaPlugin {
     public void onDisable() {
         // Kill all sessions before exiting
         for (DropperArena arena : dropperArenaHandler.getArenas().values()) {
-            dropperArenaPlayerRegistry.removeForArena(arena);
+            dropperArenaPlayerRegistry.removeForArena(arena, true);
         }
         for (ParkourArena arena : parkourArenaHandler.getArenas().values()) {
-            parkourArenaPlayerRegistry.removeForArena(arena);
+            parkourArenaPlayerRegistry.removeForArena(arena, true);
         }
     }
 

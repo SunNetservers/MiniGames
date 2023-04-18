@@ -5,6 +5,7 @@ import net.knarcraft.minigames.arena.ArenaRecordsRegistry;
 import net.knarcraft.minigames.arena.ArenaSession;
 import net.knarcraft.minigames.arena.PlayerEntryState;
 import net.knarcraft.minigames.config.DropperConfiguration;
+import net.knarcraft.minigames.config.Message;
 import net.knarcraft.minigames.property.RecordResult;
 import net.knarcraft.minigames.util.PlayerTeleporter;
 import org.bukkit.Location;
@@ -84,9 +85,9 @@ public class DropperArenaSession implements ArenaSession {
 
         // Mark the arena as cleared
         if (this.arena.getData().setCompleted(this.gameMode, this.player)) {
-            this.player.sendMessage("You cleared the arena!");
+            this.player.sendMessage(Message.SUCCESS_ARENA_FIRST_CLEAR.getMessage());
         }
-        this.player.sendMessage("You won!");
+        this.player.sendMessage(Message.SUCCESS_ARENA_WIN.getMessage());
 
         // Teleport the player out of the arena
         teleportToExit(false);
@@ -178,7 +179,7 @@ public class DropperArenaSession implements ArenaSession {
         // Teleport the player out of the arena
         teleportToExit(immediately);
 
-        player.sendMessage("You quit the arena!");
+        player.sendMessage(Message.SUCCESS_ARENA_QUIT.getMessage());
     }
 
     /**

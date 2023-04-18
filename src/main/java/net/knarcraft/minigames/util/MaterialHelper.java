@@ -1,6 +1,7 @@
 package net.knarcraft.minigames.util;
 
 import net.knarcraft.minigames.MiniGames;
+import net.knarcraft.minigames.config.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -43,7 +44,7 @@ public final class MaterialHelper {
             if (matched != null) {
                 parsedMaterials.add(matched);
             } else {
-                MiniGames.log(Level.WARNING, "Unable to parse: " + string);
+                MiniGames.log(Level.WARNING, Message.ERROR_MATERIAL_NOT_PARSE_ABLE.getMessage("{material}", string));
             }
         }
         return parsedMaterials;

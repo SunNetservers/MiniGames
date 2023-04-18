@@ -6,6 +6,7 @@ import net.knarcraft.minigames.arena.parkour.ParkourArenaGameMode;
 import net.knarcraft.minigames.arena.parkour.ParkourArenaGroup;
 import net.knarcraft.minigames.arena.parkour.ParkourArenaPlayerRegistry;
 import net.knarcraft.minigames.arena.parkour.ParkourArenaSession;
+import net.knarcraft.minigames.config.Message;
 import net.knarcraft.minigames.config.ParkourConfiguration;
 import net.knarcraft.minigames.util.PlayerTeleporter;
 import org.bukkit.command.Command;
@@ -23,7 +24,7 @@ public class JoinParkourArenaCommand implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s,
                              @NotNull String[] arguments) {
         if (!(commandSender instanceof Player player)) {
-            commandSender.sendMessage("This command must be used by a player");
+            commandSender.sendMessage(Message.ERROR_PLAYER_ONLY.getMessage());
             return false;
         }
 
@@ -33,20 +34,20 @@ public class JoinParkourArenaCommand implements CommandExecutor {
 
         // Disallow joining if the player is already in a mini-game arena
         if (MiniGames.getInstance().getSession(player.getUniqueId()) != null) {
-            commandSender.sendMessage("You are already playing a mini-game!");
+            commandSender.sendMessage(Message.ERROR_ALREADY_PLAYING.getMessage());
             return false;
         }
 
         // Make sure the arena exists
         ParkourArena specifiedArena = MiniGames.getInstance().getParkourArenaHandler().getArena(arguments[0]);
         if (specifiedArena == null) {
-            commandSender.sendMessage("Unable to find the specified parkour arena.");
+            commandSender.sendMessage(Message.ERROR_ARENA_NOT_FOUND.getMessage());
             return false;
         }
 
         // Deny vehicles as allowing this is tricky, and will cause problems in some cases
         if (player.isInsideVehicle() || !player.getPassengers().isEmpty()) {
-            commandSender.sendMessage("You cannot join an arena while inside a vehicle or carrying a passenger.");
+            commandSender.sendMessage(Message.ERROR_JOIN_IN_VEHICLE_OR_PASSENGER.getMessage());
             return false;
         }
 
@@ -84,8 +85,7 @@ public class JoinParkourArenaCommand implements CommandExecutor {
         // Try to teleport the player to the arena
         boolean teleported = PlayerTeleporter.teleportPlayer(player, specifiedArena.getSpawnLocation(), false, false);
         if (!teleported) {
-            player.sendMessage("Unable to teleport you to the parkour arena. Make sure you're not in a vehicle," +
-                    "and not carrying a passenger!");
+            player.sendMessage(Message.ERROR_ARENA_TELEPORT_FAILED.getMessage());
             newSession.triggerQuit(false);
             return false;
         } else {
@@ -111,7 +111,7 @@ public class JoinParkourArenaCommand implements CommandExecutor {
         // Require that the player has beaten the previous arena on the same game-mode before trying this one
         if (configuration.mustDoGroupedInSequence() &&
                 arenaGroup.cannotPlay(arenaGameMode, player, parkourArena.getArenaId())) {
-            player.sendMessage("You have not yet beaten the previous arena!");
+            player.sendMessage(Message.ERROR_PREVIOUS_ARENA_REQUIRED.getMessage());
             return false;
         }
 

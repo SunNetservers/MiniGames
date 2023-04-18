@@ -1,5 +1,6 @@
 package net.knarcraft.minigames.command.parkour;
 
+import net.knarcraft.minigames.config.Message;
 import net.knarcraft.minigames.util.TabCompleteHelper;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -18,10 +19,11 @@ public class ListParkourArenaCommand implements TabExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label,
                              @NotNull String[] arguments) {
-        sender.sendMessage("Parkour arenas:");
+        StringBuilder builder = new StringBuilder(Message.SUCCESS_PARKOUR_ARENAS_LIST.getMessage());
         for (String arenaName : TabCompleteHelper.getParkourArenas()) {
-            sender.sendMessage(arenaName);
+            builder.append("\n").append(arenaName);
         }
+        sender.sendMessage(builder.toString());
         return true;
     }
 

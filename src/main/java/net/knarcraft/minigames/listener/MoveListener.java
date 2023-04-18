@@ -8,6 +8,7 @@ import net.knarcraft.minigames.arena.dropper.DropperArenaSession;
 import net.knarcraft.minigames.arena.parkour.ParkourArena;
 import net.knarcraft.minigames.arena.parkour.ParkourArenaSession;
 import net.knarcraft.minigames.config.DropperConfiguration;
+import net.knarcraft.minigames.config.Message;
 import net.knarcraft.minigames.config.ParkourConfiguration;
 import net.knarcraft.minigames.config.SharedConfiguration;
 import org.bukkit.Location;
@@ -80,19 +81,30 @@ public class MoveListener implements Listener {
         List<Location> checkpoints = arena.getCheckpoints();
         for (Location checkpoint : checkpoints) {
             Location previousCheckpoint = arenaSession.getRegisteredCheckpoint();
-            if (checkpoint.getBlock().equals(event.getTo().getBlock()) && !checkpoint.equals(previousCheckpoint)) {
-                if (parkourConfiguration.enforceCheckpointOrder()) {
-                    int checkpointIndex = checkpoints.indexOf(checkpoint);
-                    int previousIndex = previousCheckpoint == null ? -1 : checkpoints.indexOf(previousCheckpoint);
-                    if (checkpointIndex - previousIndex != 1) {
-                        continue;
-                    }
-                }
 
-                arenaSession.registerCheckpoint(checkpoint.clone());
-                event.getPlayer().sendMessage("Checkpoint reached!");
+            // Skip if checkpoint has not been reached
+            if (!checkpoint.getBlock().equals(event.getTo().getBlock())) {
+                continue;
+            }
+
+            // If the checkpoint is the same as the previously reached one, abort
+            if (previousCheckpoint != null && checkpoint.getBlock().equals(previousCheckpoint.getBlock())) {
                 return;
             }
+
+            // If not the correct checkpoint according to the enforced order, abort
+            if (parkourConfiguration.enforceCheckpointOrder()) {
+                int checkpointIndex = checkpoints.indexOf(checkpoint);
+                int previousIndex = previousCheckpoint == null ? -1 : checkpoints.indexOf(previousCheckpoint);
+                if (checkpointIndex - previousIndex != 1) {
+                    return;
+                }
+            }
+
+            // Register the checkpoint
+            arenaSession.registerCheckpoint(checkpoint.clone());
+            event.getPlayer().sendMessage(Message.SUCCESS_CHECKPOINT_REACHED.getMessage());
+            return;
         }
     }
 

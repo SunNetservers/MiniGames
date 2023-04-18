@@ -2,6 +2,7 @@ package net.knarcraft.minigames.command;
 
 import net.knarcraft.minigames.MiniGames;
 import net.knarcraft.minigames.arena.ArenaSession;
+import net.knarcraft.minigames.config.Message;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -21,13 +22,13 @@ public class LeaveArenaCommand implements TabExecutor {
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s,
                              @NotNull String[] strings) {
         if (!(commandSender instanceof Player player)) {
-            commandSender.sendMessage("This command must be used by a player");
+            commandSender.sendMessage(Message.ERROR_PLAYER_ONLY.getMessage());
             return false;
         }
 
         ArenaSession existingSession = MiniGames.getInstance().getSession(player.getUniqueId());
         if (existingSession == null) {
-            commandSender.sendMessage("You are not in a mini-games arena!");
+            commandSender.sendMessage(Message.ERROR_NOT_IN_ARENA.getMessage());
             return false;
         }
 

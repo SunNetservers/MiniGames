@@ -4,6 +4,7 @@ import net.knarcraft.minigames.MiniGames;
 import net.knarcraft.minigames.arena.dropper.DropperArena;
 import net.knarcraft.minigames.arena.dropper.DropperArenaGroup;
 import net.knarcraft.minigames.arena.dropper.DropperArenaHandler;
+import net.knarcraft.minigames.config.Message;
 import net.knarcraft.minigames.util.StringSanitizer;
 import net.knarcraft.minigames.util.TabCompleteHelper;
 import org.bukkit.command.Command;
@@ -33,7 +34,7 @@ public class DropperGroupSetCommand implements TabExecutor {
 
         DropperArena specifiedArena = arenaHandler.getArena(arguments[0]);
         if (specifiedArena == null) {
-            commandSender.sendMessage("Unable to find the specified dropper arena.");
+            commandSender.sendMessage(Message.ERROR_ARENA_NOT_FOUND.getMessage());
             return false;
         }
 
@@ -55,7 +56,7 @@ public class DropperGroupSetCommand implements TabExecutor {
 
         arenaHandler.setGroup(specifiedArena.getArenaId(), arenaGroup);
 
-        commandSender.sendMessage("The arena's group has been updated");
+        commandSender.sendMessage(Message.SUCCESS_ARENA_GROUP_UPDATED.getMessage());
         return true;
     }
 

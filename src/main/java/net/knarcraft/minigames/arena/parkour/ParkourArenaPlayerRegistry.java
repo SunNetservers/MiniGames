@@ -44,16 +44,12 @@ public class ParkourArenaPlayerRegistry implements ArenaPlayerRegistry<ParkourAr
         return this.arenaPlayers.getOrDefault(playerId, null);
     }
 
-    /**
-     * Removes all active sessions for the given arena
-     *
-     * @param arena <p>The arena to remove sessions for</p>
-     */
-    public void removeForArena(ParkourArena arena) {
+    @Override
+    public void removeForArena(ParkourArena arena, boolean immediately) {
         for (Map.Entry<UUID, ParkourArenaSession> entry : this.arenaPlayers.entrySet()) {
             if (entry.getValue().getArena() == arena) {
                 // Kick the player gracefully
-                entry.getValue().triggerQuit(false);
+                entry.getValue().triggerQuit(immediately);
                 this.arenaPlayers.remove(entry.getKey());
             }
         }

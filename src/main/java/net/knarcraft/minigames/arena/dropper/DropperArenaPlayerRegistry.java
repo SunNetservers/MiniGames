@@ -44,16 +44,12 @@ public class DropperArenaPlayerRegistry implements ArenaPlayerRegistry<DropperAr
         return this.arenaPlayers.getOrDefault(playerId, null);
     }
 
-    /**
-     * Removes all active sessions for the given arena
-     *
-     * @param arena <p>The arena to remove sessions for</p>
-     */
-    public void removeForArena(DropperArena arena) {
+    @Override
+    public void removeForArena(DropperArena arena, boolean immediately) {
         for (Map.Entry<UUID, DropperArenaSession> entry : this.arenaPlayers.entrySet()) {
             if (entry.getValue().getArena() == arena) {
                 // Kick the player gracefully
-                entry.getValue().triggerQuit(false);
+                entry.getValue().triggerQuit(immediately);
                 this.arenaPlayers.remove(entry.getKey());
             }
         }

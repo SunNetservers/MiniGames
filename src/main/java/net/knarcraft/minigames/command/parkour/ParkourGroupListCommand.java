@@ -4,6 +4,7 @@ import net.knarcraft.minigames.MiniGames;
 import net.knarcraft.minigames.arena.parkour.ParkourArena;
 import net.knarcraft.minigames.arena.parkour.ParkourArenaGroup;
 import net.knarcraft.minigames.arena.parkour.ParkourArenaHandler;
+import net.knarcraft.minigames.config.Message;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -61,17 +62,17 @@ public class ParkourGroupListCommand implements TabExecutor {
                                              @NotNull String groupName) {
         ParkourArenaGroup arenaGroup = arenaHandler.getGroup(groupName);
         if (arenaGroup == null) {
-            sender.sendMessage("Unable to find the specified group!");
+            sender.sendMessage(Message.ERROR_GROUP_NOT_FOUND.getMessage());
             return false;
         }
 
         // Send a list of all stages (arenas in the group)
-        StringBuilder builder = new StringBuilder(groupName).append("'s stages:").append("\n");
+        StringBuilder builder = new StringBuilder(Message.SUCCESS_GROUP_STAGES.getMessage("{group}", groupName));
         int counter = 1;
         for (UUID arenaId : arenaGroup.getArenas()) {
             ParkourArena arena = arenaHandler.getArena(arenaId);
             if (arena != null) {
-                builder.append(counter++).append(". ").append(arena.getArenaName()).append("\n");
+                builder.append("\n").append(counter++).append(". ").append(arena.getArenaName());
             }
         }
         sender.sendMessage(builder.toString());

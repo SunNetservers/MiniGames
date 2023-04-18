@@ -2,6 +2,7 @@ package net.knarcraft.minigames.arena.dropper;
 
 import net.knarcraft.minigames.MiniGames;
 import net.knarcraft.minigames.arena.ArenaHandler;
+import net.knarcraft.minigames.config.Message;
 import net.knarcraft.minigames.util.DropperArenaStorageHelper;
 
 import java.io.IOException;
@@ -31,8 +32,7 @@ public class DropperArenaHandler extends ArenaHandler<DropperArena, DropperArena
         try {
             DropperArenaStorageHelper.saveDropperArenaGroups(new HashSet<>(this.arenaGroups.values()));
         } catch (IOException e) {
-            MiniGames.log(Level.SEVERE, "Unable to save current arena groups! " +
-                    "Data loss can occur!");
+            MiniGames.log(Level.SEVERE, Message.ERROR_CANNOT_SAVE_ARENA_GROUPS.getMessage());
             MiniGames.log(Level.SEVERE, e.getMessage());
         }
     }

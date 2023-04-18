@@ -4,6 +4,8 @@ import net.knarcraft.minigames.MiniGames;
 import net.knarcraft.minigames.arena.dropper.DropperArena;
 import net.knarcraft.minigames.arena.dropper.DropperArenaEditableProperty;
 import net.knarcraft.minigames.config.DropperConfiguration;
+import net.knarcraft.minigames.config.Message;
+import net.knarcraft.minigames.container.PlaceholderContainer;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -32,7 +34,7 @@ public class EditDropperArenaCommand implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s,
                              @NotNull String[] arguments) {
         if (!(commandSender instanceof Player player)) {
-            commandSender.sendMessage("This command must be used by a player");
+            commandSender.sendMessage(Message.ERROR_PLAYER_ONLY.getMessage());
             return false;
         }
 
@@ -42,29 +44,29 @@ public class EditDropperArenaCommand implements CommandExecutor {
 
         DropperArena specifiedArena = MiniGames.getInstance().getDropperArenaHandler().getArena(arguments[0]);
         if (specifiedArena == null) {
-            commandSender.sendMessage("Unable to find the specified dropper arena.");
+            commandSender.sendMessage(Message.ERROR_ARENA_NOT_FOUND.getMessage());
             return false;
         }
 
         DropperArenaEditableProperty editableProperty = DropperArenaEditableProperty.getFromArgumentString(arguments[1]);
         if (editableProperty == null) {
-            commandSender.sendMessage("Unknown property specified.");
+            commandSender.sendMessage(Message.ERROR_UNKNOWN_PROPERTY.getMessage());
             return false;
         }
-
-        String currentValueFormat = "Current value of %s is: %s";
 
         if (arguments.length < 3) {
             // Print the current value of the property
             String value = editableProperty.getCurrentValueAsString(specifiedArena);
-            commandSender.sendMessage(String.format(currentValueFormat, editableProperty.getArgumentString(), value));
+            commandSender.sendMessage(Message.SUCCESS_CURRENT_VALUE.getMessage(new PlaceholderContainer().add(
+                    "{property}", editableProperty.getArgumentString()).add("{value}", value)));
             return true;
         } else {
             boolean successful = changeValue(specifiedArena, editableProperty, arguments[2], player);
             if (successful) {
-                player.sendMessage(String.format("Property %s changed to: %s", editableProperty, arguments[2]));
+                player.sendMessage(Message.SUCCESS_PROPERTY_CHANGED.getMessage("{property}",
+                        editableProperty.getArgumentString()));
             } else {
-                player.sendMessage("Unable to change the property. Make sure your input is valid!");
+                player.sendMessage(Message.ERROR_PROPERTY_INPUT_INVALID.getMessage());
             }
             return successful;
         }
