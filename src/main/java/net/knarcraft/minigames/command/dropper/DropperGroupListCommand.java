@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static net.knarcraft.minigames.util.TabCompleteHelper.filterMatchingContains;
+
 /**
  * The command for listing groups and the stages within
  */
@@ -84,7 +86,7 @@ public class DropperGroupListCommand implements TabExecutor {
             for (DropperArenaGroup group : MiniGames.getInstance().getDropperArenaHandler().getAllGroups()) {
                 groupNames.add(group.getGroupName());
             }
-            return groupNames;
+            return filterMatchingContains(groupNames, arguments[0]);
         } else {
             return new ArrayList<>();
         }

@@ -15,6 +15,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+import static net.knarcraft.minigames.util.TabCompleteHelper.filterMatchingContains;
+
 /**
  * The command for setting the group of an arena
  */
@@ -62,7 +64,7 @@ public class ParkourGroupSetCommand implements TabExecutor {
     public List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s,
                                       @NotNull String[] arguments) {
         if (arguments.length == 1) {
-            return TabCompleteHelper.getParkourArenas();
+            return filterMatchingContains(TabCompleteHelper.getParkourArenas(), arguments[0]);
         } else if (arguments.length == 2) {
             List<String> possibleValues = new ArrayList<>();
             possibleValues.add("none");
@@ -70,7 +72,7 @@ public class ParkourGroupSetCommand implements TabExecutor {
             for (ParkourArenaGroup group : MiniGames.getInstance().getParkourArenaHandler().getAllGroups()) {
                 possibleValues.add(group.getGroupName());
             }
-            return possibleValues;
+            return filterMatchingContains(possibleValues, arguments[1]);
         } else {
             return new ArrayList<>();
         }

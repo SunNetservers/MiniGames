@@ -10,6 +10,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+import static net.knarcraft.minigames.util.TabCompleteHelper.filterMatchingContains;
+
 /**
  * The tab-completer for the remove arena command
  */
@@ -20,7 +22,7 @@ public class RemoveParkourArenaTabCompleter implements TabCompleter {
     public List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s,
                                       @NotNull String[] arguments) {
         if (arguments.length == 1) {
-            return TabCompleteHelper.getParkourArenas();
+            return filterMatchingContains(TabCompleteHelper.getParkourArenas(), arguments[0]);
         } else {
             return new ArrayList<>();
         }

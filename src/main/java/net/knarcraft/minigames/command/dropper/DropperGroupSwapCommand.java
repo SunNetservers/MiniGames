@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static net.knarcraft.minigames.util.TabCompleteHelper.filterMatchingContains;
+
 /**
  * The command for swapping the order of two arenas in a group
  */
@@ -63,9 +65,9 @@ public class DropperGroupSwapCommand implements TabExecutor {
             for (DropperArena dropperArena : arenaHandler.getArenasInAGroup()) {
                 arenaNames.add(dropperArena.getArenaName());
             }
-            return arenaNames;
+            return filterMatchingContains(arenaNames, arguments[0]);
         } else if (arguments.length == 2) {
-            return getArenaNamesInSameGroup(arguments[0]);
+            return filterMatchingContains(getArenaNamesInSameGroup(arguments[0]), arguments[1]);
         } else {
             return new ArrayList<>();
         }

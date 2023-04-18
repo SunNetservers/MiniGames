@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import static net.knarcraft.minigames.util.TabCompleteHelper.filterMatchingContains;
+
 /**
  * The command for listing groups and the stages within
  */
@@ -86,7 +88,7 @@ public class ParkourGroupListCommand implements TabExecutor {
             for (ParkourArenaGroup group : arenaGroups) {
                 groupNames.add(group.getGroupName());
             }
-            return groupNames;
+            return filterMatchingContains(groupNames, arguments[0]);
         } else {
             return new ArrayList<>();
         }
