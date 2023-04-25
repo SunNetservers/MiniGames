@@ -1,5 +1,6 @@
 package net.knarcraft.minigames;
 
+import net.knarcraft.minigames.arena.ArenaPlayerRegistry;
 import net.knarcraft.minigames.arena.ArenaSession;
 import net.knarcraft.minigames.arena.dropper.DropperArena;
 import net.knarcraft.minigames.arena.dropper.DropperArenaData;
@@ -8,7 +9,6 @@ import net.knarcraft.minigames.arena.dropper.DropperArenaGroup;
 import net.knarcraft.minigames.arena.dropper.DropperArenaHandler;
 import net.knarcraft.minigames.arena.dropper.DropperArenaPlayerRegistry;
 import net.knarcraft.minigames.arena.dropper.DropperArenaRecordsRegistry;
-import net.knarcraft.minigames.arena.dropper.DropperArenaSession;
 import net.knarcraft.minigames.arena.parkour.ParkourArena;
 import net.knarcraft.minigames.arena.parkour.ParkourArenaData;
 import net.knarcraft.minigames.arena.parkour.ParkourArenaGameMode;
@@ -77,11 +77,11 @@ public final class MiniGames extends JavaPlugin {
     private DropperConfiguration dropperConfiguration;
     private ParkourConfiguration parkourConfiguration;
     private DropperArenaHandler dropperArenaHandler;
-    private DropperArenaPlayerRegistry dropperArenaPlayerRegistry;
+    private ArenaPlayerRegistry<DropperArena> dropperArenaPlayerRegistry;
     private DropperRecordExpansion dropperRecordExpansion;
     private ParkourRecordExpansion parkourRecordExpansion;
     private ParkourArenaHandler parkourArenaHandler;
-    private ParkourArenaPlayerRegistry parkourArenaPlayerRegistry;
+    private ArenaPlayerRegistry<ParkourArena> parkourArenaPlayerRegistry;
 
     /**
      * Gets an instance of this plugin
@@ -115,7 +115,7 @@ public final class MiniGames extends JavaPlugin {
      *
      * @return <p>A dropper arena player registry</p>
      */
-    public DropperArenaPlayerRegistry getDropperArenaPlayerRegistry() {
+    public ArenaPlayerRegistry<DropperArena> getDropperArenaPlayerRegistry() {
         return this.dropperArenaPlayerRegistry;
     }
 
@@ -124,7 +124,7 @@ public final class MiniGames extends JavaPlugin {
      *
      * @return <p>A parkour arena player registry</p>
      */
-    public ParkourArenaPlayerRegistry getParkourArenaPlayerRegistry() {
+    public ArenaPlayerRegistry<ParkourArena> getParkourArenaPlayerRegistry() {
         return this.parkourArenaPlayerRegistry;
     }
 
@@ -164,7 +164,7 @@ public final class MiniGames extends JavaPlugin {
      * @return <p>The player's current session, or null if not found</p>
      */
     public @Nullable ArenaSession getSession(@NotNull UUID playerId) {
-        DropperArenaSession dropperArenaSession = dropperArenaPlayerRegistry.getArenaSession(playerId);
+        ArenaSession dropperArenaSession = dropperArenaPlayerRegistry.getArenaSession(playerId);
         if (dropperArenaSession != null) {
             return dropperArenaSession;
         }

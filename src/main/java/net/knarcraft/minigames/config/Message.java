@@ -50,6 +50,9 @@ public enum Message {
     SUCCESS_PARKOUR_ARENAS_LIST("&aParkour arenas:&r"),
     SUCCESS_CHECKPOINT_REACHED("&aCheckpoint reached!"),
     SUCCESS_GROUP_STAGES("&a{group}'s stages:&r"),
+    SUCCESS_RECORD_ACHIEVED("&aYou just set a {recordInfo} on the {gameMode} game-mode!"),
+    RECORD_ACHIEVED_GLOBAL("new {recordType} record"),
+    RECORD_ACHIEVED_PERSONAL("personal {recordType} record"),
     ;
 
     private final @NotNull String defaultMessage;

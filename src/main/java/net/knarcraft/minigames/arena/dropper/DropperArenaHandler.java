@@ -2,6 +2,7 @@ package net.knarcraft.minigames.arena.dropper;
 
 import net.knarcraft.minigames.MiniGames;
 import net.knarcraft.minigames.arena.ArenaHandler;
+import net.knarcraft.minigames.arena.ArenaPlayerRegistry;
 import net.knarcraft.minigames.config.Message;
 import net.knarcraft.minigames.util.DropperArenaStorageHelper;
 
@@ -23,7 +24,7 @@ public class DropperArenaHandler extends ArenaHandler<DropperArena, DropperArena
      *
      * @param playerRegistry <p>The registry keeping track of player sessions</p>
      */
-    public DropperArenaHandler(DropperArenaPlayerRegistry playerRegistry) {
+    public DropperArenaHandler(ArenaPlayerRegistry<DropperArena> playerRegistry) {
         super(playerRegistry);
     }
 

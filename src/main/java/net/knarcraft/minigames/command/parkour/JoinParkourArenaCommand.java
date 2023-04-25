@@ -1,10 +1,10 @@
 package net.knarcraft.minigames.command.parkour;
 
 import net.knarcraft.minigames.MiniGames;
+import net.knarcraft.minigames.arena.ArenaPlayerRegistry;
 import net.knarcraft.minigames.arena.parkour.ParkourArena;
 import net.knarcraft.minigames.arena.parkour.ParkourArenaGameMode;
 import net.knarcraft.minigames.arena.parkour.ParkourArenaGroup;
-import net.knarcraft.minigames.arena.parkour.ParkourArenaPlayerRegistry;
 import net.knarcraft.minigames.arena.parkour.ParkourArenaSession;
 import net.knarcraft.minigames.config.Message;
 import net.knarcraft.minigames.config.ParkourConfiguration;
@@ -79,7 +79,7 @@ public class JoinParkourArenaCommand implements CommandExecutor {
 
         // Register the player's session
         ParkourArenaSession newSession = new ParkourArenaSession(specifiedArena, player, gameMode);
-        ParkourArenaPlayerRegistry playerRegistry = MiniGames.getInstance().getParkourArenaPlayerRegistry();
+        ArenaPlayerRegistry<ParkourArena> playerRegistry = MiniGames.getInstance().getParkourArenaPlayerRegistry();
         playerRegistry.registerPlayer(player.getUniqueId(), newSession);
 
         // Try to teleport the player to the arena

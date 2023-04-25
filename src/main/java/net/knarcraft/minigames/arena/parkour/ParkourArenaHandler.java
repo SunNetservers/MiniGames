@@ -2,6 +2,7 @@ package net.knarcraft.minigames.arena.parkour;
 
 import net.knarcraft.minigames.MiniGames;
 import net.knarcraft.minigames.arena.ArenaHandler;
+import net.knarcraft.minigames.arena.ArenaPlayerRegistry;
 import net.knarcraft.minigames.config.Message;
 import net.knarcraft.minigames.util.ParkourArenaStorageHelper;
 
@@ -23,7 +24,7 @@ public class ParkourArenaHandler extends ArenaHandler<ParkourArena, ParkourArena
      *
      * @param playerRegistry <p>The registry keeping track of player sessions</p>
      */
-    public ParkourArenaHandler(ParkourArenaPlayerRegistry playerRegistry) {
+    public ParkourArenaHandler(ArenaPlayerRegistry<ParkourArena> playerRegistry) {
         super(playerRegistry);
     }
 

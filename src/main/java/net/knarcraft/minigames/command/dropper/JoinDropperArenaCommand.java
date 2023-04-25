@@ -1,10 +1,10 @@
 package net.knarcraft.minigames.command.dropper;
 
 import net.knarcraft.minigames.MiniGames;
+import net.knarcraft.minigames.arena.ArenaPlayerRegistry;
 import net.knarcraft.minigames.arena.dropper.DropperArena;
 import net.knarcraft.minigames.arena.dropper.DropperArenaGameMode;
 import net.knarcraft.minigames.arena.dropper.DropperArenaGroup;
-import net.knarcraft.minigames.arena.dropper.DropperArenaPlayerRegistry;
 import net.knarcraft.minigames.arena.dropper.DropperArenaSession;
 import net.knarcraft.minigames.config.DropperConfiguration;
 import net.knarcraft.minigames.config.Message;
@@ -87,7 +87,7 @@ public class JoinDropperArenaCommand implements CommandExecutor {
 
         // Register the player's session
         DropperArenaSession newSession = new DropperArenaSession(specifiedArena, player, gameMode);
-        DropperArenaPlayerRegistry playerRegistry = MiniGames.getInstance().getDropperArenaPlayerRegistry();
+        ArenaPlayerRegistry<DropperArena> playerRegistry = MiniGames.getInstance().getDropperArenaPlayerRegistry();
         playerRegistry.registerPlayer(player.getUniqueId(), newSession);
 
         // Try to teleport the player to the arena
