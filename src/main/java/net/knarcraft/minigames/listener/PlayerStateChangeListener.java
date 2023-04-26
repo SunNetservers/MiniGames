@@ -5,6 +5,7 @@ import net.knarcraft.minigames.arena.ArenaPlayerRegistry;
 import net.knarcraft.minigames.arena.ArenaSession;
 import net.knarcraft.minigames.arena.PlayerEntryState;
 import net.knarcraft.minigames.arena.parkour.ParkourArenaSession;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -81,7 +82,7 @@ public class PlayerStateChangeListener implements Listener {
                     ". Attempting to restore the player's state.");
             playerRegistry.removePlayer(player.getUniqueId(), false);
 
-            entryState.restore(player);
+            Bukkit.getScheduler().runTaskLater(MiniGames.getInstance(), () -> entryState.restore(player), 1);
             return entryState.getEntryLocation();
         } else {
             return null;
