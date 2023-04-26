@@ -84,12 +84,18 @@ public class DropperPlayerEntryState extends AbstractPlayerEntryState {
     }
 
     @Override
-    public void restore() {
-        super.restore();
+    public boolean restore() {
         Player player = getPlayer();
         if (player == null) {
-            return;
+            return false;
         }
+        this.restore(player);
+        return true;
+    }
+
+    @Override
+    public void restore(@NotNull Player player) {
+        super.restore(player);
         player.setFlySpeed(this.originalFlySpeed);
     }
 

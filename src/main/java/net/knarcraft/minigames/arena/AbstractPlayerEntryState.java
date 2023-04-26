@@ -94,20 +94,17 @@ public abstract class AbstractPlayerEntryState implements PlayerEntryState {
     }
 
     @Override
-    public void restore() {
+    public boolean restore() {
         Player player = getPlayer();
         if (player == null) {
-            return;
+            return false;
         }
         restore(player);
+        return true;
     }
 
-    /**
-     * Restores the state of the given player
-     *
-     * @param player <p>The player to restore the state for</p>
-     */
-    public void restore(Player player) {
+    @Override
+    public void restore(@NotNull Player player) {
         player.setFlying(this.originalIsFlying);
         player.setGameMode(this.originalGameMode);
         player.setAllowFlight(this.originalAllowFlight);

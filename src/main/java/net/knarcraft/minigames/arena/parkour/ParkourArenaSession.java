@@ -69,7 +69,7 @@ public class ParkourArenaSession extends AbstractArenaSession {
     @Override
     public void triggerWin() {
         // Stop this session
-        stopSession();
+        removeSession();
 
         // Check for, and display, records
         MiniGames miniGames = MiniGames.getInstance();
@@ -106,7 +106,8 @@ public class ParkourArenaSession extends AbstractArenaSession {
     @Override
     protected void removeSession() {
         // Remove this session for game sessions to stop listeners from fiddling more with the player
-        boolean removedSession = MiniGames.getInstance().getParkourArenaPlayerRegistry().removePlayer(player.getUniqueId());
+        boolean removedSession = MiniGames.getInstance().getParkourArenaPlayerRegistry().removePlayer(
+                player.getUniqueId(), true);
         if (!removedSession) {
             MiniGames.log(Level.SEVERE, "Unable to remove parkour arena session for " + player.getName() + ". " +
                     "This will have unintended consequences.");

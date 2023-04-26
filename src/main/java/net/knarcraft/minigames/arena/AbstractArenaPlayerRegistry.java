@@ -42,9 +42,19 @@ public abstract class AbstractArenaPlayerRegistry<K extends Arena> implements Ar
     }
 
     @Override
-    public boolean removePlayer(@NotNull UUID playerId) {
-        this.entryStates.remove(playerId);
-        this.saveEntryStates();
+    public boolean removePlayer(@NotNull UUID playerId, boolean restoreState) {
+        // Try and restore the state. If it cannot be restored, retain the entry state
+        PlayerEntryState entryState = this.entryStates.remove(playerId);
+        if (restoreState) {
+            if (entryState.restore()) {
+                this.saveEntryStates();
+            } else {
+                this.entryStates.put(playerId, entryState);
+            }
+        } else {
+            this.saveEntryStates();
+        }
+
         return this.arenaPlayers.remove(playerId) != null;
     }
 
@@ -89,7 +99,7 @@ public abstract class AbstractArenaPlayerRegistry<K extends Arena> implements Ar
         }
         if (this.entryStates.size() > 0) {
             MiniGames.log(Level.WARNING, entryStates.size() + " un-exited sessions found. This happens if " +
-                    "players are leaving in the middle of a game, or the server crashes. MiniGames will do its best " +
+                    "players leave in the middle of a game, or if the server crashes. MiniGames will do its best " +
                     "to fix the players' states.");
         }
     }

@@ -35,7 +35,7 @@ public abstract class AbstractArenaSession implements ArenaSession {
     @Override
     public void triggerQuit(boolean immediately) {
         // Stop this session
-        stopSession();
+        removeSession();
         // Teleport the player out of the arena
         teleportToExit(immediately);
 
@@ -90,17 +90,6 @@ public abstract class AbstractArenaSession implements ArenaSession {
             exitLocation = this.entryState.getEntryLocation();
         }
         PlayerTeleporter.teleportPlayer(this.player, exitLocation, true, immediately);
-    }
-
-    /**
-     * Stops this session, and disables flight mode
-     */
-    protected void stopSession() {
-        // Remove this session from game sessions to stop listeners from fiddling more with the player
-        removeSession();
-
-        // Remove flight mode
-        entryState.restore();
     }
 
     /**

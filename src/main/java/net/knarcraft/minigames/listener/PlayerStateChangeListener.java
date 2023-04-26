@@ -79,7 +79,7 @@ public class PlayerStateChangeListener implements Listener {
         if (entryState != null) {
             MiniGames.log(Level.INFO, "Found existing state for joining player " + player +
                     ". Attempting to restore the player's state.");
-            playerRegistry.removePlayer(player.getUniqueId());
+            playerRegistry.removePlayer(player.getUniqueId(), false);
 
             entryState.restore(player);
             return entryState.getEntryLocation();

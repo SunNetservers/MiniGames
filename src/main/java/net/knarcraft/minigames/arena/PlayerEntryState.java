@@ -19,7 +19,7 @@ public interface PlayerEntryState extends ConfigurationSerializable {
     /**
      * Restores the stored state for the stored player
      */
-    void restore();
+    boolean restore();
 
     /**
      * Restores the stored state for the given player

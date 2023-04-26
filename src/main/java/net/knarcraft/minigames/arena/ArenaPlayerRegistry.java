@@ -31,9 +31,10 @@ public interface ArenaPlayerRegistry<K extends Arena> {
     /**
      * Removes this player from players currently playing
      *
-     * @param playerId <p>The id of the player to remove</p>
+     * @param playerId     <p>The id of the player to remove</p>
+     * @param restoreState <p>Whether to restore the state of the player as part of the removal</p>
      */
-    boolean removePlayer(@NotNull UUID playerId);
+    boolean removePlayer(@NotNull UUID playerId, boolean restoreState);
 
     /**
      * Gets the player's active dropper arena session
