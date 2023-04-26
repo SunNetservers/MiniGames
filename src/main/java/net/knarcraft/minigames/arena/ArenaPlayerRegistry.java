@@ -13,6 +13,14 @@ import java.util.UUID;
 public interface ArenaPlayerRegistry<K extends Arena> {
 
     /**
+     * Gets the current entry state for the given player
+     *
+     * @param playerId <p>The id of the player to get an entry state for</p>
+     * @return <p>The entry state of the player, or null if not found</p>
+     */
+    @Nullable PlayerEntryState getEntryState(@NotNull UUID playerId);
+
+    /**
      * Registers that the given player has started playing the given dropper arena session
      *
      * @param playerId     <p>The id of the player that started playing</p>

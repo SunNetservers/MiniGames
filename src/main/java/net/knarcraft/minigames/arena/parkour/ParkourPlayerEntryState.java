@@ -1,9 +1,14 @@
 package net.knarcraft.minigames.arena.parkour;
 
 import net.knarcraft.minigames.arena.AbstractPlayerEntryState;
+import net.knarcraft.minigames.container.SerializableUUID;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * The state of a player before entering a parkour arena
@@ -19,14 +24,60 @@ public class ParkourPlayerEntryState extends AbstractPlayerEntryState {
         super(player, makePlayerInvisible);
     }
 
+    /**
+     * Instantiates a new parkour player entry state
+     *
+     * @param playerId             <p>The id of the player whose state this should keep track of</p>
+     * @param makePlayerInvisible  <p>Whether players should be made invisible while in the arena</p>
+     * @param entryLocation        <p>The location the player entered from</p>
+     * @param originalIsFlying     <p>Whether the player was flying before entering the arena</p>
+     * @param originalGameMode     <p>The game-mode of the player before entering the arena</p>
+     * @param originalAllowFlight  <p>Whether the player was allowed flight before entering the arena</p>
+     * @param originalInvulnerable <p>Whether the player was invulnerable before entering the arena</p>
+     * @param originalIsSwimming   <p>Whether the player was swimming before entering the arena</p>
+     * @param originalCollideAble  <p>Whether the player was collide-able before entering the arena</p>
+     */
+    public ParkourPlayerEntryState(@NotNull UUID playerId, boolean makePlayerInvisible, Location entryLocation,
+                                   boolean originalIsFlying, GameMode originalGameMode, boolean originalAllowFlight,
+                                   boolean originalInvulnerable, boolean originalIsSwimming,
+                                   boolean originalCollideAble) {
+        super(playerId, makePlayerInvisible, entryLocation, originalIsFlying, originalGameMode, originalAllowFlight,
+                originalInvulnerable, originalIsSwimming, originalCollideAble);
+    }
+
     @Override
     public void setArenaState() {
         super.setArenaState();
-        this.player.setAllowFlight(false);
-        this.player.setFlying(false);
-        this.player.setGameMode(GameMode.ADVENTURE);
-        this.player.setSwimming(false);
-        this.player.setCollidable(false);
+        Player player = getPlayer();
+        if (player == null) {
+            return;
+        }
+        player.setAllowFlight(false);
+        player.setFlying(false);
+        player.setGameMode(GameMode.ADVENTURE);
+        player.setSwimming(false);
+        player.setCollidable(false);
+    }
+
+    /**
+     * Deserializes a ParkourPlayerEntryState from the given data
+     *
+     * @return <p>The data to deserialize</p>
+     */
+    @SuppressWarnings("unused")
+    public static ParkourPlayerEntryState deserialize(Map<String, Object> data) {
+        UUID playerId = ((SerializableUUID) data.get("playerId")).getRawValue();
+        boolean makePlayerInvisible = (boolean) data.get("makePlayerInvisible");
+        Location entryLocation = (Location) data.get("entryLocation");
+        boolean originalIsFlying = (boolean) data.get("originalIsFlying");
+        GameMode originalGameMode = GameMode.valueOf((String) data.get("originalGameMode"));
+        boolean originalAllowFlight = (boolean) data.get("originalAllowFlight");
+        boolean originalInvulnerable = (boolean) data.get("originalInvulnerable");
+        boolean originalIsSwimming = (boolean) data.get("originalIsSwimming");
+        boolean originalCollideAble = (boolean) data.get("originalCollideAble");
+
+        return new ParkourPlayerEntryState(playerId, makePlayerInvisible, entryLocation, originalIsFlying,
+                originalGameMode, originalAllowFlight, originalInvulnerable, originalIsSwimming, originalCollideAble);
     }
 
 }

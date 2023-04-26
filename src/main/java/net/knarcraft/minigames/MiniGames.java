@@ -9,6 +9,7 @@ import net.knarcraft.minigames.arena.dropper.DropperArenaGroup;
 import net.knarcraft.minigames.arena.dropper.DropperArenaHandler;
 import net.knarcraft.minigames.arena.dropper.DropperArenaPlayerRegistry;
 import net.knarcraft.minigames.arena.dropper.DropperArenaRecordsRegistry;
+import net.knarcraft.minigames.arena.dropper.DropperPlayerEntryState;
 import net.knarcraft.minigames.arena.parkour.ParkourArena;
 import net.knarcraft.minigames.arena.parkour.ParkourArenaData;
 import net.knarcraft.minigames.arena.parkour.ParkourArenaGameMode;
@@ -16,6 +17,7 @@ import net.knarcraft.minigames.arena.parkour.ParkourArenaGroup;
 import net.knarcraft.minigames.arena.parkour.ParkourArenaHandler;
 import net.knarcraft.minigames.arena.parkour.ParkourArenaPlayerRegistry;
 import net.knarcraft.minigames.arena.parkour.ParkourArenaRecordsRegistry;
+import net.knarcraft.minigames.arena.parkour.ParkourPlayerEntryState;
 import net.knarcraft.minigames.arena.record.IntegerRecord;
 import net.knarcraft.minigames.arena.record.LongRecord;
 import net.knarcraft.minigames.command.LeaveArenaCommand;
@@ -50,7 +52,7 @@ import net.knarcraft.minigames.container.SerializableUUID;
 import net.knarcraft.minigames.listener.CommandListener;
 import net.knarcraft.minigames.listener.DamageListener;
 import net.knarcraft.minigames.listener.MoveListener;
-import net.knarcraft.minigames.listener.PlayerLeaveListener;
+import net.knarcraft.minigames.listener.PlayerStateChangeListener;
 import net.knarcraft.minigames.placeholder.DropperRecordExpansion;
 import net.knarcraft.minigames.placeholder.ParkourRecordExpansion;
 import org.bukkit.Bukkit;
@@ -217,6 +219,8 @@ public final class MiniGames extends JavaPlugin {
         ConfigurationSerialization.registerClass(ParkourArenaData.class);
         ConfigurationSerialization.registerClass(ParkourArenaGroup.class);
         ConfigurationSerialization.registerClass(ParkourArenaGameMode.class);
+        ConfigurationSerialization.registerClass(DropperPlayerEntryState.class);
+        ConfigurationSerialization.registerClass(ParkourPlayerEntryState.class);
     }
 
     @Override
@@ -240,7 +244,7 @@ public final class MiniGames extends JavaPlugin {
         PluginManager pluginManager = getServer().getPluginManager();
         pluginManager.registerEvents(new DamageListener(), this);
         pluginManager.registerEvents(new MoveListener(this.dropperConfiguration, this.parkourConfiguration), this);
-        pluginManager.registerEvents(new PlayerLeaveListener(), this);
+        pluginManager.registerEvents(new PlayerStateChangeListener(), this);
         pluginManager.registerEvents(new CommandListener(), this);
 
         registerCommand("miniGamesReload", new ReloadCommand(), null);
