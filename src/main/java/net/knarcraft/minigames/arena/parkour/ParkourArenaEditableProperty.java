@@ -1,5 +1,6 @@
 package net.knarcraft.minigames.arena.parkour;
 
+import net.knarcraft.minigames.arena.EditablePropertyType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,22 +14,25 @@ public enum ParkourArenaEditableProperty {
     /**
      * The name of the arena
      */
-    NAME("name", ParkourArena::getArenaName),
+    NAME("name", ParkourArena::getArenaName, EditablePropertyType.ARENA_NAME),
 
     /**
      * The arena's spawn location
      */
-    SPAWN_LOCATION("spawnLocation", (arena) -> String.valueOf(arena.getSpawnLocation())),
+    SPAWN_LOCATION("spawnLocation", (arena) -> String.valueOf(arena.getSpawnLocation()),
+            EditablePropertyType.LOCATION),
 
     /**
      * The arena's exit location
      */
-    EXIT_LOCATION("exitLocation", (arena) -> String.valueOf(arena.getExitLocation())),
+    EXIT_LOCATION("exitLocation", (arena) -> String.valueOf(arena.getExitLocation()),
+            EditablePropertyType.LOCATION),
 
     /**
      * The arena's win block type
      */
-    WIN_BLOCK_TYPE("winBlockType", (arena) -> arena.getWinBlockType().toString()),
+    WIN_BLOCK_TYPE("winBlockType", (arena) -> arena.getWinBlockType().toString(),
+            EditablePropertyType.BLOCK_TYPE),
 
     /**
      * The arena's win location (overrides the win block type)
@@ -39,35 +43,50 @@ public enum ParkourArenaEditableProperty {
         } else {
             return "null";
         }
-    }),
+    }, EditablePropertyType.LOCATION),
 
     /**
      * The arena's check points. Specifically used for adding.
      */
-    CHECKPOINT_ADD("checkpointAdd", (arena) -> String.valueOf(arena.getCheckpoints())),
+    CHECKPOINT_ADD("checkpointAdd", (arena) -> String.valueOf(arena.getCheckpoints()),
+            EditablePropertyType.LOCATION),
 
     /**
      * The arena's check points. Specifically used for clearing.
      */
-    CHECKPOINT_CLEAR("checkpointClear", (arena) -> String.valueOf(arena.getCheckpoints())),
+    CHECKPOINT_CLEAR("checkpointClear", (arena) -> String.valueOf(arena.getCheckpoints()),
+            EditablePropertyType.CHECKPOINT_CLEAR),
 
     /**
      * The blocks constituting the arena's lethal blocks
      */
-    KILL_PLANE_BLOCKS("killPlaneBlocks", (arena) -> String.valueOf(arena.getKillPlaneBlockNames())),
+    KILL_PLANE_BLOCKS("killPlaneBlocks", (arena) -> String.valueOf(arena.getKillPlaneBlockNames()),
+            EditablePropertyType.MATERIAL_LIST),
     ;
 
     private final @NotNull String argumentString;
     private final Function<ParkourArena, String> currentValueProvider;
+    private final EditablePropertyType propertyType;
 
     /**
      * Instantiates a new arena editable property
      *
      * @param argumentString <p>The argument string used to specify this property</p>
      */
-    ParkourArenaEditableProperty(@NotNull String argumentString, Function<ParkourArena, String> currentValueProvider) {
+    ParkourArenaEditableProperty(@NotNull String argumentString, Function<ParkourArena, String> currentValueProvider,
+                                 EditablePropertyType propertyType) {
         this.argumentString = argumentString;
         this.currentValueProvider = currentValueProvider;
+        this.propertyType = propertyType;
+    }
+
+    /**
+     * Gets the type of property this editable property represents
+     *
+     * @return <p>The type of this property</p>
+     */
+    public EditablePropertyType getPropertyType() {
+        return this.propertyType;
     }
 
     /**

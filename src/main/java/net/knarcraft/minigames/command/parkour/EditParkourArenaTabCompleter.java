@@ -1,5 +1,6 @@
 package net.knarcraft.minigames.command.parkour;
 
+import net.knarcraft.minigames.arena.parkour.ParkourArenaEditableProperty;
 import net.knarcraft.minigames.util.TabCompleteHelper;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -25,8 +26,12 @@ public class EditParkourArenaTabCompleter implements TabCompleter {
         } else if (arguments.length == 2) {
             return filterMatchingContains(TabCompleteHelper.getParkourArenaProperties(), arguments[1]);
         } else if (arguments.length == 3) {
-            //TODO: Tab-complete possible values for the given property
-            return null;
+            ParkourArenaEditableProperty property = ParkourArenaEditableProperty.getFromArgumentString(arguments[1]);
+            if (property == null) {
+                return new ArrayList<>();
+            }
+            return filterMatchingContains(TabCompleteHelper.getTabCompleteSuggestions(property.getPropertyType()),
+                    arguments[2]);
         } else {
             return new ArrayList<>();
         }
