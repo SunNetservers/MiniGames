@@ -61,7 +61,7 @@ public abstract class AbstractArenaSession implements ArenaSession {
             case PERSONAL_BEST -> Message.RECORD_ACHIEVED_PERSONAL;
             default -> throw new IllegalStateException("Unexpected value: " + recordResult);
         };
-        String recordInfo = recordInfoMessage.getMessage("{recordType}", type);
+        String recordInfo = recordInfoMessage.getPartialMessage("{recordType}", type);
 
         PlaceholderContainer placeholderContainer = new PlaceholderContainer().add("{gameMode}", gameModeString);
         placeholderContainer.add("{recordInfo}", recordInfo);

@@ -91,6 +91,7 @@ public class JoinParkourArenaCommand implements CommandExecutor {
         } else {
             // Make sure to update the state again in the air to remove a potential swimming state
             newSession.getEntryState().setArenaState();
+            player.sendMessage(Message.SUCCESS_ARENA_JOINED.getMessage());
             return true;
         }
     }
