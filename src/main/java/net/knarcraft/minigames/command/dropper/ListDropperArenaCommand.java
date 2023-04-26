@@ -1,5 +1,6 @@
 package net.knarcraft.minigames.command.dropper;
 
+import net.knarcraft.minigames.config.Message;
 import net.knarcraft.minigames.util.TabCompleteHelper;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -18,10 +19,11 @@ public class ListDropperArenaCommand implements TabExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label,
                              @NotNull String[] arguments) {
-        sender.sendMessage("Dropper arenas:");
+        StringBuilder builder = new StringBuilder(Message.SUCCESS_DROPPER_ARENAS_LIST.getMessage());
         for (String arenaName : TabCompleteHelper.getDropperArenas()) {
-            sender.sendMessage(arenaName);
+            builder.append("\n").append(arenaName);
         }
+        sender.sendMessage(builder.toString());
         return true;
     }
 

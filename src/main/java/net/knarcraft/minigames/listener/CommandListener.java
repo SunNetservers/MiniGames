@@ -2,6 +2,7 @@ package net.knarcraft.minigames.listener;
 
 import net.knarcraft.minigames.MiniGames;
 import net.knarcraft.minigames.arena.ArenaSession;
+import net.knarcraft.minigames.config.Message;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -40,7 +41,7 @@ public class CommandListener implements Listener {
             }
         }
 
-        player.sendMessage("You cannot use that command while in an arena!");
+        player.sendMessage(Message.ERROR_ILLEGAL_COMMAND.getMessage());
         event.setCancelled(true);
     }
 

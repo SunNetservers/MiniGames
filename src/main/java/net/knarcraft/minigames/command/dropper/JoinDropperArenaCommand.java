@@ -1,12 +1,13 @@
 package net.knarcraft.minigames.command.dropper;
 
 import net.knarcraft.minigames.MiniGames;
+import net.knarcraft.minigames.arena.ArenaPlayerRegistry;
 import net.knarcraft.minigames.arena.dropper.DropperArena;
 import net.knarcraft.minigames.arena.dropper.DropperArenaGameMode;
 import net.knarcraft.minigames.arena.dropper.DropperArenaGroup;
-import net.knarcraft.minigames.arena.dropper.DropperArenaPlayerRegistry;
 import net.knarcraft.minigames.arena.dropper.DropperArenaSession;
 import net.knarcraft.minigames.config.DropperConfiguration;
+import net.knarcraft.minigames.config.Message;
 import net.knarcraft.minigames.util.PlayerTeleporter;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -23,7 +24,7 @@ public class JoinDropperArenaCommand implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s,
                              @NotNull String[] arguments) {
         if (!(commandSender instanceof Player player)) {
-            commandSender.sendMessage("This command must be used by a player");
+            commandSender.sendMessage(Message.ERROR_PLAYER_ONLY.getMessage());
             return false;
         }
 
@@ -33,20 +34,20 @@ public class JoinDropperArenaCommand implements CommandExecutor {
 
         // Disallow joining if the player is already in a mini-game arena
         if (MiniGames.getInstance().getSession(player.getUniqueId()) != null) {
-            commandSender.sendMessage("You are already playing a mini-game!");
+            commandSender.sendMessage(Message.ERROR_ALREADY_PLAYING.getMessage());
             return false;
         }
 
         // Make sure the arena exists
         DropperArena specifiedArena = MiniGames.getInstance().getDropperArenaHandler().getArena(arguments[0]);
         if (specifiedArena == null) {
-            commandSender.sendMessage("Unable to find the specified dropper arena.");
+            commandSender.sendMessage(Message.ERROR_ARENA_NOT_FOUND.getMessage());
             return false;
         }
 
         // Deny vehicles as allowing this is tricky, and will cause problems in some cases
         if (player.isInsideVehicle() || !player.getPassengers().isEmpty()) {
-            commandSender.sendMessage("You cannot join an arena while inside a vehicle or carrying a passenger.");
+            commandSender.sendMessage(Message.ERROR_JOIN_IN_VEHICLE_OR_PASSENGER.getMessage());
             return false;
         }
 
@@ -80,25 +81,25 @@ public class JoinDropperArenaCommand implements CommandExecutor {
         if (MiniGames.getInstance().getDropperConfiguration().mustDoNormalModeFirst() &&
                 gameMode != DropperArenaGameMode.DEFAULT &&
                 specifiedArena.getData().hasNotCompleted(DropperArenaGameMode.DEFAULT, player)) {
-            player.sendMessage("You must complete this arena in normal mode first!");
+            player.sendMessage(Message.ERROR_NORMAL_MODE_REQUIRED.getMessage());
             return false;
         }
 
         // Register the player's session
         DropperArenaSession newSession = new DropperArenaSession(specifiedArena, player, gameMode);
-        DropperArenaPlayerRegistry playerRegistry = MiniGames.getInstance().getDropperArenaPlayerRegistry();
+        ArenaPlayerRegistry<DropperArena> playerRegistry = MiniGames.getInstance().getDropperArenaPlayerRegistry();
         playerRegistry.registerPlayer(player.getUniqueId(), newSession);
 
         // Try to teleport the player to the arena
         boolean teleported = PlayerTeleporter.teleportPlayer(player, specifiedArena.getSpawnLocation(), false, false);
         if (!teleported) {
-            player.sendMessage("Unable to teleport you to the dropper arena. Make sure you're not in a vehicle," +
-                    "and not carrying a passenger!");
+            player.sendMessage(Message.ERROR_ARENA_TELEPORT_FAILED.getMessage());
             newSession.triggerQuit(false);
             return false;
         } else {
             // Make sure to update the state again in the air to remove a potential swimming state
             newSession.getEntryState().setArenaState();
+            player.sendMessage(Message.SUCCESS_ARENA_JOINED.getMessage());
             return true;
         }
     }
@@ -118,14 +119,14 @@ public class JoinDropperArenaCommand implements CommandExecutor {
         // Require that players beat all arenas in the group in the normal game-mode before trying challenge modes
         if (configuration.mustDoNormalModeFirst() && arenaGameMode != DropperArenaGameMode.DEFAULT &&
                 !arenaGroup.hasBeatenAll(DropperArenaGameMode.DEFAULT, player)) {
-            player.sendMessage("You have not yet beaten all arenas in this group!");
+            player.sendMessage(Message.ERROR_GROUP_NORMAL_MODE_REQUIRED.getMessage());
             return false;
         }
 
         // Require that the player has beaten the previous arena on the same game-mode before trying this one
         if (configuration.mustDoGroupedInSequence() &&
                 arenaGroup.cannotPlay(arenaGameMode, player, dropperArena.getArenaId())) {
-            player.sendMessage("You have not yet beaten the previous arena!");
+            player.sendMessage(Message.ERROR_PREVIOUS_ARENA_REQUIRED.getMessage());
             return false;
         }
 

@@ -1,6 +1,7 @@
 package net.knarcraft.minigames.util;
 
 import net.knarcraft.minigames.MiniGames;
+import net.knarcraft.minigames.config.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -35,7 +36,7 @@ public final class PlayerTeleporter {
                     passenger.teleport(location);
                 }
             } else {
-                player.sendMessage("You cannot be teleported with a passenger!");
+                player.sendMessage(Message.ERROR_TELEPORT_WITH_PASSENGER.getMessage());
                 return false;
             }
         }
@@ -45,16 +46,16 @@ public final class PlayerTeleporter {
                 player.eject();
                 vehicle.teleport(location);
             } else {
-                player.sendMessage("You cannot be teleported while in a vehicle");
+                player.sendMessage(Message.ERROR_TELEPORT_IN_VEHICLE.getMessage());
                 return false;
             }
         }
-        //Stop the existing player velocity to prevent unevenness between players
+        // Stop the existing player velocity to prevent unevenness between players
         player.setVelocity(new Vector(0, 0, 0));
         player.setInvulnerable(true);
         player.teleport(location);
         player.setVelocity(new Vector(0, 0, 0));
-        //When teleporting a player out of the arena, sometimes the move listener is slow to react, giving the player 
+        // When teleporting a player out of the arena, sometimes the move listener is slow to react, giving the player 
         // lethal velocity, and causing damage. That's why the player is given 5 ticks of invulnerability
         if (!immediately) {
             Bukkit.getScheduler().runTaskLater(MiniGames.getInstance(), () -> player.setInvulnerable(false), 5);

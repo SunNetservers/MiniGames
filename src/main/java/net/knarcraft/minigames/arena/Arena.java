@@ -3,6 +3,7 @@ package net.knarcraft.minigames.arena;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
@@ -82,5 +83,12 @@ public interface Arena {
      * @return <p>This arena's spawn location</p>
      */
     @NotNull Location getSpawnLocation();
+
+    /**
+     * Gets this arena's exit location
+     *
+     * @return <p>This arena's exit location, or null if no such location is set.</p>
+     */
+    @Nullable Location getExitLocation();
 
 }

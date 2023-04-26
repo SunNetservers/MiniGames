@@ -170,7 +170,7 @@ public abstract class ArenaHandler<K extends Arena, S extends ArenaGroup<K, S>> 
      */
     public void removeArena(@NotNull K arena) {
         UUID arenaId = arena.getArenaId();
-        this.playerRegistry.removeForArena(arena);
+        this.playerRegistry.removeForArena(arena, false);
         this.arenas.remove(arenaId);
         this.arenaNameLookup.remove(arena.getArenaNameSanitized());
         this.arenaGroups.remove(arenaId);

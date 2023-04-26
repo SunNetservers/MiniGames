@@ -4,6 +4,7 @@ import net.knarcraft.minigames.MiniGames;
 import net.knarcraft.minigames.arena.dropper.DropperArena;
 import net.knarcraft.minigames.arena.dropper.DropperArenaGroup;
 import net.knarcraft.minigames.arena.dropper.DropperArenaHandler;
+import net.knarcraft.minigames.config.Message;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -13,6 +14,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
+import static net.knarcraft.minigames.util.TabCompleteHelper.filterMatchingContains;
 
 /**
  * The command for swapping the order of two arenas in a group
@@ -30,26 +33,26 @@ public class DropperGroupSwapCommand implements TabExecutor {
 
         DropperArena arena1 = arenaHandler.getArena(arguments[0]);
         if (arena1 == null) {
-            commandSender.sendMessage("Unable to find the first specified dropper arena.");
+            commandSender.sendMessage(Message.ERROR_ARENA_1_NOT_FOUND.getMessage());
             return false;
         }
 
         DropperArena arena2 = arenaHandler.getArena(arguments[1]);
         if (arena2 == null) {
-            commandSender.sendMessage("Unable to find the second specified dropper arena.");
+            commandSender.sendMessage(Message.ERROR_ARENA_2_NOT_FOUND.getMessage());
             return false;
         }
 
         DropperArenaGroup arena1Group = arenaHandler.getGroup(arena1.getArenaId());
         DropperArenaGroup arena2Group = arenaHandler.getGroup(arena2.getArenaId());
         if (arena1Group == null || !arena1Group.equals(arena2Group)) {
-            commandSender.sendMessage("You cannot swap arenas in different groups!");
+            commandSender.sendMessage(Message.ERROR_SWAP_DIFFERENT_GROUPS.getMessage());
             return false;
         }
 
         arena1Group.swapArenas(arena1Group.getArenas().indexOf(arena1.getArenaId()),
                 arena1Group.getArenas().indexOf(arena2.getArenaId()));
-        commandSender.sendMessage("The arenas have been swapped!");
+        commandSender.sendMessage(Message.SUCCESS_ARENAS_SWAPPED.getMessage());
         return true;
     }
 
@@ -63,9 +66,9 @@ public class DropperGroupSwapCommand implements TabExecutor {
             for (DropperArena dropperArena : arenaHandler.getArenasInAGroup()) {
                 arenaNames.add(dropperArena.getArenaName());
             }
-            return arenaNames;
+            return filterMatchingContains(arenaNames, arguments[0]);
         } else if (arguments.length == 2) {
-            return getArenaNamesInSameGroup(arguments[0]);
+            return filterMatchingContains(getArenaNamesInSameGroup(arguments[0]), arguments[1]);
         } else {
             return new ArrayList<>();
         }

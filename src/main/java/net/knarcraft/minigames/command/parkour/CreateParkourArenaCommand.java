@@ -3,6 +3,7 @@ package net.knarcraft.minigames.command.parkour;
 import net.knarcraft.minigames.MiniGames;
 import net.knarcraft.minigames.arena.parkour.ParkourArena;
 import net.knarcraft.minigames.arena.parkour.ParkourArenaHandler;
+import net.knarcraft.minigames.config.Message;
 import net.knarcraft.minigames.util.StringSanitizer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -19,7 +20,7 @@ public class CreateParkourArenaCommand implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s,
                              @NotNull String[] arguments) {
         if (!(commandSender instanceof Player player)) {
-            commandSender.sendMessage("This command must be used by a player");
+            commandSender.sendMessage(Message.ERROR_PLAYER_ONLY.getMessage());
             return false;
         }
 
@@ -40,13 +41,13 @@ public class CreateParkourArenaCommand implements CommandExecutor {
 
         ParkourArena existingArena = arenaHandler.getArena(arenaName);
         if (existingArena != null) {
-            commandSender.sendMessage("There already exists a parkour arena with that name!");
+            commandSender.sendMessage(Message.ERROR_ARENA_NAME_COLLISION.getMessage());
             return false;
         }
 
         ParkourArena arena = new ParkourArena(arenaName, player.getLocation(), arenaHandler);
         arenaHandler.addArena(arena);
-        commandSender.sendMessage("The arena was successfully created!");
+        commandSender.sendMessage(Message.SUCCESS_ARENA_CREATED.getMessage());
         return true;
     }
 

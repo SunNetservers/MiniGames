@@ -4,6 +4,7 @@ import net.knarcraft.minigames.MiniGames;
 import net.knarcraft.minigames.arena.parkour.ParkourArena;
 import net.knarcraft.minigames.arena.parkour.ParkourArenaGroup;
 import net.knarcraft.minigames.arena.parkour.ParkourArenaHandler;
+import net.knarcraft.minigames.config.Message;
 import net.knarcraft.minigames.util.StringSanitizer;
 import net.knarcraft.minigames.util.TabCompleteHelper;
 import org.bukkit.command.Command;
@@ -14,6 +15,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static net.knarcraft.minigames.util.TabCompleteHelper.filterMatchingContains;
 
 /**
  * The command for setting the group of an arena
@@ -31,7 +34,7 @@ public class ParkourGroupSetCommand implements TabExecutor {
 
         ParkourArena specifiedArena = arenaHandler.getArena(arguments[0]);
         if (specifiedArena == null) {
-            commandSender.sendMessage("Unable to find the specified parkour arena.");
+            commandSender.sendMessage(Message.ERROR_ARENA_NOT_FOUND.getMessage());
             return false;
         }
 
@@ -53,7 +56,7 @@ public class ParkourGroupSetCommand implements TabExecutor {
 
         arenaHandler.setGroup(specifiedArena.getArenaId(), arenaGroup);
 
-        commandSender.sendMessage("The arena's group has been updated");
+        commandSender.sendMessage(Message.SUCCESS_ARENA_GROUP_UPDATED.getMessage());
         return true;
     }
 
@@ -62,7 +65,7 @@ public class ParkourGroupSetCommand implements TabExecutor {
     public List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s,
                                       @NotNull String[] arguments) {
         if (arguments.length == 1) {
-            return TabCompleteHelper.getParkourArenas();
+            return filterMatchingContains(TabCompleteHelper.getParkourArenas(), arguments[0]);
         } else if (arguments.length == 2) {
             List<String> possibleValues = new ArrayList<>();
             possibleValues.add("none");
@@ -70,7 +73,7 @@ public class ParkourGroupSetCommand implements TabExecutor {
             for (ParkourArenaGroup group : MiniGames.getInstance().getParkourArenaHandler().getAllGroups()) {
                 possibleValues.add(group.getGroupName());
             }
-            return possibleValues;
+            return filterMatchingContains(possibleValues, arguments[1]);
         } else {
             return new ArrayList<>();
         }

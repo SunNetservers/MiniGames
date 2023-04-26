@@ -1,4 +1,5 @@
 name: MiniGames
+prefix: MiniGames
 version: '${project.version}'
 main: net.knarcraft.minigames.MiniGames
 api-version: 1.19

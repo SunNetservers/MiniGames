@@ -1,19 +1,23 @@
 package net.knarcraft.minigames;
 
+import net.knarcraft.minigames.arena.ArenaPlayerRegistry;
 import net.knarcraft.minigames.arena.ArenaSession;
+import net.knarcraft.minigames.arena.dropper.DropperArena;
 import net.knarcraft.minigames.arena.dropper.DropperArenaData;
 import net.knarcraft.minigames.arena.dropper.DropperArenaGameMode;
 import net.knarcraft.minigames.arena.dropper.DropperArenaGroup;
 import net.knarcraft.minigames.arena.dropper.DropperArenaHandler;
 import net.knarcraft.minigames.arena.dropper.DropperArenaPlayerRegistry;
 import net.knarcraft.minigames.arena.dropper.DropperArenaRecordsRegistry;
-import net.knarcraft.minigames.arena.dropper.DropperArenaSession;
+import net.knarcraft.minigames.arena.dropper.DropperPlayerEntryState;
+import net.knarcraft.minigames.arena.parkour.ParkourArena;
 import net.knarcraft.minigames.arena.parkour.ParkourArenaData;
 import net.knarcraft.minigames.arena.parkour.ParkourArenaGameMode;
 import net.knarcraft.minigames.arena.parkour.ParkourArenaGroup;
 import net.knarcraft.minigames.arena.parkour.ParkourArenaHandler;
 import net.knarcraft.minigames.arena.parkour.ParkourArenaPlayerRegistry;
 import net.knarcraft.minigames.arena.parkour.ParkourArenaRecordsRegistry;
+import net.knarcraft.minigames.arena.parkour.ParkourPlayerEntryState;
 import net.knarcraft.minigames.arena.record.IntegerRecord;
 import net.knarcraft.minigames.arena.record.LongRecord;
 import net.knarcraft.minigames.command.LeaveArenaCommand;
@@ -48,7 +52,7 @@ import net.knarcraft.minigames.container.SerializableUUID;
 import net.knarcraft.minigames.listener.CommandListener;
 import net.knarcraft.minigames.listener.DamageListener;
 import net.knarcraft.minigames.listener.MoveListener;
-import net.knarcraft.minigames.listener.PlayerLeaveListener;
+import net.knarcraft.minigames.listener.PlayerStateChangeListener;
 import net.knarcraft.minigames.placeholder.DropperRecordExpansion;
 import net.knarcraft.minigames.placeholder.ParkourRecordExpansion;
 import org.bukkit.Bukkit;
@@ -56,7 +60,6 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
@@ -76,11 +79,11 @@ public final class MiniGames extends JavaPlugin {
     private DropperConfiguration dropperConfiguration;
     private ParkourConfiguration parkourConfiguration;
     private DropperArenaHandler dropperArenaHandler;
-    private DropperArenaPlayerRegistry dropperArenaPlayerRegistry;
+    private ArenaPlayerRegistry<DropperArena> dropperArenaPlayerRegistry;
     private DropperRecordExpansion dropperRecordExpansion;
     private ParkourRecordExpansion parkourRecordExpansion;
     private ParkourArenaHandler parkourArenaHandler;
-    private ParkourArenaPlayerRegistry parkourArenaPlayerRegistry;
+    private ArenaPlayerRegistry<ParkourArena> parkourArenaPlayerRegistry;
 
     /**
      * Gets an instance of this plugin
@@ -114,7 +117,7 @@ public final class MiniGames extends JavaPlugin {
      *
      * @return <p>A dropper arena player registry</p>
      */
-    public DropperArenaPlayerRegistry getDropperArenaPlayerRegistry() {
+    public ArenaPlayerRegistry<DropperArena> getDropperArenaPlayerRegistry() {
         return this.dropperArenaPlayerRegistry;
     }
 
@@ -123,7 +126,7 @@ public final class MiniGames extends JavaPlugin {
      *
      * @return <p>A parkour arena player registry</p>
      */
-    public ParkourArenaPlayerRegistry getParkourArenaPlayerRegistry() {
+    public ArenaPlayerRegistry<ParkourArena> getParkourArenaPlayerRegistry() {
         return this.parkourArenaPlayerRegistry;
     }
 
@@ -163,7 +166,7 @@ public final class MiniGames extends JavaPlugin {
      * @return <p>The player's current session, or null if not found</p>
      */
     public @Nullable ArenaSession getSession(@NotNull UUID playerId) {
-        DropperArenaSession dropperArenaSession = dropperArenaPlayerRegistry.getArenaSession(playerId);
+        ArenaSession dropperArenaSession = dropperArenaPlayerRegistry.getArenaSession(playerId);
         if (dropperArenaSession != null) {
             return dropperArenaSession;
         }
@@ -216,6 +219,8 @@ public final class MiniGames extends JavaPlugin {
         ConfigurationSerialization.registerClass(ParkourArenaData.class);
         ConfigurationSerialization.registerClass(ParkourArenaGroup.class);
         ConfigurationSerialization.registerClass(ParkourArenaGameMode.class);
+        ConfigurationSerialization.registerClass(DropperPlayerEntryState.class);
+        ConfigurationSerialization.registerClass(ParkourPlayerEntryState.class);
     }
 
     @Override
@@ -239,7 +244,7 @@ public final class MiniGames extends JavaPlugin {
         PluginManager pluginManager = getServer().getPluginManager();
         pluginManager.registerEvents(new DamageListener(), this);
         pluginManager.registerEvents(new MoveListener(this.dropperConfiguration, this.parkourConfiguration), this);
-        pluginManager.registerEvents(new PlayerLeaveListener(), this);
+        pluginManager.registerEvents(new PlayerStateChangeListener(), this);
         pluginManager.registerEvents(new CommandListener(), this);
 
         registerCommand("miniGamesReload", new ReloadCommand(), null);
@@ -277,12 +282,12 @@ public final class MiniGames extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        // Throw out currently playing players before exiting
-        for (Player player : getServer().getOnlinePlayers()) {
-            ArenaSession session = getSession(player.getUniqueId());
-            if (session != null) {
-                session.triggerQuit(true);
-            }
+        // Kill all sessions before exiting
+        for (DropperArena arena : dropperArenaHandler.getArenas().values()) {
+            dropperArenaPlayerRegistry.removeForArena(arena, true);
+        }
+        for (ParkourArena arena : parkourArenaHandler.getArenas().values()) {
+            parkourArenaPlayerRegistry.removeForArena(arena, true);
         }
     }
 

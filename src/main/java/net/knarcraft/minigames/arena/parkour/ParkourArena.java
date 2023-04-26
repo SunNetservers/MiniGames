@@ -162,11 +162,7 @@ public class ParkourArena implements Arena {
         return this.spawnLocation;
     }
 
-    /**
-     * Gets this arena's exit location
-     *
-     * @return <p>This arena's exit location, or null if no such location is set.</p>
-     */
+    @Override
     public @Nullable Location getExitLocation() {
         return this.exitLocation;
     }

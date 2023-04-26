@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
+import static net.knarcraft.minigames.util.TabCompleteHelper.filterMatchingContains;
+
 /**
  * An abstract class for an arena joining tab-completer
  */
@@ -34,13 +36,13 @@ public abstract class JoinArenaTabCompleter implements TabCompleter {
     public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command,
                                                 @NotNull String label, @NotNull String[] arguments) {
         if (arguments.length == 1) {
-            return arenaNameSupplier.get();
+            return filterMatchingContains(arenaNameSupplier.get(), arguments[0]);
         } else if (arguments.length == 2) {
             List<String> gameModes = new ArrayList<>();
             for (ArenaGameMode gameMode : gameMode.getValues()) {
                 gameModes.add(gameMode.name().toLowerCase());
             }
-            return gameModes;
+            return filterMatchingContains(gameModes, arguments[1]);
         } else {
             return new ArrayList<>();
         }
