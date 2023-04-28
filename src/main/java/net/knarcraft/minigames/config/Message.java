@@ -135,6 +135,11 @@ public enum Message {
      */
     ERROR_ILLEGAL_COMMAND("&cYou cannot use that command while in an arena!"),
 
+    /**
+     * The message displayed if the player is trying to join a parkour arena on hardcore which has no checkpoints
+     */
+    ERROR_HARDCORE_NO_CHECKPOINTS("&cThis arena cannot be played in hardcore mode as it has no checkpoints!"),
+
     /* **************** *
      * Success messages *
      * **************** */

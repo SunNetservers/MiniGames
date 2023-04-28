@@ -223,6 +223,15 @@ public class ParkourArena implements Arena {
     }
 
     /**
+     * Gets whether this arena has no checkpoints
+     *
+     * @return <p>True if this arena has no checkpoints</p>
+     */
+    public boolean hasNoCheckpoints() {
+        return this.checkpoints.isEmpty();
+    }
+
+    /**
      * Gets this arena's sanitized name
      *
      * @return <p>This arena's sanitized name</p>

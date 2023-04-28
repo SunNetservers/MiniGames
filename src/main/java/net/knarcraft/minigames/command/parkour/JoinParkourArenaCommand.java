@@ -71,6 +71,12 @@ public class JoinParkourArenaCommand implements CommandExecutor {
             gameMode = ParkourArenaGameMode.DEFAULT;
         }
 
+        // Don't allow joining the hardcore game-mode if there are no checkpoints to skip
+        if (specifiedArena.hasNoCheckpoints() && gameMode == ParkourArenaGameMode.HARDCORE) {
+            player.sendMessage(Message.ERROR_HARDCORE_NO_CHECKPOINTS.getMessage());
+            return false;
+        }
+
         // Make sure the player has beaten the necessary levels
         ParkourArenaGroup arenaGroup = MiniGames.getInstance().getParkourArenaHandler().getGroup(specifiedArena.getArenaId());
         if (arenaGroup != null && !doGroupChecks(specifiedArena, arenaGroup, gameMode, player)) {
