@@ -44,6 +44,15 @@ public class ParkourArenaSession extends AbstractArenaSession {
     }
 
     /**
+     * Gets the game-mode the player is playing in this session
+     *
+     * @return <p>The game-mode for this session</p>
+     */
+    public @NotNull ParkourArenaGameMode getGameMode() {
+        return this.gameMode;
+    }
+
+    /**
      * Registers the checkpoint this session's player has reached
      *
      * @param location <p>The location of the checkpoint</p>
@@ -118,6 +127,7 @@ public class ParkourArenaSession extends AbstractArenaSession {
     protected String getGameModeString() {
         return switch (this.gameMode) {
             case DEFAULT -> "default";
+            case HARDCORE -> "hardcore";
         };
     }
 

@@ -50,7 +50,7 @@ The only permission normal players will need is `minigames.join` which is set to
 | /dropperGroupList                      | /dglist  | \[group]                    | Lists groups, or the stages of a group if a group is specified.                     |
 | [/dropperGroupSwap](#droppergroupswap) | /dgswap  | \<arena1> \<arena2>         | Swaps the two arenas in the group's ordered list.                                   |
 | /parkourList                           | /plist   |                             | Lists available parkour arenas.                                                     |
-| /parkourJoin                           | /pjoin   | \<arena>                    | Joins the selected arena.                                                           |
+| [/parkourJoin](#parkourjoin)           | /pjoin   | \<arena> \[mode]            | Joins the selected arena.                                                           |
 | /parkourCreate                         | /pcreate | \<name>                     | Creates a new parkour arena with the given name. The spawn is set to your location. |
 | /parkourRemove                         | /premove | \<arena>                    | Removes the specified parkour arena.                                                |
 | [/parkourEdit](#parkouredit)           | /pedit   | \<arena> \<option> \[value] | Gets or sets a parkour arena option.                                                |
@@ -127,6 +127,17 @@ You could use `/droppergroupswap Sea Savanna` to change the order to:
 4. Sea
 
 ### Command explanation parkour
+
+#### /parkourJoin
+
+This command is used for joining a dropper arena.
+
+`/parkourjoin <arena> [mode]`
+
+| Argument | Usage                                                                                                     |
+|----------|-----------------------------------------------------------------------------------------------------------|
+| arena    | The name of the arena to join.                                                                            |
+| mode     | Additional challenge modes can be played after an arena has been cleared once. Available modes: hardcore. |
 
 #### /parkourEdit
 

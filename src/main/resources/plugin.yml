@@ -122,7 +122,9 @@ commands:
       - pjoin
     permission: minigames.join
     usage: |
-      /<command> <arena>
+      /<command> <arena> [mode]
+      - Mode can be used to select challenge modes which can be played after beating the arena.
+      - hardcore = A game-mode where checkpoints cannot be triggered
     description: Used to join a parkour arena
   parkourCreate:
     aliases:

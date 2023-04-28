@@ -16,6 +16,11 @@ public enum ParkourArenaGameMode implements ConfigurationSerializable, ArenaGame
      * The default game-mode. Failing once throws the player out.
      */
     DEFAULT,
+
+    /**
+     * A hard-core game mode where no checkpoints are allowed
+     */
+    HARDCORE,
     ;
 
     /**

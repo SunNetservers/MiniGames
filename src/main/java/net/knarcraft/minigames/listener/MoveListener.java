@@ -6,6 +6,7 @@ import net.knarcraft.minigames.arena.ArenaSession;
 import net.knarcraft.minigames.arena.dropper.DropperArenaGameMode;
 import net.knarcraft.minigames.arena.dropper.DropperArenaSession;
 import net.knarcraft.minigames.arena.parkour.ParkourArena;
+import net.knarcraft.minigames.arena.parkour.ParkourArenaGameMode;
 import net.knarcraft.minigames.arena.parkour.ParkourArenaSession;
 import net.knarcraft.minigames.config.DropperConfiguration;
 import net.knarcraft.minigames.config.Message;
@@ -76,14 +77,30 @@ public class MoveListener implements Listener {
             return;
         }
 
+        // Skip checkpoint registration if playing on hardcore
+        if (arenaSession.getGameMode() == ParkourArenaGameMode.HARDCORE) {
+            return;
+        }
+
         // Check if the player reached one of the checkpoints for the arena
+        updateCheckpoint(arenaSession, event.getTo().getBlock(), event.getPlayer());
+    }
+
+    /**
+     * Updates the checkpoint of a player if reached
+     *
+     * @param arenaSession <p>The session of the player</p>
+     * @param targetBlock  <p>The block the player is moving to</p>
+     * @param player       <p>The player moving</p>
+     */
+    private void updateCheckpoint(ParkourArenaSession arenaSession, Block targetBlock, Player player) {
         ParkourArena arena = arenaSession.getArena();
         List<Location> checkpoints = arena.getCheckpoints();
         for (Location checkpoint : checkpoints) {
             Location previousCheckpoint = arenaSession.getRegisteredCheckpoint();
 
             // Skip if checkpoint has not been reached
-            if (!checkpoint.getBlock().equals(event.getTo().getBlock())) {
+            if (!checkpoint.getBlock().equals(targetBlock)) {
                 continue;
             }
 
@@ -103,7 +120,7 @@ public class MoveListener implements Listener {
 
             // Register the checkpoint
             arenaSession.registerCheckpoint(checkpoint.clone());
-            event.getPlayer().sendMessage(Message.SUCCESS_CHECKPOINT_REACHED.getMessage());
+            player.sendMessage(Message.SUCCESS_CHECKPOINT_REACHED.getMessage());
             return;
         }
     }
