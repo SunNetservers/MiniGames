@@ -20,6 +20,10 @@ import net.knarcraft.minigames.arena.parkour.ParkourArenaRecordsRegistry;
 import net.knarcraft.minigames.arena.parkour.ParkourPlayerEntryState;
 import net.knarcraft.minigames.arena.record.IntegerRecord;
 import net.knarcraft.minigames.arena.record.LongRecord;
+import net.knarcraft.minigames.arena.reward.CommandReward;
+import net.knarcraft.minigames.arena.reward.EconomyReward;
+import net.knarcraft.minigames.arena.reward.ItemReward;
+import net.knarcraft.minigames.arena.reward.PermissionReward;
 import net.knarcraft.minigames.command.LeaveArenaCommand;
 import net.knarcraft.minigames.command.ReloadCommand;
 import net.knarcraft.minigames.command.dropper.CreateDropperArenaCommand;
@@ -221,6 +225,10 @@ public final class MiniGames extends JavaPlugin {
         ConfigurationSerialization.registerClass(ParkourArenaGameMode.class);
         ConfigurationSerialization.registerClass(DropperPlayerEntryState.class);
         ConfigurationSerialization.registerClass(ParkourPlayerEntryState.class);
+        ConfigurationSerialization.registerClass(CommandReward.class);
+        ConfigurationSerialization.registerClass(EconomyReward.class);
+        ConfigurationSerialization.registerClass(ItemReward.class);
+        ConfigurationSerialization.registerClass(PermissionReward.class);
     }
 
     @Override

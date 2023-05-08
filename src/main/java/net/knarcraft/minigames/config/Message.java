@@ -233,6 +233,31 @@ public enum Message {
      * The message displayed when a player joins an arena
      */
     SUCCESS_ARENA_JOINED("&aYou joined the arena."),
+
+    /**
+     * The message displayed when a player is rewarded with an item
+     */
+    SUCCESS_ITEM_REWARDED("&aYou have been rewarded {amount} {item}(s)"),
+
+    /**
+     * The message displayed when a player is rewarded with a permission
+     */
+    SUCCESS_PERMISSION_REWARDED("&aYou have been granted the permission: {permission}"),
+
+    /**
+     * The message displayed when a player is rewarded with a permission, for a specific world
+     */
+    SUCCESS_PERMISSION_REWARDED_WORLD("&aYou have been granted the permission: {permission} in world: {world}"),
+
+    /**
+     * The message displayed when a player is rewarded by a command being run
+     */
+    SUCCESS_COMMAND_REWARDED("&aThe command `{command}` has been run as your reward."),
+
+    /**
+     * The message displayed when a player is rewarded with an amount of currency
+     */
+    SUCCESS_ECONOMY_REWARDED("&aYou have been granted {currency}"),
     ;
 
     private final @NotNull String defaultMessage;
