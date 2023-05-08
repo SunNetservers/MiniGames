@@ -57,6 +57,7 @@ The only permission normal players will need is `minigames.join` which is set to
 | /parkourGroupSet                       | /pgset   | \<arena> \<group>           | Puts the given arena in the given group. Use "none" to remove an existing group.    |
 | /parkourGroupList                      | /pglist  | \[group]                    | Lists groups, or the stages of a group if a group is specified.                     |
 | [/parkourGroupSwap](#droppergroupswap) | /pgswap  | \<arena1> \<arena2>         | Swaps the two arenas in the group's ordered list.                                   |
+| /parkourCheckpoint                     | /pcheck  |                             | Triggers a teleportation to your previous checkpoint.                               |
 
 ### Command explanation dropper
 

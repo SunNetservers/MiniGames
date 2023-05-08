@@ -39,6 +39,7 @@ import net.knarcraft.minigames.command.parkour.EditParkourArenaTabCompleter;
 import net.knarcraft.minigames.command.parkour.JoinParkourArenaCommand;
 import net.knarcraft.minigames.command.parkour.JoinParkourArenaTabCompleter;
 import net.knarcraft.minigames.command.parkour.ListParkourArenaCommand;
+import net.knarcraft.minigames.command.parkour.ParkourCheckpointCommand;
 import net.knarcraft.minigames.command.parkour.ParkourGroupListCommand;
 import net.knarcraft.minigames.command.parkour.ParkourGroupSetCommand;
 import net.knarcraft.minigames.command.parkour.ParkourGroupSwapCommand;
@@ -267,6 +268,7 @@ public final class MiniGames extends JavaPlugin {
         registerCommand("parkourGroupSet", new ParkourGroupSetCommand(), null);
         registerCommand("parkourGroupSwap", new ParkourGroupSwapCommand(), null);
         registerCommand("parkourGroupList", new ParkourGroupListCommand(), null);
+        registerCommand("parkourCheckpoint", new ParkourCheckpointCommand(), null);
 
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
             this.dropperRecordExpansion = new DropperRecordExpansion(this);

@@ -20,13 +20,12 @@ commands:
       - mleave
       - dleave
       - pleave
-    permission: minigames.join
     usage: /<command>
     description: Used to leave the current dropper arena
   dropperGroupSet:
     aliases:
       - dgset
-    permission: minigames.edit
+    permission: minigames.edit.dropper
     usage: |
       /<command> <arena> <group>
       - The group will be created if it doesn't already exist
@@ -35,7 +34,7 @@ commands:
   dropperGroupSwap:
     aliases:
       - dgswap
-    permission: minigames.edit
+    permission: minigames.edit.dropper
     usage: |
       /<command> <arena1> <arena2>
       - The two arenas must be in the same group
@@ -43,7 +42,7 @@ commands:
   dropperGroupList:
     aliases:
       - dglist
-    permission: minigames.edit
+    permission: minigames.edit.dropper
     usage: |
       /<command> [group]
       - Existing groups will be listed if used without an argument
@@ -52,13 +51,13 @@ commands:
   dropperList:
     aliases:
       - dlist
-    permission: minigames.join
+    permission: minigames.join.dropper
     usage: /<command>
     description: Used to list all current dropper arenas
   dropperJoin:
     aliases:
       - djoin
-    permission: minigames.join
+    permission: minigames.join.dropper
     usage: |
       /<command> <arena> [mode]
       - Mode can be used to select challenge modes which can be played after beating the arena.
@@ -68,7 +67,7 @@ commands:
   dropperCreate:
     aliases:
       - dcreate
-    permission: minigames.create
+    permission: minigames.create.dropper
     usage: |
       /<command> <arena> <property> [new value]
       - Valid properties: name, spawnLocation, exitLocation, verticalVelocity, horizontalVelocity, winBlockType
@@ -76,13 +75,13 @@ commands:
   dropperEdit:
     aliases:
       - dedit
-    permission: minigames.edit
+    permission: minigames.edit.dropper
     usage: /<command> (Details not finalized)
     description: Used to edit an existing dropper arena
   dropperRemove:
     aliases:
       - dremove
-    permission: minigames.remove
+    permission: minigames.remove.dropper
     usage: /<command> <arena>
     description: Used to remove an existing dropper arena
   parkourGroupSet:
@@ -97,7 +96,7 @@ commands:
   parkourGroupSwap:
     aliases:
       - pgswap
-    permission: minigames.edit
+    permission: minigames.edit.parkour
     usage: |
       /<command> <arena1> <arena2>
       - The two arenas must be in the same group
@@ -105,7 +104,7 @@ commands:
   parkourGroupList:
     aliases:
       - pglist
-    permission: minigames.edit
+    permission: minigames.edit.parkour
     usage: |
       /<command> [group]
       - Existing groups will be listed if used without an argument
@@ -114,13 +113,13 @@ commands:
   parkourList:
     aliases:
       - plist
-    permission: minigames.join
+    permission: minigames.join.parkour
     usage: /<command>
     description: Used to list all current parkour arenas
   parkourJoin:
     aliases:
       - pjoin
-    permission: minigames.join
+    permission: minigames.join.parkour
     usage: |
       /<command> <arena> [mode]
       - Mode can be used to select challenge modes which can be played after beating the arena.
@@ -129,7 +128,7 @@ commands:
   parkourCreate:
     aliases:
       - pcreate
-    permission: minigames.create
+    permission: minigames.create.parkour
     usage: |
       /<command> <arena> <property> [new value]
       - Valid properties: name, spawnLocation, exitLocation, winBlockType, winLocation, checkpointAdd, checkpointClear, killPlaneBlocks
@@ -137,15 +136,22 @@ commands:
   parkourEdit:
     aliases:
       - pedit
-    permission: minigames.edit
+    permission: minigames.edit.parkour
     usage: /<command> (Details not finalized)
     description: Used to edit an existing parkour arena
   parkourRemove:
     aliases:
       - dremove
-    permission: minigames.remove
+    permission: minigames.remove.parkour
     usage: /<command> <arena>
     description: Used to remove an existing parkour arena
+  parkourCheckpoint:
+    aliases:
+      - pcheckpoint
+      - pcheck
+    permission: minigames.join.parkour
+    usage: /<command>
+    description: Used to teleport to the previous checkpoint while in a parkour arena
 permissions:
   minigames.*:
     description: Gives all permissions
