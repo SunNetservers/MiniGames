@@ -5,6 +5,8 @@ import net.knarcraft.minigames.arena.AbstractArenaSession;
 import net.knarcraft.minigames.arena.PlayerEntryState;
 import net.knarcraft.minigames.config.Message;
 import net.knarcraft.minigames.config.ParkourConfiguration;
+import net.knarcraft.minigames.gui.ArenaGUI;
+import net.knarcraft.minigames.gui.ParkourGUI;
 import net.knarcraft.minigames.util.PlayerTeleporter;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -17,6 +19,8 @@ import java.util.logging.Level;
  * A representation of a player's current session in a parkour arena
  */
 public class ParkourArenaSession extends AbstractArenaSession {
+
+    private static final ArenaGUI gui = new ParkourGUI();
 
     private final @NotNull ParkourArena arena;
     private final @NotNull Player player;
@@ -110,6 +114,11 @@ public class ParkourArenaSession extends AbstractArenaSession {
     @Override
     public @NotNull ParkourArena getArena() {
         return this.arena;
+    }
+
+    @Override
+    public @NotNull ArenaGUI getGUI() {
+        return gui;
     }
 
     @Override

@@ -5,6 +5,8 @@ import net.knarcraft.minigames.arena.AbstractArenaSession;
 import net.knarcraft.minigames.arena.PlayerEntryState;
 import net.knarcraft.minigames.config.DropperConfiguration;
 import net.knarcraft.minigames.config.Message;
+import net.knarcraft.minigames.gui.ArenaGUI;
+import net.knarcraft.minigames.gui.DropperGUI;
 import net.knarcraft.minigames.util.PlayerTeleporter;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -15,6 +17,8 @@ import java.util.logging.Level;
  * A representation of a player's current session in a dropper arena
  */
 public class DropperArenaSession extends AbstractArenaSession {
+
+    private static final ArenaGUI gui = new DropperGUI();
 
     private final @NotNull DropperArena arena;
     private final @NotNull Player player;
@@ -99,6 +103,11 @@ public class DropperArenaSession extends AbstractArenaSession {
     @Override
     public @NotNull DropperArena getArena() {
         return this.arena;
+    }
+
+    @Override
+    public @NotNull ArenaGUI getGUI() {
+        return gui;
     }
 
     @Override

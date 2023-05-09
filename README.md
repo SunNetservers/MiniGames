@@ -41,6 +41,7 @@ The only permission normal players will need is `minigames.join` which is set to
 |----------------------------------------|----------|-----------------------------|-------------------------------------------------------------------------------------|
 | /miniGamesReload                       | /mreload |                             | Reloads all data from disk.                                                         |
 | /miniGamesLeave                        | /mleave  |                             | Leaves the current mini-game.                                                       |
+| /miniGamesMenu                         | /mmenu   |                             | Shows a menu of actions if used while in an arena                                   |
 | /dropperList                           | /dlist   |                             | Lists available dropper arenas.                                                     |
 | [/dropperJoin](#dropperjoin)           | /djoin   | \<arena> \[mode]            | Joins the selected arena.                                                           |
 | /dropperCreate                         | /dcreate | \<name>                     | Creates a new dropper arena with the given name. The spawn is set to your location. |

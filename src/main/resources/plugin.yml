@@ -22,6 +22,11 @@ commands:
       - pleave
     usage: /<command>
     description: Used to leave the current dropper arena
+  miniGamesMenu:
+    aliases:
+      - mmenu
+    usage: /<command>
+    description: Used to display an actions menu while in an arena
   dropperGroupSet:
     aliases:
       - dgset

@@ -1,5 +1,6 @@
 package net.knarcraft.minigames;
 
+import net.knarcraft.knargui.GUIListener;
 import net.knarcraft.minigames.arena.ArenaPlayerRegistry;
 import net.knarcraft.minigames.arena.ArenaSession;
 import net.knarcraft.minigames.arena.dropper.DropperArena;
@@ -21,6 +22,7 @@ import net.knarcraft.minigames.arena.parkour.ParkourPlayerEntryState;
 import net.knarcraft.minigames.arena.record.IntegerRecord;
 import net.knarcraft.minigames.arena.record.LongRecord;
 import net.knarcraft.minigames.command.LeaveArenaCommand;
+import net.knarcraft.minigames.command.MenuCommand;
 import net.knarcraft.minigames.command.ReloadCommand;
 import net.knarcraft.minigames.command.dropper.CreateDropperArenaCommand;
 import net.knarcraft.minigames.command.dropper.DropperGroupListCommand;
@@ -228,6 +230,51 @@ public final class MiniGames extends JavaPlugin {
     public void onEnable() {
         // Plugin startup logic
         instance = this;
+
+        // Load configuration
+        loadConfiguration();
+
+        // Register all listeners
+        registerListeners();
+
+        // Register all commands
+        registerCommands();
+
+        // Integrate with other plugins
+        doPluginIntegration();
+    }
+
+    @Override
+    public void onDisable() {
+        // Kill all sessions before exiting
+        for (DropperArena arena : dropperArenaHandler.getArenas().values()) {
+            dropperArenaPlayerRegistry.removeForArena(arena, true);
+        }
+        for (ParkourArena arena : parkourArenaHandler.getArenas().values()) {
+            parkourArenaPlayerRegistry.removeForArena(arena, true);
+        }
+    }
+
+    /**
+     * Sets up integration with third-party plugins
+     */
+    private void doPluginIntegration() {
+        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            this.dropperRecordExpansion = new DropperRecordExpansion(this);
+            if (!this.dropperRecordExpansion.register()) {
+                log(Level.WARNING, "Unable to register PlaceholderAPI dropper expansion!");
+            }
+            this.parkourRecordExpansion = new ParkourRecordExpansion(this);
+            if (!this.parkourRecordExpansion.register()) {
+                log(Level.WARNING, "Unable to register PlaceholderAPI parkour expansion!");
+            }
+        }
+    }
+
+    /**
+     * Loads all configuration values used by this plugin
+     */
+    private void loadConfiguration() {
         this.saveDefaultConfig();
         getConfig().options().copyDefaults(true);
         saveConfig();
@@ -241,56 +288,18 @@ public final class MiniGames extends JavaPlugin {
         this.parkourArenaPlayerRegistry = new ParkourArenaPlayerRegistry();
         this.parkourArenaHandler = new ParkourArenaHandler(this.parkourArenaPlayerRegistry);
         this.parkourArenaHandler.load();
+    }
 
+    /**
+     * Registers all listeners used by this plugin
+     */
+    private void registerListeners() {
         PluginManager pluginManager = getServer().getPluginManager();
         pluginManager.registerEvents(new DamageListener(), this);
         pluginManager.registerEvents(new MoveListener(this.dropperConfiguration, this.parkourConfiguration), this);
         pluginManager.registerEvents(new PlayerStateChangeListener(), this);
         pluginManager.registerEvents(new CommandListener(), this);
-
-        registerCommand("miniGamesReload", new ReloadCommand(), null);
-        registerCommand("miniGamesLeave", new LeaveArenaCommand(), null);
-
-        registerCommand("dropperCreate", new CreateDropperArenaCommand(), null);
-        registerCommand("dropperList", new ListDropperArenaCommand(), null);
-        registerCommand("dropperJoin", new JoinDropperArenaCommand(), new JoinDropperArenaTabCompleter());
-        registerCommand("dropperEdit", new EditDropperArenaCommand(this.dropperConfiguration), new EditDropperArenaTabCompleter());
-        registerCommand("dropperRemove", new RemoveDropperArenaCommand(), new RemoveDropperArenaTabCompleter());
-        registerCommand("dropperGroupSet", new DropperGroupSetCommand(), null);
-        registerCommand("dropperGroupSwap", new DropperGroupSwapCommand(), null);
-        registerCommand("dropperGroupList", new DropperGroupListCommand(), null);
-
-        registerCommand("parkourCreate", new CreateParkourArenaCommand(), null);
-        registerCommand("parkourList", new ListParkourArenaCommand(), null);
-        registerCommand("parkourJoin", new JoinParkourArenaCommand(), new JoinParkourArenaTabCompleter());
-        registerCommand("parkourEdit", new EditParkourArenaCommand(), new EditParkourArenaTabCompleter());
-        registerCommand("parkourRemove", new RemoveParkourArenaCommand(), new RemoveParkourArenaTabCompleter());
-        registerCommand("parkourGroupSet", new ParkourGroupSetCommand(), null);
-        registerCommand("parkourGroupSwap", new ParkourGroupSwapCommand(), null);
-        registerCommand("parkourGroupList", new ParkourGroupListCommand(), null);
-        registerCommand("parkourCheckpoint", new ParkourCheckpointCommand(), null);
-
-        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
-            this.dropperRecordExpansion = new DropperRecordExpansion(this);
-            if (!this.dropperRecordExpansion.register()) {
-                log(Level.WARNING, "Unable to register PlaceholderAPI dropper expansion!");
-            }
-            this.parkourRecordExpansion = new ParkourRecordExpansion(this);
-            if (!this.parkourRecordExpansion.register()) {
-                log(Level.WARNING, "Unable to register PlaceholderAPI parkour expansion!");
-            }
-        }
-    }
-
-    @Override
-    public void onDisable() {
-        // Kill all sessions before exiting
-        for (DropperArena arena : dropperArenaHandler.getArenas().values()) {
-            dropperArenaPlayerRegistry.removeForArena(arena, true);
-        }
-        for (ParkourArena arena : parkourArenaHandler.getArenas().values()) {
-            parkourArenaPlayerRegistry.removeForArena(arena, true);
-        }
+        pluginManager.registerEvents(new GUIListener(false), this);
     }
 
     /**
@@ -311,6 +320,47 @@ public final class MiniGames extends JavaPlugin {
         } else {
             log(Level.SEVERE, "Unable to register the command " + commandName);
         }
+    }
+
+    /**
+     * Registers all commands used by this plugin
+     */
+    private void registerCommands() {
+        registerCommand("miniGamesReload", new ReloadCommand(), null);
+        registerCommand("miniGamesLeave", new LeaveArenaCommand(), null);
+        registerCommand("miniGamesMenu", new MenuCommand(), null);
+
+        registerDropperCommands();
+        registerParkourCommands();
+    }
+
+    /**
+     * Registers all commands related to droppers
+     */
+    private void registerDropperCommands() {
+        registerCommand("dropperCreate", new CreateDropperArenaCommand(), null);
+        registerCommand("dropperList", new ListDropperArenaCommand(), null);
+        registerCommand("dropperJoin", new JoinDropperArenaCommand(), new JoinDropperArenaTabCompleter());
+        registerCommand("dropperEdit", new EditDropperArenaCommand(this.dropperConfiguration), new EditDropperArenaTabCompleter());
+        registerCommand("dropperRemove", new RemoveDropperArenaCommand(), new RemoveDropperArenaTabCompleter());
+        registerCommand("dropperGroupSet", new DropperGroupSetCommand(), null);
+        registerCommand("dropperGroupSwap", new DropperGroupSwapCommand(), null);
+        registerCommand("dropperGroupList", new DropperGroupListCommand(), null);
+    }
+
+    /**
+     * Registers all commands related to parkour
+     */
+    private void registerParkourCommands() {
+        registerCommand("parkourCreate", new CreateParkourArenaCommand(), null);
+        registerCommand("parkourList", new ListParkourArenaCommand(), null);
+        registerCommand("parkourJoin", new JoinParkourArenaCommand(), new JoinParkourArenaTabCompleter());
+        registerCommand("parkourEdit", new EditParkourArenaCommand(), new EditParkourArenaTabCompleter());
+        registerCommand("parkourRemove", new RemoveParkourArenaCommand(), new RemoveParkourArenaTabCompleter());
+        registerCommand("parkourGroupSet", new ParkourGroupSetCommand(), null);
+        registerCommand("parkourGroupSwap", new ParkourGroupSwapCommand(), null);
+        registerCommand("parkourGroupList", new ParkourGroupListCommand(), null);
+        registerCommand("parkourCheckpoint", new ParkourCheckpointCommand(), null);
     }
 
 }

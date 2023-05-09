@@ -40,6 +40,20 @@
                         </goals>
                         <configuration>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <filters>
+                                <filter>
+                                    <artifact>net.knarcraft:knargui</artifact>
+                                    <includes>
+                                        <include>net/knarcraft/knargui/**</include>
+                                    </includes>
+                                </filter>
+                                <filter>
+                                    <excludes>
+                                        <exclude>*.MF</exclude>
+                                        <exclude>*.yml</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
                         </configuration>
                     </execution>
                 </executions>
@@ -61,6 +75,10 @@
         <repository>
             <id>placeholderapi</id>
             <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
+        </repository>
+        <repository>
+            <id>knarcraft-repo</id>
+            <url>https://git.knarcraft.net/api/packages/EpicKnarvik97/maven</url>
         </repository>
     </repositories>
 
@@ -88,6 +106,12 @@
             <artifactId>placeholderapi</artifactId>
             <version>2.10.0</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.knarcraft</groupId>
+            <artifactId>knargui</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 </project>

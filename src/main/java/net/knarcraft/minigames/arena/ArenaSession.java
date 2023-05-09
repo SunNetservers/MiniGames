@@ -1,5 +1,6 @@
 package net.knarcraft.minigames.arena;
 
+import net.knarcraft.minigames.gui.ArenaGUI;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -37,5 +38,12 @@ public interface ArenaSession {
      * @return <p>The session's arena</p>
      */
     @NotNull Arena getArena();
+
+    /**
+     * Gets the GUI with this arena's options
+     *
+     * @return <p>This arena's GUI</p>
+     */
+    @NotNull ArenaGUI getGUI();
 
 }

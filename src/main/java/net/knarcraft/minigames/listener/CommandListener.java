@@ -32,6 +32,8 @@ public class CommandListener implements Listener {
         allowedCommands.add("/parkourCheckpoint");
         allowedCommands.add("/pCheckpoint");
         allowedCommands.add("/pCheck");
+        allowedCommands.add("/miniGamesMenu");
+        allowedCommands.add("/mMenu");
 
         String message = event.getMessage();
         if (!message.startsWith("/")) {
