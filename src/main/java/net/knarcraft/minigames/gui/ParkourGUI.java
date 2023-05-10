@@ -7,6 +7,7 @@ import net.knarcraft.minigames.arena.ArenaSession;
 import net.knarcraft.minigames.arena.parkour.ParkourArenaSession;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
@@ -16,9 +17,18 @@ import java.util.List;
  */
 public class ParkourGUI extends ArenaGUI {
 
-    public ParkourGUI() {
+    /**
+     * Instantiates a new parkour gui
+     *
+     * @param player <p>The player the GUI is created for</p>
+     */
+    public ParkourGUI(Player player) {
         super(9, "Parkour", MiniGames.getInstance().getParkourArenaPlayerRegistry());
-        setItem(0, getTogglePlayersItem());
+        if (MiniGames.getInstance().getPlayerVisibilityManager().isHidingPlayers(player)) {
+            setItem(0, getTogglePlayersItemEnabled());
+        } else {
+            setItem(0, getTogglePlayersItemDisabled());
+        }
         setItem(2, getGiveUpItem());
         setItem(4, getLeaveItem());
 

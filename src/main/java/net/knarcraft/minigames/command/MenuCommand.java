@@ -3,6 +3,7 @@ package net.knarcraft.minigames.command;
 import net.knarcraft.minigames.MiniGames;
 import net.knarcraft.minigames.arena.ArenaSession;
 import net.knarcraft.minigames.config.Message;
+import net.knarcraft.minigames.gui.MiniGamesGUI;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -28,12 +29,12 @@ public class MenuCommand implements TabExecutor {
 
         ArenaSession existingSession = MiniGames.getInstance().getSession(player.getUniqueId());
         if (existingSession == null) {
-            commandSender.sendMessage(Message.ERROR_NOT_IN_ARENA.getMessage());
+            new MiniGamesGUI(player).openFor(player);
             return false;
+        } else {
+            existingSession.getGUI().openFor(player);
+            return true;
         }
-
-        existingSession.getGUI().openFor(player);
-        return true;
     }
 
     @Nullable

@@ -4,26 +4,24 @@ import net.knarcraft.minigames.MiniGames;
 import org.bukkit.entity.Player;
 
 /**
- * A GUI used in the dropper arena
+ * A GUI used outside arenas
  */
-public class DropperGUI extends ArenaGUI {
+public class MiniGamesGUI extends ArenaGUI {
 
     /**
-     * Instantiates a new dropper gui
+     * Instantiates a new mini games gui
      *
      * @param player <p>The player the GUI is created for</p>
      */
-    public DropperGUI(Player player) {
-        super(9, "Dropper", MiniGames.getInstance().getDropperArenaPlayerRegistry());
+    public MiniGamesGUI(Player player) {
+        super(9, "MiniGames", null);
         if (MiniGames.getInstance().getPlayerVisibilityManager().isHidingPlayers(player)) {
             setItem(0, getTogglePlayersItemEnabled());
         } else {
             setItem(0, getTogglePlayersItemDisabled());
         }
-        setItem(2, getLeaveItem());
 
         setAnyClickAction(0, getTogglePlayersAction());
-        setAnyClickAction(2, getLeaveAction());
     }
 
 }

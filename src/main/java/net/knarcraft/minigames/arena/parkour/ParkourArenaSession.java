@@ -19,8 +19,6 @@ import java.util.logging.Level;
  */
 public class ParkourArenaSession extends AbstractArenaSession {
 
-    private static final ArenaGUI gui = new ParkourGUI();
-
     private final @NotNull ParkourArena arena;
     private final @NotNull Player player;
     private final @NotNull ParkourArenaGameMode gameMode;
@@ -115,7 +113,7 @@ public class ParkourArenaSession extends AbstractArenaSession {
 
     @Override
     public @NotNull ArenaGUI getGUI() {
-        return gui;
+        return new ParkourGUI(player);
     }
 
     @Override

@@ -17,8 +17,6 @@ import java.util.logging.Level;
  */
 public class DropperArenaSession extends AbstractArenaSession {
 
-    private static final ArenaGUI gui = new DropperGUI();
-
     private final @NotNull DropperArena arena;
     private final @NotNull Player player;
     private final @NotNull DropperArenaGameMode gameMode;
@@ -102,7 +100,7 @@ public class DropperArenaSession extends AbstractArenaSession {
 
     @Override
     public @NotNull ArenaGUI getGUI() {
-        return gui;
+        return new DropperGUI(player);
     }
 
     @Override

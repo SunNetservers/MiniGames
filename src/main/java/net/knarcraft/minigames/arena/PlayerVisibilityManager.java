@@ -4,6 +4,7 @@ import net.knarcraft.minigames.MiniGames;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -32,6 +33,16 @@ public class PlayerVisibilityManager {
             changeVisibilityFor(playerRegistry, player, true);
         }
 
+    }
+
+    /**
+     * Gets whether the given player is currently hiding other players
+     *
+     * @param player <p>The player to check</p>
+     * @return <p>True if currently hiding other players</p>
+     */
+    public boolean isHidingPlayers(Player player) {
+        return this.hidingEnabledFor.contains(player.getUniqueId());
     }
 
     /**
@@ -77,7 +88,10 @@ public class PlayerVisibilityManager {
      * @param player         <p>The player to change the visibility for</p>
      * @param hide           <p>Whether to hide the players or show the players</p>
      */
-    private void changeVisibilityFor(@NotNull ArenaPlayerRegistry<?> playerRegistry, @NotNull Player player, boolean hide) {
+    private void changeVisibilityFor(@Nullable ArenaPlayerRegistry<?> playerRegistry, @NotNull Player player, boolean hide) {
+        if (playerRegistry == null) {
+            return;
+        }
         for (UUID playerId : playerRegistry.getPlayingPlayers()) {
             Player otherPlayer = Bukkit.getPlayer(playerId);
             if (otherPlayer == null) {

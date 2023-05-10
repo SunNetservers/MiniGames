@@ -3,9 +3,11 @@ package net.knarcraft.minigames.gui;
 import net.knarcraft.knargui.AbstractGUI;
 import net.knarcraft.knargui.GUIAction;
 import net.knarcraft.knargui.item.GUIItemFactory;
+import net.knarcraft.knargui.item.PlayerHeadGUIItemFactory;
 import net.knarcraft.minigames.MiniGames;
 import net.knarcraft.minigames.arena.ArenaPlayerRegistry;
 import net.knarcraft.minigames.arena.ArenaSession;
+import net.knarcraft.minigames.arena.PlayerVisibilityManager;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.ClickType;
@@ -38,15 +40,32 @@ public abstract class ArenaGUI extends AbstractGUI {
      *
      * @return <p>A player toggle item</p>
      */
-    protected ItemStack getTogglePlayersItem() {
+    protected ItemStack getTogglePlayersItemDisabled() {
         GUIItemFactory togglePlayersItemFactory = new GUIItemFactory(Material.PLAYER_HEAD);
         List<String> loreLines = getLoreLines();
-        loreLines.add(ChatColor.GRAY + "Use this item to toggle the visibility");
+        loreLines.add(ChatColor.GRAY + "Use this item to disable the visibility");
         loreLines.add(ChatColor.GRAY + "of other players");
-        togglePlayersItemFactory.setName(ChatColor.BLUE + "Toggle Players");
+        togglePlayersItemFactory.setName(ChatColor.BLUE + "Disable Players");
         togglePlayersItemFactory.setLore(loreLines);
         return togglePlayersItemFactory.build();
     }
+
+    /**
+     * Gets an item describing player visibility toggling
+     *
+     * @return <p>A player toggle item</p>
+     */
+    protected ItemStack getTogglePlayersItemEnabled() {
+        PlayerHeadGUIItemFactory togglePlayersItemFactory = new PlayerHeadGUIItemFactory();
+        togglePlayersItemFactory.useSkin("c10591e6909e6a281b371836e462d67a2c78fa0952e910f32b41a26c48c1757c");
+        List<String> loreLines = getLoreLines();
+        loreLines.add(ChatColor.GRAY + "Use this item to enable the visibility");
+        loreLines.add(ChatColor.GRAY + "of other players");
+        togglePlayersItemFactory.setName(ChatColor.BLUE + "Enable Players");
+        togglePlayersItemFactory.setLore(loreLines);
+        return togglePlayersItemFactory.build();
+    }
+
 
     /**
      * Gets an item describing a leave arena action
@@ -104,8 +123,15 @@ public abstract class ArenaGUI extends AbstractGUI {
      * @return <p>The action for triggering player visibility</p>
      */
     protected GUIAction getTogglePlayersAction() {
-        return (player) -> MiniGames.getInstance().getPlayerVisibilityManager().toggleHidePlayers(playerRegistry,
-                player);
+        return (player) -> {
+            PlayerVisibilityManager visibilityManager = MiniGames.getInstance().getPlayerVisibilityManager();
+            visibilityManager.toggleHidePlayers(playerRegistry, player);
+            if (MiniGames.getInstance().getPlayerVisibilityManager().isHidingPlayers(player)) {
+                setItem(0, getTogglePlayersItemEnabled());
+            } else {
+                setItem(0, getTogglePlayersItemDisabled());
+            }
+        };
     }
 
 }

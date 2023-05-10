@@ -310,7 +310,7 @@ public final class MiniGames extends JavaPlugin {
         pluginManager.registerEvents(new MoveListener(this.dropperConfiguration, this.parkourConfiguration), this);
         pluginManager.registerEvents(new PlayerStateChangeListener(), this);
         pluginManager.registerEvents(new CommandListener(), this);
-        pluginManager.registerEvents(new GUIListener(false), this);
+        pluginManager.registerEvents(new GUIListener(true), this);
     }
 
     /**
