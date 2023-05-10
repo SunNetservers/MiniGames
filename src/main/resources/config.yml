@@ -12,9 +12,6 @@ parkour:
   # are required to do a second play-through to register a record for a grouped arena.
   ignoreRecordsUntilGroupBeatenOnce: false
   
-  # Whether players should be made invisible while playing in a dropper arena
-  makePlayersInvisible: false
-  
   # The blocks compromising parkour arenas' kill planes. Add any materials you want to use for the "bottom" of your
   # parkour arenas.
   killPlaneBlocks:
@@ -47,13 +44,6 @@ dropper:
   
   # Whether a player must do the normal/default game-mode before playing any other game-modes
   mustDoNormalModeFirst: true
-  
-  # Whether players should be made invisible while playing in a dropper arena
-  makePlayersInvisible: false
-  
-  # Whether players should have their entity hit collision disabled while in an arena. This prevents players from 
-  # pushing each-other if in the same arena.
-  disableHitCollision: true
   
   # A whitelist for which blocks won't trigger a loss when hit/passed through. The win block check happens before the
   # loss check, so even blocks on the whitelist can be used as the win-block. "+" denotes a material tag.
