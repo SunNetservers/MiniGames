@@ -4,6 +4,7 @@ import net.knarcraft.knargui.AbstractGUI;
 import net.knarcraft.knargui.GUIAction;
 import net.knarcraft.knargui.item.GUIItemFactory;
 import net.knarcraft.minigames.MiniGames;
+import net.knarcraft.minigames.arena.ArenaPlayerRegistry;
 import net.knarcraft.minigames.arena.ArenaSession;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
@@ -18,14 +19,18 @@ import java.util.List;
  */
 public abstract class ArenaGUI extends AbstractGUI {
 
+    protected final ArenaPlayerRegistry<?> playerRegistry;
+
     /**
      * Instantiates a new arena gui
      *
-     * @param inventorySize <p>The size of the GUI's inventory</p>
-     * @param inventoryName <p>The name of the inventory</p>
+     * @param inventorySize  <p>The size of the GUI's inventory</p>
+     * @param inventoryName  <p>The name of the inventory</p>
+     * @param playerRegistry <p>The player registry used for this GUI</p>
      */
-    public ArenaGUI(int inventorySize, String inventoryName) {
+    public ArenaGUI(int inventorySize, String inventoryName, ArenaPlayerRegistry<?> playerRegistry) {
         super(inventorySize, inventoryName, null);
+        this.playerRegistry = playerRegistry;
     }
 
     /**
@@ -88,9 +93,19 @@ public abstract class ArenaGUI extends AbstractGUI {
         return (player) -> {
             ArenaSession session = MiniGames.getInstance().getSession(player.getUniqueId());
             if (session != null) {
-                session.triggerQuit(false);
+                session.triggerQuit(false, true);
             }
         };
+    }
+
+    /**
+     * Gets the action to run when triggering the toggle players action
+     *
+     * @return <p>The action for triggering player visibility</p>
+     */
+    protected GUIAction getTogglePlayersAction() {
+        return (player) -> MiniGames.getInstance().getPlayerVisibilityManager().toggleHidePlayers(playerRegistry,
+                player);
     }
 
 }

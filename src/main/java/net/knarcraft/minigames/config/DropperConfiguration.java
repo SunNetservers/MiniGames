@@ -19,8 +19,6 @@ public class DropperConfiguration extends MiniGameConfiguration {
     private boolean mustDoGroupedInSequence;
     private boolean ignoreRecordsUntilGroupBeatenOnce;
     private boolean mustDoNormalModeFirst;
-    private boolean makePlayersInvisible;
-    private boolean disableHitCollision;
     private boolean blockSneaking;
     private boolean blockSprinting;
     private Set<Material> blockWhitelist;
@@ -98,24 +96,6 @@ public class DropperConfiguration extends MiniGameConfiguration {
     }
 
     /**
-     * Gets whether players should be made invisible while in an arena
-     *
-     * @return <p>Whether players should be made invisible</p>
-     */
-    public boolean makePlayersInvisible() {
-        return this.makePlayersInvisible;
-    }
-
-    /**
-     * Gets whether entity hit-collision of players in an arena should be disabled
-     *
-     * @return <p>Whether to disable hit collision</p>
-     */
-    public boolean disableHitCollision() {
-        return this.disableHitCollision;
-    }
-
-    /**
      * Gets whether players trying to sneak while in a dropper arena to increase their downwards speed should be blocked
      *
      * @return <p>Whether to block sneak to speed up</p>
@@ -141,8 +121,6 @@ public class DropperConfiguration extends MiniGameConfiguration {
         this.mustDoGroupedInSequence = configuration.getBoolean(rootNode + "mustDoGroupedInSequence", true);
         this.ignoreRecordsUntilGroupBeatenOnce = configuration.getBoolean(rootNode + "ignoreRecordsUntilGroupBeatenOnce", false);
         this.mustDoNormalModeFirst = configuration.getBoolean(rootNode + "mustDoNormalModeFirst", true);
-        this.makePlayersInvisible = configuration.getBoolean(rootNode + "makePlayersInvisible", false);
-        this.disableHitCollision = configuration.getBoolean(rootNode + "disableHitCollision", true);
         this.blockSprinting = configuration.getBoolean(rootNode + "blockSprinting", true);
         this.blockSneaking = configuration.getBoolean(rootNode + "blockSneaking", true);
         this.blockWhitelist = loadMaterialList(rootNode + "blockWhitelist");
@@ -176,8 +154,6 @@ public class DropperConfiguration extends MiniGameConfiguration {
                         "\n" + "Must do groups in sequence: " + mustDoGroupedInSequence +
                         "\n" + "Ignore records until group beaten once: " + ignoreRecordsUntilGroupBeatenOnce +
                         "\n" + "Must do normal mode first: " + mustDoNormalModeFirst +
-                        "\n" + "Make players invisible: " + makePlayersInvisible +
-                        "\n" + "Disable hit collision: " + disableHitCollision +
                         "\n" + "Block whitelist: ");
         for (Material material : blockWhitelist) {
             builder.append("\n  - ").append(material.name());

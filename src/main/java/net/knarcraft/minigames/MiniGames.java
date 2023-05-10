@@ -3,6 +3,7 @@ package net.knarcraft.minigames;
 import net.knarcraft.knargui.GUIListener;
 import net.knarcraft.minigames.arena.ArenaPlayerRegistry;
 import net.knarcraft.minigames.arena.ArenaSession;
+import net.knarcraft.minigames.arena.PlayerVisibilityManager;
 import net.knarcraft.minigames.arena.dropper.DropperArena;
 import net.knarcraft.minigames.arena.dropper.DropperArenaData;
 import net.knarcraft.minigames.arena.dropper.DropperArenaGameMode;
@@ -41,7 +42,6 @@ import net.knarcraft.minigames.command.parkour.EditParkourArenaTabCompleter;
 import net.knarcraft.minigames.command.parkour.JoinParkourArenaCommand;
 import net.knarcraft.minigames.command.parkour.JoinParkourArenaTabCompleter;
 import net.knarcraft.minigames.command.parkour.ListParkourArenaCommand;
-import net.knarcraft.minigames.command.parkour.ParkourCheckpointCommand;
 import net.knarcraft.minigames.command.parkour.ParkourGroupListCommand;
 import net.knarcraft.minigames.command.parkour.ParkourGroupSetCommand;
 import net.knarcraft.minigames.command.parkour.ParkourGroupSwapCommand;
@@ -87,6 +87,7 @@ public final class MiniGames extends JavaPlugin {
     private ParkourRecordExpansion parkourRecordExpansion;
     private ParkourArenaHandler parkourArenaHandler;
     private ArenaPlayerRegistry<ParkourArena> parkourArenaPlayerRegistry;
+    private PlayerVisibilityManager playerVisibilityManager;
 
     /**
      * Gets an instance of this plugin
@@ -160,6 +161,15 @@ public final class MiniGames extends JavaPlugin {
      */
     public ParkourConfiguration getParkourConfiguration() {
         return this.parkourConfiguration;
+    }
+
+    /**
+     * Gets the manager keeping track of player visibility
+     *
+     * @return <p>The player visibility manager</p>
+     */
+    public PlayerVisibilityManager getPlayerVisibilityManager() {
+        return this.playerVisibilityManager;
     }
 
     /**
@@ -288,6 +298,7 @@ public final class MiniGames extends JavaPlugin {
         this.parkourArenaPlayerRegistry = new ParkourArenaPlayerRegistry();
         this.parkourArenaHandler = new ParkourArenaHandler(this.parkourArenaPlayerRegistry);
         this.parkourArenaHandler.load();
+        this.playerVisibilityManager = new PlayerVisibilityManager();
     }
 
     /**
@@ -360,7 +371,6 @@ public final class MiniGames extends JavaPlugin {
         registerCommand("parkourGroupSet", new ParkourGroupSetCommand(), null);
         registerCommand("parkourGroupSwap", new ParkourGroupSwapCommand(), null);
         registerCommand("parkourGroupList", new ParkourGroupListCommand(), null);
-        registerCommand("parkourCheckpoint", new ParkourCheckpointCommand(), null);
     }
 
 }

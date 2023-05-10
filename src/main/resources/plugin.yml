@@ -150,13 +150,6 @@ commands:
     permission: minigames.remove.parkour
     usage: /<command> <arena>
     description: Used to remove an existing parkour arena
-  parkourCheckpoint:
-    aliases:
-      - pcheckpoint
-      - pcheck
-    permission: minigames.join.parkour
-    usage: /<command>
-    description: Used to teleport to the previous checkpoint while in a parkour arena
 permissions:
   minigames.*:
     description: Gives all permissions

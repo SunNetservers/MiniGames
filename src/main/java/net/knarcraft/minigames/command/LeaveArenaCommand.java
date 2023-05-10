@@ -32,7 +32,7 @@ public class LeaveArenaCommand implements TabExecutor {
             return false;
         }
 
-        existingSession.triggerQuit(false);
+        existingSession.triggerQuit(false, true);
         return true;
     }
 

@@ -17,11 +17,12 @@ import java.util.List;
 public class ParkourGUI extends ArenaGUI {
 
     public ParkourGUI() {
-        super(9, "Parkour");
+        super(9, "Parkour", MiniGames.getInstance().getParkourArenaPlayerRegistry());
         setItem(0, getTogglePlayersItem());
         setItem(2, getGiveUpItem());
         setItem(4, getLeaveItem());
 
+        setAnyClickAction(0, getTogglePlayersAction());
         setAnyClickAction(2, getGiveUpAction());
         setAnyClickAction(4, getLeaveAction());
     }
@@ -32,7 +33,7 @@ public class ParkourGUI extends ArenaGUI {
      * @return <p>A give up item</p>
      */
     private ItemStack getGiveUpItem() {
-        GUIItemFactory giveUpItemFactory = new GUIItemFactory(Material.SKELETON_SKULL);
+        GUIItemFactory giveUpItemFactory = new GUIItemFactory(Material.RESPAWN_ANCHOR);
         List<String> loreLines = getLoreLines();
         loreLines.add(ChatColor.GRAY + "Use this item to give up");
         loreLines.add(ChatColor.GRAY + "and go to the last checkpoint");

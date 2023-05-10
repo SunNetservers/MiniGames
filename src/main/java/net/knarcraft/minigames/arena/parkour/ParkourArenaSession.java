@@ -4,7 +4,6 @@ import net.knarcraft.minigames.MiniGames;
 import net.knarcraft.minigames.arena.AbstractArenaSession;
 import net.knarcraft.minigames.arena.PlayerEntryState;
 import net.knarcraft.minigames.config.Message;
-import net.knarcraft.minigames.config.ParkourConfiguration;
 import net.knarcraft.minigames.gui.ArenaGUI;
 import net.knarcraft.minigames.gui.ParkourGUI;
 import net.knarcraft.minigames.util.PlayerTeleporter;
@@ -41,9 +40,7 @@ public class ParkourArenaSession extends AbstractArenaSession {
         this.player = player;
         this.gameMode = gameMode;
 
-        ParkourConfiguration configuration = MiniGames.getInstance().getParkourConfiguration();
-        boolean makeInvisible = configuration.makePlayersInvisible();
-        this.entryState = new ParkourPlayerEntryState(player, makeInvisible);
+        this.entryState = new ParkourPlayerEntryState(player);
         this.entryState.setArenaState();
     }
 

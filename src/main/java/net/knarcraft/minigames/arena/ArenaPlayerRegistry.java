@@ -3,6 +3,7 @@ package net.knarcraft.minigames.arena;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -11,6 +12,13 @@ import java.util.UUID;
  * @param <K> <p>The type of arena this registry stores</p>
  */
 public interface ArenaPlayerRegistry<K extends Arena> {
+
+    /**
+     * Gets the ids of the players currently playing
+     *
+     * @return <p>The ids of the playing players</p>
+     */
+    @NotNull Set<UUID> getPlayingPlayers();
 
     /**
      * Gets the current entry state for the given player

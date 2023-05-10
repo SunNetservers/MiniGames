@@ -3,7 +3,6 @@ package net.knarcraft.minigames.arena.dropper;
 import net.knarcraft.minigames.MiniGames;
 import net.knarcraft.minigames.arena.AbstractArenaSession;
 import net.knarcraft.minigames.arena.PlayerEntryState;
-import net.knarcraft.minigames.config.DropperConfiguration;
 import net.knarcraft.minigames.config.Message;
 import net.knarcraft.minigames.gui.ArenaGUI;
 import net.knarcraft.minigames.gui.DropperGUI;
@@ -38,11 +37,7 @@ public class DropperArenaSession extends AbstractArenaSession {
         this.player = player;
         this.gameMode = gameMode;
 
-        DropperConfiguration configuration = MiniGames.getInstance().getDropperConfiguration();
-        boolean makeInvisible = configuration.makePlayersInvisible();
-        boolean disableCollision = configuration.disableHitCollision();
-        this.entryState = new DropperPlayerEntryState(player, gameMode, makeInvisible, disableCollision,
-                dropperArena.getPlayerHorizontalVelocity());
+        this.entryState = new DropperPlayerEntryState(player, gameMode, dropperArena.getPlayerHorizontalVelocity());
         this.entryState.setArenaState();
     }
 

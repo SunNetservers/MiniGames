@@ -94,11 +94,13 @@ public class JoinDropperArenaCommand implements CommandExecutor {
         boolean teleported = PlayerTeleporter.teleportPlayer(player, specifiedArena.getSpawnLocation(), false, false);
         if (!teleported) {
             player.sendMessage(Message.ERROR_ARENA_TELEPORT_FAILED.getMessage());
-            newSession.triggerQuit(false);
+            newSession.triggerQuit(false, true);
             return false;
         } else {
             // Make sure to update the state again in the air to remove a potential swimming state
             newSession.getEntryState().setArenaState();
+            // Update visibility for the player
+            MiniGames.getInstance().getPlayerVisibilityManager().updateHiddenPlayers(playerRegistry, player);
             player.sendMessage(Message.SUCCESS_ARENA_JOINED.getMessage());
             return true;
         }

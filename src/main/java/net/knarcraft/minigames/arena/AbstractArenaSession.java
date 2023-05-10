@@ -1,5 +1,6 @@
 package net.knarcraft.minigames.arena;
 
+import net.knarcraft.minigames.MiniGames;
 import net.knarcraft.minigames.config.Message;
 import net.knarcraft.minigames.container.PlaceholderContainer;
 import net.knarcraft.minigames.property.RecordResult;
@@ -33,11 +34,15 @@ public abstract class AbstractArenaSession implements ArenaSession {
     }
 
     @Override
-    public void triggerQuit(boolean immediately) {
+    public void triggerQuit(boolean immediately, boolean removeSession) {
         // Stop this session
-        removeSession();
+        if (removeSession) {
+            removeSession();
+        }
         // Teleport the player out of the arena
         teleportToExit(immediately);
+        // Make the player visible to everyone
+        MiniGames.getInstance().getPlayerVisibilityManager().showPlayersFor(player);
 
         player.sendMessage(Message.SUCCESS_ARENA_QUIT.getMessage());
     }
