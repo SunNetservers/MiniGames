@@ -15,7 +15,7 @@ import java.util.UUID;
  */
 public class PlayerVisibilityManager {
 
-    private final Set<UUID> hidingEnabledFor = new HashSet<>();
+    private final Set<UUID> displayingEnabledFor = new HashSet<>();
 
     /**
      * Toggles whether players should be hidden for the player with the given id
@@ -23,14 +23,14 @@ public class PlayerVisibilityManager {
      * @param player <p>The the player to update</p>
      */
     public void toggleHidePlayers(@NotNull ArenaPlayerRegistry<?> playerRegistry, @NotNull Player player) {
-        if (hidingEnabledFor.contains(player.getUniqueId())) {
-            hidingEnabledFor.remove(player.getUniqueId());
-            // Make all other players visible again
-            changeVisibilityFor(playerRegistry, player, false);
-        } else {
-            hidingEnabledFor.add(player.getUniqueId());
+        if (displayingEnabledFor.contains(player.getUniqueId())) {
+            displayingEnabledFor.remove(player.getUniqueId());
             // Make all other players hidden
             changeVisibilityFor(playerRegistry, player, true);
+        } else {
+            displayingEnabledFor.add(player.getUniqueId());
+            // Make all other players visible again
+            changeVisibilityFor(playerRegistry, player, false);
         }
 
     }
@@ -42,7 +42,7 @@ public class PlayerVisibilityManager {
      * @return <p>True if currently hiding other players</p>
      */
     public boolean isHidingPlayers(Player player) {
-        return this.hidingEnabledFor.contains(player.getUniqueId());
+        return !this.displayingEnabledFor.contains(player.getUniqueId());
     }
 
     /**
@@ -52,7 +52,7 @@ public class PlayerVisibilityManager {
      * @param player         <p>The player that joined the arena</p>
      */
     public void updateHiddenPlayers(@NotNull ArenaPlayerRegistry<?> playerRegistry, @NotNull Player player) {
-        boolean hideForPlayer = hidingEnabledFor.contains(player.getUniqueId());
+        boolean hideForPlayer = !displayingEnabledFor.contains(player.getUniqueId());
         for (UUID playerId : playerRegistry.getPlayingPlayers()) {
             Player otherPlayer = Bukkit.getPlayer(playerId);
             if (otherPlayer == null) {
@@ -63,7 +63,7 @@ public class PlayerVisibilityManager {
                 player.hidePlayer(MiniGames.getInstance(), otherPlayer);
             }
             // Hide the newly joined player from this player
-            if (hidingEnabledFor.contains(playerId)) {
+            if (!displayingEnabledFor.contains(playerId)) {
                 otherPlayer.hidePlayer(MiniGames.getInstance(), player);
             }
         }
