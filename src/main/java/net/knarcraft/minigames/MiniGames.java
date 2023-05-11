@@ -54,6 +54,7 @@ import net.knarcraft.minigames.container.SerializableMaterial;
 import net.knarcraft.minigames.container.SerializableUUID;
 import net.knarcraft.minigames.listener.CommandListener;
 import net.knarcraft.minigames.listener.DamageListener;
+import net.knarcraft.minigames.listener.InteractListener;
 import net.knarcraft.minigames.listener.MoveListener;
 import net.knarcraft.minigames.listener.PlayerStateChangeListener;
 import net.knarcraft.minigames.placeholder.DropperRecordExpansion;
@@ -311,6 +312,7 @@ public final class MiniGames extends JavaPlugin {
         pluginManager.registerEvents(new PlayerStateChangeListener(), this);
         pluginManager.registerEvents(new CommandListener(), this);
         pluginManager.registerEvents(new GUIListener(true), this);
+        pluginManager.registerEvents(new InteractListener(), this);
     }
 
     /**

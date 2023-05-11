@@ -2,14 +2,21 @@ package net.knarcraft.minigames.arena;
 
 import net.knarcraft.minigames.MiniGames;
 import net.knarcraft.minigames.container.SerializableUUID;
+import net.knarcraft.minigames.property.PersistentDataKey;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Level;
 
@@ -86,6 +93,7 @@ public abstract class AbstractPlayerEntryState implements PlayerEntryState {
         player.setAllowFlight(this.originalAllowFlight);
         player.setInvulnerable(this.originalInvulnerable);
         player.setSwimming(this.originalIsSwimming);
+        removeMenuItem(player);
     }
 
     @Override
@@ -119,6 +127,32 @@ public abstract class AbstractPlayerEntryState implements PlayerEntryState {
         data.put("originalInvulnerable", this.originalInvulnerable);
         data.put("originalIsSwimming", this.originalIsSwimming);
         return data;
+    }
+
+    /**
+     * Removes the menu item from the given player's inventory
+     *
+     * @param player <p>The player to remove the menu item from</p>
+     */
+    private void removeMenuItem(Player player) {
+        Set<ItemStack> itemsToRemove = new HashSet<>();
+        player.getInventory().forEach((item) -> {
+            if (item == null) {
+                return;
+            }
+            ItemMeta meta = item.getItemMeta();
+            if (meta == null) {
+                return;
+            }
+            Integer persistentData = meta.getPersistentDataContainer().get(new NamespacedKey(MiniGames.getInstance(),
+                    PersistentDataKey.MENU_ITEM.getKeyName()), PersistentDataType.INTEGER);
+            if (persistentData != null && persistentData == PersistentDataKey.MENU_ITEM.getDataValue()) {
+                itemsToRemove.add(item);
+            }
+        });
+        for (ItemStack toRemove : itemsToRemove) {
+            player.getInventory().remove(toRemove);
+        }
     }
 
 }

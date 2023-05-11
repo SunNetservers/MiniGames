@@ -8,6 +8,7 @@ import net.knarcraft.minigames.arena.parkour.ParkourArenaGroup;
 import net.knarcraft.minigames.arena.parkour.ParkourArenaSession;
 import net.knarcraft.minigames.config.Message;
 import net.knarcraft.minigames.config.ParkourConfiguration;
+import net.knarcraft.minigames.util.GUIHelper;
 import net.knarcraft.minigames.util.PlayerTeleporter;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -99,6 +100,7 @@ public class JoinParkourArenaCommand implements CommandExecutor {
             newSession.getEntryState().setArenaState();
             // Update visibility for the player
             MiniGames.getInstance().getPlayerVisibilityManager().updateHiddenPlayers(playerRegistry, player);
+            player.getInventory().addItem(GUIHelper.getGUIOpenItem());
             player.sendMessage(Message.SUCCESS_ARENA_JOINED.getMessage());
             return true;
         }
