@@ -88,9 +88,9 @@ public abstract class AbstractPlayerEntryState implements PlayerEntryState {
 
     @Override
     public void restore(@NotNull Player player) {
-        player.setFlying(this.originalIsFlying);
-        player.setGameMode(this.originalGameMode);
         player.setAllowFlight(this.originalAllowFlight);
+        player.setFlying(player.getAllowFlight() && this.originalIsFlying);
+        player.setGameMode(this.originalGameMode);
         player.setInvulnerable(this.originalInvulnerable);
         player.setSwimming(this.originalIsSwimming);
         removeMenuItem(player);
