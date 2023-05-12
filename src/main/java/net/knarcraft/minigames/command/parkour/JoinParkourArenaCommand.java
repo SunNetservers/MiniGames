@@ -89,6 +89,9 @@ public class JoinParkourArenaCommand implements CommandExecutor {
         ArenaPlayerRegistry<ParkourArena> playerRegistry = MiniGames.getInstance().getParkourArenaPlayerRegistry();
         playerRegistry.registerPlayer(player.getUniqueId(), newSession);
 
+        // Update visibility and hit-box for the player
+        MiniGames.getInstance().getPlayerVisibilityManager().updateHiddenPlayers(playerRegistry, player);
+
         // Try to teleport the player to the arena
         boolean teleported = PlayerTeleporter.teleportPlayer(player, specifiedArena.getSpawnLocation(), false, false);
         if (!teleported) {
@@ -96,10 +99,9 @@ public class JoinParkourArenaCommand implements CommandExecutor {
             newSession.triggerQuit(false, true);
             return false;
         } else {
-            // Make sure to update the state again in the air to remove a potential swimming state
+            // Update the player's state to follow the arena's rules
             newSession.getEntryState().setArenaState();
-            // Update visibility for the player
-            MiniGames.getInstance().getPlayerVisibilityManager().updateHiddenPlayers(playerRegistry, player);
+            
             player.getInventory().addItem(GUIHelper.getGUIOpenItem());
             player.sendMessage(Message.SUCCESS_ARENA_JOINED.getMessage());
             return true;

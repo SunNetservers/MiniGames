@@ -34,12 +34,13 @@ public class ParkourPlayerEntryState extends AbstractPlayerEntryState {
      * @param originalAllowFlight  <p>Whether the player was allowed flight before entering the arena</p>
      * @param originalInvulnerable <p>Whether the player was invulnerable before entering the arena</p>
      * @param originalIsSwimming   <p>Whether the player was swimming before entering the arena</p>
+     * @param originalCollideAble  <p>Whether the player was collide-able before entering the arena</p>
      */
     public ParkourPlayerEntryState(@NotNull UUID playerId, Location entryLocation,
                                    boolean originalIsFlying, GameMode originalGameMode, boolean originalAllowFlight,
-                                   boolean originalInvulnerable, boolean originalIsSwimming) {
+                                   boolean originalInvulnerable, boolean originalIsSwimming, boolean originalCollideAble) {
         super(playerId, entryLocation, originalIsFlying, originalGameMode, originalAllowFlight,
-                originalInvulnerable, originalIsSwimming);
+                originalInvulnerable, originalIsSwimming, originalCollideAble);
     }
 
     @Override
@@ -63,14 +64,15 @@ public class ParkourPlayerEntryState extends AbstractPlayerEntryState {
     public static ParkourPlayerEntryState deserialize(Map<String, Object> data) {
         UUID playerId = ((SerializableUUID) data.get("playerId")).getRawValue();
         Location entryLocation = (Location) data.get("entryLocation");
-        boolean originalIsFlying = (boolean) data.get("originalIsFlying");
+        boolean originalIsFlying = getBoolean(data, "originalIsFlying");
         GameMode originalGameMode = GameMode.valueOf((String) data.get("originalGameMode"));
-        boolean originalAllowFlight = (boolean) data.get("originalAllowFlight");
-        boolean originalInvulnerable = (boolean) data.get("originalInvulnerable");
-        boolean originalIsSwimming = (boolean) data.get("originalIsSwimming");
+        boolean originalAllowFlight = getBoolean(data, "originalAllowFlight");
+        boolean originalInvulnerable = getBoolean(data, "originalInvulnerable");
+        boolean originalIsSwimming = getBoolean(data, "originalIsSwimming");
+        boolean originalCollideAble = getBoolean(data, "originalCollideAble");
 
         return new ParkourPlayerEntryState(playerId, entryLocation, originalIsFlying,
-                originalGameMode, originalAllowFlight, originalInvulnerable, originalIsSwimming);
+                originalGameMode, originalAllowFlight, originalInvulnerable, originalIsSwimming, originalCollideAble);
     }
 
 }

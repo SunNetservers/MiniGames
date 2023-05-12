@@ -44,14 +44,15 @@ public class DropperPlayerEntryState extends AbstractPlayerEntryState {
      * @param originalIsSwimming   <p>Whether the player was swimming before entering the arena</p>
      * @param originalFlySpeed     <p>The fly-speed of the player before entering the arena</p>
      * @param horizontalVelocity   <p>The horizontal velocity of the player before entering the arena</p>
+     * @param originalCollideAble  <p>Whether the player was collide-able before entering the arena</p>
      */
     public DropperPlayerEntryState(@NotNull UUID playerId, Location entryLocation,
                                    boolean originalIsFlying, GameMode originalGameMode, boolean originalAllowFlight,
                                    boolean originalInvulnerable, boolean originalIsSwimming,
                                    float originalFlySpeed, float horizontalVelocity,
-                                   DropperArenaGameMode arenaGameMode) {
+                                   DropperArenaGameMode arenaGameMode, boolean originalCollideAble) {
         super(playerId, entryLocation, originalIsFlying, originalGameMode, originalAllowFlight,
-                originalInvulnerable, originalIsSwimming);
+                originalInvulnerable, originalIsSwimming, originalCollideAble);
         this.originalFlySpeed = originalFlySpeed;
         this.horizontalVelocity = horizontalVelocity;
         this.arenaGameMode = arenaGameMode;
@@ -111,18 +112,19 @@ public class DropperPlayerEntryState extends AbstractPlayerEntryState {
     public static DropperPlayerEntryState deserialize(Map<String, Object> data) {
         UUID playerId = ((SerializableUUID) data.get("playerId")).getRawValue();
         Location entryLocation = (Location) data.get("entryLocation");
-        boolean originalIsFlying = (boolean) data.get("originalIsFlying");
+        boolean originalIsFlying = getBoolean(data, "originalIsFlying");
         GameMode originalGameMode = GameMode.valueOf((String) data.get("originalGameMode"));
-        boolean originalAllowFlight = (boolean) data.get("originalAllowFlight");
-        boolean originalInvulnerable = (boolean) data.get("originalInvulnerable");
-        boolean originalIsSwimming = (boolean) data.get("originalIsSwimming");
+        boolean originalAllowFlight = getBoolean(data, "originalAllowFlight");
+        boolean originalInvulnerable = getBoolean(data, "originalInvulnerable");
+        boolean originalIsSwimming = getBoolean(data, "originalIsSwimming");
         float originalFlySpeed = ((Number) data.get("originalFlySpeed")).floatValue();
         float horizontalVelocity = ((Number) data.get("horizontalVelocity")).floatValue();
         DropperArenaGameMode arenaGameMode = (DropperArenaGameMode) data.get("arenaGameMode");
+        boolean originalCollideAble = getBoolean(data, "originalCollideAble");
 
         return new DropperPlayerEntryState(playerId, entryLocation, originalIsFlying,
                 originalGameMode, originalAllowFlight, originalInvulnerable, originalIsSwimming,
-                originalFlySpeed, horizontalVelocity, arenaGameMode);
+                originalFlySpeed, horizontalVelocity, arenaGameMode, originalCollideAble);
     }
 
 }

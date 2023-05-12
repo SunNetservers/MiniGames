@@ -16,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -32,6 +33,7 @@ public abstract class AbstractPlayerEntryState implements PlayerEntryState {
     private final boolean originalAllowFlight;
     private final boolean originalInvulnerable;
     private final boolean originalIsSwimming;
+    private final boolean originalCollideAble;
 
     /**
      * Instantiates a new abstract player entry state
@@ -46,6 +48,7 @@ public abstract class AbstractPlayerEntryState implements PlayerEntryState {
         this.originalAllowFlight = player.getAllowFlight();
         this.originalInvulnerable = player.isInvulnerable();
         this.originalIsSwimming = player.isSwimming();
+        this.originalCollideAble = player.isCollidable();
     }
 
     /**
@@ -58,10 +61,12 @@ public abstract class AbstractPlayerEntryState implements PlayerEntryState {
      * @param originalAllowFlight  <p>Whether the player was allowed flight before entering the arena</p>
      * @param originalInvulnerable <p>Whether the player was invulnerable before entering the arena</p>
      * @param originalIsSwimming   <p>Whether the player was swimming before entering the arena</p>
+     * @param originalCollideAble  <p>Whether the player was collide-able before entering the arena</p>
      */
     public AbstractPlayerEntryState(@NotNull UUID playerId, Location entryLocation,
                                     boolean originalIsFlying, GameMode originalGameMode, boolean originalAllowFlight,
-                                    boolean originalInvulnerable, boolean originalIsSwimming) {
+                                    boolean originalInvulnerable, boolean originalIsSwimming,
+                                    boolean originalCollideAble) {
         this.playerId = playerId;
         this.entryLocation = entryLocation;
         this.originalIsFlying = originalIsFlying;
@@ -69,6 +74,7 @@ public abstract class AbstractPlayerEntryState implements PlayerEntryState {
         this.originalAllowFlight = originalAllowFlight;
         this.originalInvulnerable = originalInvulnerable;
         this.originalIsSwimming = originalIsSwimming;
+        this.originalCollideAble = originalCollideAble;
     }
 
     @Override
@@ -88,6 +94,7 @@ public abstract class AbstractPlayerEntryState implements PlayerEntryState {
 
     @Override
     public void restore(@NotNull Player player) {
+        player.setCollidable(this.originalCollideAble);
         player.setAllowFlight(this.originalAllowFlight);
         player.setFlying(player.getAllowFlight() && this.originalIsFlying);
         player.setGameMode(this.originalGameMode);
@@ -126,6 +133,7 @@ public abstract class AbstractPlayerEntryState implements PlayerEntryState {
         data.put("originalAllowFlight", this.originalAllowFlight);
         data.put("originalInvulnerable", this.originalInvulnerable);
         data.put("originalIsSwimming", this.originalIsSwimming);
+        data.put("originalCollideAble", this.originalCollideAble);
         return data;
     }
 
@@ -153,6 +161,18 @@ public abstract class AbstractPlayerEntryState implements PlayerEntryState {
         for (ItemStack toRemove : itemsToRemove) {
             player.getInventory().remove(toRemove);
         }
+    }
+
+    /**
+     * Gets a boolean value from a serialization map
+     *
+     * @param data <p>The serialization data to look through</p>
+     * @param key  <p>The key to get</p>
+     * @return <p>The boolean value of the key</p>
+     */
+    protected static boolean getBoolean(Map<String, Object> data, String key) {
+        Boolean value = (Boolean) data.get(key);
+        return Objects.requireNonNullElse(value, false);
     }
 
 }
