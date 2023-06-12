@@ -1,6 +1,7 @@
 package net.knarcraft.minigames.placeholder;
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
+import net.knarcraft.minigames.MiniGames;
 import net.knarcraft.minigames.arena.Arena;
 import net.knarcraft.minigames.arena.ArenaGameMode;
 import net.knarcraft.minigames.arena.ArenaGroup;
@@ -26,6 +27,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Supplier;
+import java.util.logging.Level;
 
 /**
  * A placeholder expansion for parkour record placeholders
@@ -71,7 +73,14 @@ public abstract class RecordExpansion extends PlaceholderExpansion {
         ArenaGameMode gameMode = parseGameMode(parts[2]);
         SelectionType selectionType = SelectionType.getFromString(parts[3]);
         String identifier = parts[4];
-        int recordNumber = Integer.parseInt(parts[5]) - 1;
+        int recordNumber;
+        try {
+            recordNumber = Integer.parseInt(parts[5]) - 1;
+        } catch (NumberFormatException exception) {
+            MiniGames.log(Level.WARNING, "Invalid placeholder given. " + parts[5] +
+                    " supplied instead of record placement.");
+            return parameters;
+        }
         InfoType infoType = InfoType.getFromString(parts[6]);
 
         if (recordType == null || infoType == null) {

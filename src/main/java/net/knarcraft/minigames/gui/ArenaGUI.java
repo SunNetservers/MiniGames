@@ -21,18 +21,29 @@ import java.util.List;
  */
 public abstract class ArenaGUI extends AbstractGUI {
 
-    protected final ArenaPlayerRegistry<?> playerRegistry;
-
     /**
      * Instantiates a new arena gui
      *
-     * @param inventorySize  <p>The size of the GUI's inventory</p>
-     * @param inventoryName  <p>The name of the inventory</p>
-     * @param playerRegistry <p>The player registry used for this GUI</p>
+     * @param inventorySize <p>The size of the GUI's inventory</p>
+     * @param inventoryName <p>The name of the inventory</p>
      */
-    public ArenaGUI(int inventorySize, String inventoryName, ArenaPlayerRegistry<?> playerRegistry) {
+    public ArenaGUI(int inventorySize, String inventoryName) {
         super(inventorySize, inventoryName, null);
-        this.playerRegistry = playerRegistry;
+    }
+
+    /**
+     * Gets an item describing a retry arena action
+     *
+     * @return <p>An arena restart item</p>
+     */
+    protected ItemStack getRestartItem() {
+        PlayerHeadGUIItemFactory restartItemFactory = new PlayerHeadGUIItemFactory();
+        restartItemFactory.useSkin("e23b225ed0443c4eec7cf30a034490485904e6eb3d53ef2ab9e39c73bdf22c30");
+        List<String> loreLines = getLoreLines();
+        loreLines.add(ChatColor.GRAY + "Use this item to retry the arena");
+        restartItemFactory.setName(ChatColor.BLUE + "Retry arena");
+        restartItemFactory.setLore(loreLines);
+        return restartItemFactory.build();
     }
 
     /**
@@ -108,7 +119,7 @@ public abstract class ArenaGUI extends AbstractGUI {
      *
      * @return <p>The leave action</p>
      */
-    protected GUIAction getLeaveAction() {
+    public static GUIAction getLeaveAction() {
         return (player) -> {
             ArenaSession session = MiniGames.getInstance().getSession(player.getUniqueId());
             if (session != null) {
@@ -118,11 +129,26 @@ public abstract class ArenaGUI extends AbstractGUI {
     }
 
     /**
+     * Gets the action to run when triggering the restart action
+     *
+     * @return <p>The action for triggering a session restart</p>
+     */
+    public static GUIAction getRestartAction() {
+        return (player -> {
+            ArenaSession session = MiniGames.getInstance().getSession(player.getUniqueId());
+            if (session != null) {
+                session.reset();
+            }
+        });
+    }
+
+    /**
      * Gets the action to run when triggering the toggle players action
      *
+     * @param playerRegistry <p>The registry containing relevant players</p>
      * @return <p>The action for triggering player visibility</p>
      */
-    protected GUIAction getTogglePlayersAction() {
+    public GUIAction getTogglePlayersAction(ArenaPlayerRegistry<?> playerRegistry) {
         return (player) -> {
             PlayerVisibilityManager visibilityManager = MiniGames.getInstance().getPlayerVisibilityManager();
             visibilityManager.toggleHidePlayers(playerRegistry, player);

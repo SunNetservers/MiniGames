@@ -14,14 +14,14 @@ public class MiniGamesGUI extends ArenaGUI {
      * @param player <p>The player the GUI is created for</p>
      */
     public MiniGamesGUI(Player player) {
-        super(9, "MiniGames", null);
+        super(9, "MiniGames");
         if (MiniGames.getInstance().getPlayerVisibilityManager().isHidingPlayers(player)) {
             setItem(0, getTogglePlayersItemEnabled());
         } else {
             setItem(0, getTogglePlayersItemDisabled());
         }
 
-        setAnyClickAction(0, getTogglePlayersAction());
+        setAnyClickAction(0, getTogglePlayersAction(null));
     }
 
 }

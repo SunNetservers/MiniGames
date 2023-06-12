@@ -23,7 +23,7 @@ public class ParkourGUI extends ArenaGUI {
      * @param player <p>The player the GUI is created for</p>
      */
     public ParkourGUI(Player player) {
-        super(9, "Parkour", MiniGames.getInstance().getParkourArenaPlayerRegistry());
+        super(9, "Parkour");
         if (MiniGames.getInstance().getPlayerVisibilityManager().isHidingPlayers(player)) {
             setItem(0, getTogglePlayersItemEnabled());
         } else {
@@ -31,10 +31,12 @@ public class ParkourGUI extends ArenaGUI {
         }
         setItem(2, getGiveUpItem());
         setItem(4, getLeaveItem());
+        setItem(6, getRestartItem());
 
-        setAnyClickAction(0, getTogglePlayersAction());
+        setAnyClickAction(0, getTogglePlayersAction(MiniGames.getInstance().getParkourArenaPlayerRegistry()));
         setAnyClickAction(2, getGiveUpAction());
         setAnyClickAction(4, getLeaveAction());
+        setAnyClickAction(6, getRestartAction());
     }
 
     /**
@@ -57,7 +59,7 @@ public class ParkourGUI extends ArenaGUI {
      *
      * @return <p>The give up action</p>
      */
-    private GUIAction getGiveUpAction() {
+    public static GUIAction getGiveUpAction() {
         return (player) -> {
             ArenaSession session = MiniGames.getInstance().getSession(player.getUniqueId());
             if (session instanceof ParkourArenaSession) {

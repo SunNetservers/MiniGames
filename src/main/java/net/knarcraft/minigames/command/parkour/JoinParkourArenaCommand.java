@@ -101,7 +101,7 @@ public class JoinParkourArenaCommand implements CommandExecutor {
         } else {
             // Update the player's state to follow the arena's rules
             newSession.getEntryState().setArenaState();
-            
+
             player.getInventory().addItem(GUIHelper.getGUIOpenItem());
             player.sendMessage(Message.SUCCESS_ARENA_JOINED.getMessage());
             return true;

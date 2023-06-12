@@ -117,6 +117,12 @@ public class ParkourArenaSession extends AbstractArenaSession {
     }
 
     @Override
+    public void reset() {
+        this.reachedCheckpoint = null;
+        super.reset();
+    }
+
+    @Override
     protected void removeSession() {
         // Remove this session for game sessions to stop listeners from fiddling more with the player
         boolean removedSession = MiniGames.getInstance().getParkourArenaPlayerRegistry().removePlayer(

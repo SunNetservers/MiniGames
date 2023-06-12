@@ -47,4 +47,9 @@ public interface ArenaSession {
      */
     @NotNull ArenaGUI getGUI();
 
+    /**
+     * Resets the session to allow a player to try again
+     */
+    void reset();
+
 }

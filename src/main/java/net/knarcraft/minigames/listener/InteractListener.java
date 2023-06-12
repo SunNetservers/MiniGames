@@ -1,6 +1,8 @@
 package net.knarcraft.minigames.listener;
 
 import net.knarcraft.minigames.MiniGames;
+import net.knarcraft.minigames.gui.ArenaGUI;
+import net.knarcraft.minigames.gui.ParkourGUI;
 import net.knarcraft.minigames.property.PersistentDataKey;
 import net.knarcraft.minigames.util.GUIHelper;
 import org.bukkit.NamespacedKey;
@@ -33,6 +35,20 @@ public class InteractListener implements Listener {
         if (persistentData != null && persistentData == PersistentDataKey.MENU_ITEM.getDataValue()) {
             event.setCancelled(true);
             GUIHelper.openGUI(event.getPlayer());
+            return;
+        }
+
+        persistentData = meta.getPersistentDataContainer().get(new NamespacedKey(MiniGames.getInstance(),
+                PersistentDataKey.LEAVE_ITEM.getKeyName()), PersistentDataType.INTEGER);
+        if (persistentData != null) {
+            event.setCancelled(true);
+            if (persistentData == PersistentDataKey.LEAVE_ITEM.getDataValue()) {
+                ArenaGUI.getLeaveAction().run(event.getPlayer());
+            } else if (persistentData == PersistentDataKey.GIVE_UP_ITEM.getDataValue()) {
+                ParkourGUI.getGiveUpAction().run(event.getPlayer());
+            } else if (persistentData == PersistentDataKey.TOGGLE_PLAYERS_ITEM.getDataValue()) {
+                //TODO: Figure out how in the world this should be done, as the existing code cannot be re-used
+            }
         }
     }
 

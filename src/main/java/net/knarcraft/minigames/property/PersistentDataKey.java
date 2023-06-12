@@ -6,6 +6,9 @@ package net.knarcraft.minigames.property;
 public enum PersistentDataKey {
 
     MENU_ITEM("MiniGamesMenu", 1799804),
+    LEAVE_ITEM("MiniGamesAction", 1799871),
+    GIVE_UP_ITEM("MiniGamesAction", 1799872),
+    TOGGLE_PLAYERS_ITEM("MiniGamesAction", 1799873),
     ;
 
     private final String keyName;

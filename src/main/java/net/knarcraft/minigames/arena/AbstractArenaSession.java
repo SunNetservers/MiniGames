@@ -15,7 +15,7 @@ public abstract class AbstractArenaSession implements ArenaSession {
     private final @NotNull ArenaGameMode gameMode;
     private final @NotNull Player player;
     protected int deaths;
-    protected final long startTime;
+    protected long startTime;
     protected PlayerEntryState entryState;
 
     /**
@@ -45,6 +45,14 @@ public abstract class AbstractArenaSession implements ArenaSession {
         MiniGames.getInstance().getPlayerVisibilityManager().showPlayersFor(player);
 
         player.sendMessage(Message.SUCCESS_ARENA_QUIT.getMessage());
+    }
+
+    @Override
+    public void reset() {
+        this.deaths = 0;
+        this.startTime = System.currentTimeMillis();
+        PlayerTeleporter.teleportPlayer(this.player, this.arena.getSpawnLocation(), false, false);
+        this.entryState.setArenaState();
     }
 
     /**
