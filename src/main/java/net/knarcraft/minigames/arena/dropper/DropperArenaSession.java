@@ -20,6 +20,7 @@ public class DropperArenaSession extends AbstractArenaSession {
     private final @NotNull DropperArena arena;
     private final @NotNull Player player;
     private final @NotNull DropperArenaGameMode gameMode;
+    private boolean startedMoving = false;
 
     /**
      * Instantiates a new dropper arena session
@@ -37,6 +38,22 @@ public class DropperArenaSession extends AbstractArenaSession {
 
         this.entryState = new DropperPlayerEntryState(player, gameMode, dropperArena.getPlayerHorizontalVelocity());
         this.entryState.setArenaState();
+    }
+
+    /**
+     * Marks that this arena's player has started moving
+     */
+    public void setStartedMoving() {
+        this.startedMoving = true;
+    }
+
+    /**
+     * Gets whether the player of this session has started moving in the arena
+     *
+     * @return <p>True if the player has started moving</p>
+     */
+    public boolean getStartedMoving() {
+        return this.startedMoving;
     }
 
     /**
@@ -101,6 +118,12 @@ public class DropperArenaSession extends AbstractArenaSession {
     @Override
     public @NotNull ArenaGUI getGUI() {
         return new DropperGUI(player);
+    }
+
+    @Override
+    public void reset() {
+        this.startedMoving = false;
+        super.reset();
     }
 
     @Override
