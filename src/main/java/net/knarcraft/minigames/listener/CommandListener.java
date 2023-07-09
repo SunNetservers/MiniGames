@@ -2,7 +2,7 @@ package net.knarcraft.minigames.listener;
 
 import net.knarcraft.minigames.MiniGames;
 import net.knarcraft.minigames.arena.ArenaSession;
-import net.knarcraft.minigames.config.Message;
+import net.knarcraft.minigames.config.MiniGameMessage;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -43,7 +43,7 @@ public class CommandListener implements Listener {
             }
         }
 
-        player.sendMessage(Message.ERROR_ILLEGAL_COMMAND.getMessage());
+        MiniGames.getInstance().getStringFormatter().displayErrorMessage(player, MiniGameMessage.ERROR_ILLEGAL_COMMAND);
         event.setCancelled(true);
     }
 

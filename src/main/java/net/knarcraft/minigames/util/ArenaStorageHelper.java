@@ -35,7 +35,7 @@ public final class ArenaStorageHelper {
 
         try {
             configuration.save(new File(MiniGames.getInstance().getDataFolder(), key + "EntryStates.yml"));
-        } catch (IOException e) {
+        } catch (IOException exception) {
             MiniGames.log(Level.SEVERE, "Unable to save entry states to disk");
         }
     }

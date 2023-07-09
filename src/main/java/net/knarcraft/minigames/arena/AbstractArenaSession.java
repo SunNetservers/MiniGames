@@ -1,8 +1,8 @@
 package net.knarcraft.minigames.arena;
 
+import net.knarcraft.knarlib.formatting.StringFormatter;
 import net.knarcraft.minigames.MiniGames;
-import net.knarcraft.minigames.config.Message;
-import net.knarcraft.minigames.container.PlaceholderContainer;
+import net.knarcraft.minigames.config.MiniGameMessage;
 import net.knarcraft.minigames.property.RecordResult;
 import net.knarcraft.minigames.util.PlayerTeleporter;
 import org.bukkit.Location;
@@ -44,7 +44,7 @@ public abstract class AbstractArenaSession implements ArenaSession {
         // Make the player visible to everyone
         MiniGames.getInstance().getPlayerVisibilityManager().showPlayersFor(player);
 
-        player.sendMessage(Message.SUCCESS_ARENA_QUIT.getMessage());
+        MiniGames.getInstance().getStringFormatter().displaySuccessMessage(player, MiniGameMessage.SUCCESS_ARENA_QUIT);
     }
 
     @Override
@@ -69,16 +69,17 @@ public abstract class AbstractArenaSession implements ArenaSession {
         // Gets a string representation of the played game-mode
         String gameModeString = getGameModeString();
 
-        Message recordInfoMessage = switch (recordResult) {
-            case WORLD_RECORD -> Message.RECORD_ACHIEVED_GLOBAL;
-            case PERSONAL_BEST -> Message.RECORD_ACHIEVED_PERSONAL;
+        MiniGameMessage recordInfoMiniGameMessage = switch (recordResult) {
+            case WORLD_RECORD -> MiniGameMessage.RECORD_ACHIEVED_GLOBAL;
+            case PERSONAL_BEST -> MiniGameMessage.RECORD_ACHIEVED_PERSONAL;
             default -> throw new IllegalStateException("Unexpected value: " + recordResult);
         };
-        String recordInfo = recordInfoMessage.getPartialMessage("{recordType}", type);
+        StringFormatter stringFormatter = MiniGames.getInstance().getStringFormatter();
+        String recordInfo = stringFormatter.replacePlaceholder(recordInfoMiniGameMessage, "{recordType}", type);
 
-        PlaceholderContainer placeholderContainer = new PlaceholderContainer().add("{gameMode}", gameModeString);
-        placeholderContainer.add("{recordInfo}", recordInfo);
-        player.sendMessage(Message.SUCCESS_RECORD_ACHIEVED.getMessage(placeholderContainer));
+        stringFormatter.displaySuccessMessage(player, stringFormatter.replacePlaceholders(
+                MiniGameMessage.SUCCESS_RECORD_ACHIEVED, new String[]{"{gameMode}", "{recordInfo}"},
+                new String[]{gameModeString, recordInfo}));
     }
 
     /**

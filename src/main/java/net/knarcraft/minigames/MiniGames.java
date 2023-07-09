@@ -1,6 +1,9 @@
 package net.knarcraft.minigames;
 
 import net.knarcraft.knargui.GUIListener;
+import net.knarcraft.knarlib.formatting.StringFormatter;
+import net.knarcraft.knarlib.formatting.Translator;
+import net.knarcraft.knarlib.property.ColorConversion;
 import net.knarcraft.minigames.arena.ArenaPlayerRegistry;
 import net.knarcraft.minigames.arena.ArenaSession;
 import net.knarcraft.minigames.arena.PlayerVisibilityManager;
@@ -48,6 +51,7 @@ import net.knarcraft.minigames.command.parkour.ParkourGroupSwapCommand;
 import net.knarcraft.minigames.command.parkour.RemoveParkourArenaCommand;
 import net.knarcraft.minigames.command.parkour.RemoveParkourArenaTabCompleter;
 import net.knarcraft.minigames.config.DropperConfiguration;
+import net.knarcraft.minigames.config.MiniGameMessage;
 import net.knarcraft.minigames.config.ParkourConfiguration;
 import net.knarcraft.minigames.config.SharedConfiguration;
 import net.knarcraft.minigames.container.SerializableMaterial;
@@ -59,6 +63,7 @@ import net.knarcraft.minigames.listener.MoveListener;
 import net.knarcraft.minigames.listener.PlayerStateChangeListener;
 import net.knarcraft.minigames.placeholder.DropperRecordExpansion;
 import net.knarcraft.minigames.placeholder.ParkourRecordExpansion;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.PluginCommand;
@@ -89,6 +94,8 @@ public final class MiniGames extends JavaPlugin {
     private ParkourArenaHandler parkourArenaHandler;
     private ArenaPlayerRegistry<ParkourArena> parkourArenaPlayerRegistry;
     private PlayerVisibilityManager playerVisibilityManager;
+    private Translator translator;
+    private StringFormatter stringFormatter;
 
     /**
      * Gets an instance of this plugin
@@ -174,6 +181,24 @@ public final class MiniGames extends JavaPlugin {
     }
 
     /**
+     * Gets the translator to get messages from
+     *
+     * @return <p>The translator</p>
+     */
+    public Translator getTranslator() {
+        return this.translator;
+    }
+
+    /**
+     * Gets the string formatter to get formatted messages from
+     *
+     * @return <p>The string formatter</p>
+     */
+    public StringFormatter getStringFormatter() {
+        return this.stringFormatter;
+    }
+
+    /**
      * Gets the current session of the given player
      *
      * @param playerId <p>The id of the player to get a session for</p>
@@ -208,6 +233,8 @@ public final class MiniGames extends JavaPlugin {
 
         // Reload configuration
         this.reloadConfig();
+        translator.loadLanguages(this.getDataFolder(), "en",
+                getConfig().getString("language", "en"));
         this.sharedConfiguration.load(this.getConfig());
         this.dropperConfiguration.load(this.getConfig());
         this.parkourConfiguration.load(this.getConfig());
@@ -290,6 +317,9 @@ public final class MiniGames extends JavaPlugin {
         getConfig().options().copyDefaults(true);
         saveConfig();
         reloadConfig();
+
+        setupStringFormatter();
+
         this.sharedConfiguration = new SharedConfiguration(this.getConfig());
         this.dropperConfiguration = new DropperConfiguration(this.getConfig());
         this.parkourConfiguration = new ParkourConfiguration(this.getConfig());
@@ -373,6 +403,22 @@ public final class MiniGames extends JavaPlugin {
         registerCommand("parkourGroupSet", new ParkourGroupSetCommand(), null);
         registerCommand("parkourGroupSwap", new ParkourGroupSwapCommand(), null);
         registerCommand("parkourGroupList", new ParkourGroupListCommand(), null);
+    }
+
+    /**
+     * Sets up the translator and the string formatter
+     */
+    private void setupStringFormatter() {
+        translator = new Translator();
+        translator.registerMessageCategory(MiniGameMessage.ERROR_PLAYER_ONLY);
+        translator.loadLanguages(this.getDataFolder(), "en",
+                getConfig().getString("language", "en"));
+        stringFormatter = new StringFormatter(this.getDescription().getName(), translator);
+        stringFormatter.setColorConversion(ColorConversion.RGB);
+        stringFormatter.setNamePrefix("#546EED[&r&l");
+        stringFormatter.setNameSuffix("#546EED]");
+        stringFormatter.setErrorColor(ChatColor.RED);
+        stringFormatter.setSuccessColor(ChatColor.GREEN);
     }
 
 }

@@ -1,6 +1,7 @@
 package net.knarcraft.minigames.command;
 
-import net.knarcraft.minigames.config.Message;
+import net.knarcraft.minigames.MiniGames;
+import net.knarcraft.minigames.config.MiniGameMessage;
 import net.knarcraft.minigames.util.GUIHelper;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -21,7 +22,8 @@ public class MenuCommand implements TabExecutor {
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s,
                              @NotNull String[] arguments) {
         if (!(commandSender instanceof Player player)) {
-            commandSender.sendMessage(Message.ERROR_PLAYER_ONLY.getMessage());
+            MiniGames.getInstance().getStringFormatter().displayErrorMessage(commandSender,
+                    MiniGameMessage.ERROR_PLAYER_ONLY);
             return false;
         }
 

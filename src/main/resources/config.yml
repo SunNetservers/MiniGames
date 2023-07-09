@@ -1,4 +1,7 @@
 # Configuration values for mini-games
+
+# The chosen language for Launchpad. You can use "en" or any custom language specified in strings.yml
+language: en
 parkour:
   # Whether to enforce the order in which a player must reach checkpoints. Enabling this ensures that a player cannot
   # trigger a previous checkpoint by accident. It also ensures players cannot skip a checkpoint, even if the arena

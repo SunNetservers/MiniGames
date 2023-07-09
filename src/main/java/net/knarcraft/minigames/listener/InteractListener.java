@@ -46,8 +46,6 @@ public class InteractListener implements Listener {
                 ArenaGUI.getLeaveAction().run(event.getPlayer());
             } else if (persistentData == PersistentDataKey.GIVE_UP_ITEM.getDataValue()) {
                 ParkourGUI.getGiveUpAction().run(event.getPlayer());
-            } else if (persistentData == PersistentDataKey.TOGGLE_PLAYERS_ITEM.getDataValue()) {
-                //TODO: Figure out how in the world this should be done, as the existing code cannot be re-used
             }
         }
     }

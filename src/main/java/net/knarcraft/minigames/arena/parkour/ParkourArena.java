@@ -1,10 +1,10 @@
 package net.knarcraft.minigames.arena.parkour;
 
+import net.knarcraft.knarlib.util.MaterialHelper;
 import net.knarcraft.minigames.MiniGames;
 import net.knarcraft.minigames.arena.Arena;
 import net.knarcraft.minigames.arena.ArenaGameMode;
 import net.knarcraft.minigames.arena.ArenaRecordsRegistry;
-import net.knarcraft.minigames.util.MaterialHelper;
 import net.knarcraft.minigames.util.ParkourArenaStorageHelper;
 import net.knarcraft.minigames.util.StringSanitizer;
 import org.bukkit.Location;
@@ -106,7 +106,7 @@ public class ParkourArena implements Arena {
         this.winLocation = winLocation;
         this.killPlaneBlockNames = killPlaneBlockNames;
         this.killPlaneBlocks = this.killPlaneBlockNames == null ? null : MaterialHelper.loadMaterialList(
-                new ArrayList<>(killPlaneBlockNames));
+                new ArrayList<>(killPlaneBlockNames), "+", MiniGames.getInstance().getLogger());
         this.checkpoints = checkpoints;
         this.parkourArenaData = parkourArenaData;
         this.parkourArenaHandler = arenaHandler;
@@ -250,7 +250,7 @@ public class ParkourArena implements Arena {
         try {
             ParkourArenaStorageHelper.saveParkourArenaData(getData());
             return true;
-        } catch (IOException e) {
+        } catch (IOException exception) {
             return false;
         }
     }
@@ -366,7 +366,8 @@ public class ParkourArena implements Arena {
         if (killPlaneBlockNames.isEmpty()) {
             this.killPlaneBlocks = null;
         } else {
-            Set<Material> parsed = MaterialHelper.loadMaterialList(new ArrayList<>(killPlaneBlockNames));
+            Set<Material> parsed = MaterialHelper.loadMaterialList(new ArrayList<>(killPlaneBlockNames), "+",
+                    MiniGames.getInstance().getLogger());
             if (parsed.isEmpty()) {
                 return false;
             }

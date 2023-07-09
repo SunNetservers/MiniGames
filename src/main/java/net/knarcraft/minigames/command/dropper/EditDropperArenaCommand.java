@@ -1,11 +1,11 @@
 package net.knarcraft.minigames.command.dropper;
 
+import net.knarcraft.knarlib.formatting.StringFormatter;
 import net.knarcraft.minigames.MiniGames;
 import net.knarcraft.minigames.arena.dropper.DropperArena;
 import net.knarcraft.minigames.arena.dropper.DropperArenaEditableProperty;
 import net.knarcraft.minigames.config.DropperConfiguration;
-import net.knarcraft.minigames.config.Message;
-import net.knarcraft.minigames.container.PlaceholderContainer;
+import net.knarcraft.minigames.config.MiniGameMessage;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -33,8 +33,9 @@ public class EditDropperArenaCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s,
                              @NotNull String[] arguments) {
+        StringFormatter stringFormatter = MiniGames.getInstance().getStringFormatter();
         if (!(commandSender instanceof Player player)) {
-            commandSender.sendMessage(Message.ERROR_PLAYER_ONLY.getMessage());
+            stringFormatter.displayErrorMessage(commandSender, MiniGameMessage.ERROR_PLAYER_ONLY);
             return false;
         }
 
@@ -44,29 +45,31 @@ public class EditDropperArenaCommand implements CommandExecutor {
 
         DropperArena specifiedArena = MiniGames.getInstance().getDropperArenaHandler().getArena(arguments[0]);
         if (specifiedArena == null) {
-            commandSender.sendMessage(Message.ERROR_ARENA_NOT_FOUND.getMessage());
+            stringFormatter.displayErrorMessage(commandSender, MiniGameMessage.ERROR_ARENA_NOT_FOUND);
             return false;
         }
 
         DropperArenaEditableProperty editableProperty = DropperArenaEditableProperty.getFromArgumentString(arguments[1]);
         if (editableProperty == null) {
-            commandSender.sendMessage(Message.ERROR_UNKNOWN_PROPERTY.getMessage());
+            stringFormatter.displayErrorMessage(commandSender, MiniGameMessage.ERROR_UNKNOWN_PROPERTY);
             return false;
         }
 
         if (arguments.length < 3) {
             // Print the current value of the property
             String value = editableProperty.getCurrentValueAsString(specifiedArena);
-            commandSender.sendMessage(Message.SUCCESS_CURRENT_VALUE.getMessage(new PlaceholderContainer().add(
-                    "{property}", editableProperty.getArgumentString()).add("{value}", value)));
+            stringFormatter.displaySuccessMessage(commandSender, stringFormatter.replacePlaceholders(
+                    MiniGameMessage.SUCCESS_CURRENT_VALUE, new String[]{"{property}", "{value}"},
+                    new String[]{editableProperty.getArgumentString(), value}));
             return true;
         } else {
             boolean successful = changeValue(specifiedArena, editableProperty, arguments[2], player);
             if (successful) {
-                player.sendMessage(Message.SUCCESS_PROPERTY_CHANGED.getMessage("{property}",
+                stringFormatter.displaySuccessMessage(player, stringFormatter.replacePlaceholder(
+                        MiniGameMessage.SUCCESS_PROPERTY_CHANGED, "{property}",
                         editableProperty.getArgumentString()));
             } else {
-                player.sendMessage(Message.ERROR_PROPERTY_INPUT_INVALID.getMessage());
+                stringFormatter.displayErrorMessage(player, MiniGameMessage.ERROR_PROPERTY_INPUT_INVALID);
             }
             return successful;
         }

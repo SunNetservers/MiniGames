@@ -1,7 +1,7 @@
 package net.knarcraft.minigames.util;
 
 import net.knarcraft.minigames.MiniGames;
-import net.knarcraft.minigames.config.Message;
+import net.knarcraft.minigames.config.MiniGameMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -36,7 +36,8 @@ public final class PlayerTeleporter {
                     passenger.teleport(location);
                 }
             } else {
-                player.sendMessage(Message.ERROR_TELEPORT_WITH_PASSENGER.getMessage());
+                MiniGames.getInstance().getStringFormatter().displayErrorMessage(player,
+                        MiniGameMessage.ERROR_TELEPORT_WITH_PASSENGER);
                 return false;
             }
         }
@@ -46,7 +47,8 @@ public final class PlayerTeleporter {
                 player.eject();
                 vehicle.teleport(location);
             } else {
-                player.sendMessage(Message.ERROR_TELEPORT_IN_VEHICLE.getMessage());
+                MiniGames.getInstance().getStringFormatter().displayErrorMessage(player,
+                        MiniGameMessage.ERROR_TELEPORT_IN_VEHICLE);
                 return false;
             }
         }

@@ -1,10 +1,11 @@
 package net.knarcraft.minigames.command.parkour;
 
+import net.knarcraft.knarlib.formatting.StringFormatter;
 import net.knarcraft.minigames.MiniGames;
 import net.knarcraft.minigames.arena.parkour.ParkourArena;
 import net.knarcraft.minigames.arena.parkour.ParkourArenaGroup;
 import net.knarcraft.minigames.arena.parkour.ParkourArenaHandler;
-import net.knarcraft.minigames.config.Message;
+import net.knarcraft.minigames.config.MiniGameMessage;
 import net.knarcraft.minigames.util.StringSanitizer;
 import net.knarcraft.minigames.util.TabCompleteHelper;
 import org.bukkit.command.Command;
@@ -30,11 +31,12 @@ public class ParkourGroupSetCommand implements TabExecutor {
             return false;
         }
 
+        StringFormatter stringFormatter = MiniGames.getInstance().getStringFormatter();
         ParkourArenaHandler arenaHandler = MiniGames.getInstance().getParkourArenaHandler();
 
         ParkourArena specifiedArena = arenaHandler.getArena(arguments[0]);
         if (specifiedArena == null) {
-            commandSender.sendMessage(Message.ERROR_ARENA_NOT_FOUND.getMessage());
+            stringFormatter.displayErrorMessage(commandSender, MiniGameMessage.ERROR_ARENA_NOT_FOUND);
             return false;
         }
 
@@ -56,7 +58,7 @@ public class ParkourGroupSetCommand implements TabExecutor {
 
         arenaHandler.setGroup(specifiedArena.getArenaId(), arenaGroup);
 
-        commandSender.sendMessage(Message.SUCCESS_ARENA_GROUP_UPDATED.getMessage());
+        stringFormatter.displaySuccessMessage(commandSender, MiniGameMessage.SUCCESS_ARENA_GROUP_UPDATED);
         return true;
     }
 

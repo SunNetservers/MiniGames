@@ -3,7 +3,7 @@ package net.knarcraft.minigames.command.dropper;
 import net.knarcraft.minigames.MiniGames;
 import net.knarcraft.minigames.arena.dropper.DropperArena;
 import net.knarcraft.minigames.arena.dropper.DropperArenaHandler;
-import net.knarcraft.minigames.config.Message;
+import net.knarcraft.minigames.config.MiniGameMessage;
 import net.knarcraft.minigames.util.StringSanitizer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -20,7 +20,8 @@ public class CreateDropperArenaCommand implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s,
                              @NotNull String[] arguments) {
         if (!(commandSender instanceof Player player)) {
-            commandSender.sendMessage(Message.ERROR_PLAYER_ONLY.getMessage());
+            MiniGames.getInstance().getStringFormatter().displayErrorMessage(commandSender,
+                    MiniGameMessage.ERROR_PLAYER_ONLY);
             return false;
         }
 
@@ -41,13 +42,15 @@ public class CreateDropperArenaCommand implements CommandExecutor {
 
         DropperArena existingArena = arenaHandler.getArena(arenaName);
         if (existingArena != null) {
-            commandSender.sendMessage(Message.ERROR_ARENA_NAME_COLLISION.getMessage());
+            MiniGames.getInstance().getStringFormatter().displayErrorMessage(commandSender,
+                    MiniGameMessage.ERROR_ARENA_NAME_COLLISION);
             return false;
         }
 
         DropperArena arena = new DropperArena(arenaName, player.getLocation(), arenaHandler);
         arenaHandler.addArena(arena);
-        commandSender.sendMessage(Message.SUCCESS_ARENA_CREATED.getMessage());
+        MiniGames.getInstance().getStringFormatter().displaySuccessMessage(commandSender,
+                MiniGameMessage.SUCCESS_ARENA_CREATED);
         return true;
     }
 

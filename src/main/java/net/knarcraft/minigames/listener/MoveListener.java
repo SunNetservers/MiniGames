@@ -9,7 +9,7 @@ import net.knarcraft.minigames.arena.parkour.ParkourArena;
 import net.knarcraft.minigames.arena.parkour.ParkourArenaGameMode;
 import net.knarcraft.minigames.arena.parkour.ParkourArenaSession;
 import net.knarcraft.minigames.config.DropperConfiguration;
-import net.knarcraft.minigames.config.Message;
+import net.knarcraft.minigames.config.MiniGameMessage;
 import net.knarcraft.minigames.config.ParkourConfiguration;
 import net.knarcraft.minigames.config.SharedConfiguration;
 import org.bukkit.Bukkit;
@@ -121,7 +121,8 @@ public class MoveListener implements Listener {
 
             // Register the checkpoint
             arenaSession.registerCheckpoint(checkpoint.clone());
-            player.sendMessage(Message.SUCCESS_CHECKPOINT_REACHED.getMessage());
+            MiniGames.getInstance().getStringFormatter().displaySuccessMessage(player,
+                    MiniGameMessage.SUCCESS_CHECKPOINT_REACHED);
             return;
         }
     }

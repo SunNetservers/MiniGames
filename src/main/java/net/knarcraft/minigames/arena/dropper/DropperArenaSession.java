@@ -1,9 +1,10 @@
 package net.knarcraft.minigames.arena.dropper;
 
+import net.knarcraft.knarlib.formatting.StringFormatter;
 import net.knarcraft.minigames.MiniGames;
 import net.knarcraft.minigames.arena.AbstractArenaSession;
 import net.knarcraft.minigames.arena.PlayerEntryState;
-import net.knarcraft.minigames.config.Message;
+import net.knarcraft.minigames.config.MiniGameMessage;
 import net.knarcraft.minigames.gui.ArenaGUI;
 import net.knarcraft.minigames.gui.DropperGUI;
 import net.knarcraft.minigames.util.PlayerTeleporter;
@@ -92,11 +93,13 @@ public class DropperArenaSession extends AbstractArenaSession {
             registerRecord();
         }
 
+        StringFormatter stringFormatter = MiniGames.getInstance().getStringFormatter();
+
         // Mark the arena as cleared
         if (this.arena.getData().setCompleted(this.gameMode, this.player)) {
-            this.player.sendMessage(Message.SUCCESS_ARENA_FIRST_CLEAR.getMessage());
+            stringFormatter.displaySuccessMessage(this.player, MiniGameMessage.SUCCESS_ARENA_FIRST_CLEAR);
         }
-        this.player.sendMessage(Message.SUCCESS_ARENA_WIN.getMessage());
+        stringFormatter.displaySuccessMessage(this.player, MiniGameMessage.SUCCESS_ARENA_WIN);
 
         // Teleport the player out of the arena
         teleportToExit(false);
