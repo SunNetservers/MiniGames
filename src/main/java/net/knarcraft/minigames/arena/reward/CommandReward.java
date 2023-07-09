@@ -1,6 +1,7 @@
 package net.knarcraft.minigames.arena.reward;
 
-import net.knarcraft.minigames.config.Message;
+import net.knarcraft.minigames.MiniGames;
+import net.knarcraft.minigames.config.MiniGameMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -32,7 +33,8 @@ public class CommandReward implements Reward {
 
     @Override
     public @NotNull String getGrantMessage() {
-        return Message.SUCCESS_COMMAND_REWARDED.getMessage("{command}", command);
+        return MiniGames.getInstance().getStringFormatter().replacePlaceholder(
+                MiniGameMessage.SUCCESS_COMMAND_REWARDED, "{command}", command);
     }
 
     @NotNull

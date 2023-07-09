@@ -1,7 +1,7 @@
 package net.knarcraft.minigames.arena.reward;
 
-import net.knarcraft.minigames.config.Message;
-import net.knarcraft.minigames.container.PlaceholderContainer;
+import net.knarcraft.minigames.MiniGames;
+import net.knarcraft.minigames.config.MiniGameMessage;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -43,10 +43,9 @@ public class ItemReward implements Reward {
 
     @Override
     public @NotNull String getGrantMessage() {
-        PlaceholderContainer placeholderContainer = new PlaceholderContainer();
-        placeholderContainer.add("{amount}", String.valueOf(item.getAmount())).add("{item}",
-                item.getType().getKey().getKey());
-        return Message.SUCCESS_ITEM_REWARDED.getMessage();
+        return MiniGames.getInstance().getStringFormatter().replacePlaceholders(MiniGameMessage.SUCCESS_ITEM_REWARDED,
+                new String[]{"{amount}", "{item}"}, new String[]{String.valueOf(item.getAmount()),
+                        item.getType().getKey().getKey()});
     }
 
     @NotNull

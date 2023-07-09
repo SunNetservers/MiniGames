@@ -1,6 +1,7 @@
 package net.knarcraft.minigames.arena.reward;
 
-import net.knarcraft.minigames.config.Message;
+import net.knarcraft.minigames.MiniGames;
+import net.knarcraft.minigames.config.MiniGameMessage;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -32,7 +33,8 @@ public class EconomyReward implements Reward {
     @Override
     public @NotNull String getGrantMessage() {
         //TODO: Print formatted currency amount and currency unit
-        return Message.SUCCESS_ECONOMY_REWARDED.getMessage("{currency}", String.valueOf(amount));
+        return MiniGames.getInstance().getStringFormatter().replacePlaceholder(MiniGameMessage.SUCCESS_ECONOMY_REWARDED,
+                "{currency}", String.valueOf(amount));
     }
 
     @NotNull

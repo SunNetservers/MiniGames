@@ -41,3 +41,8 @@ en:
   RECORD_ACHIEVED_GLOBAL: "new {recordType} record"
   RECORD_ACHIEVED_PERSONAL: "personal {recordType} record"
   SUCCESS_ARENA_JOINED: "You joined the arena."
+  SUCCESS_ITEM_REWARDED: "You have been rewarded {amount} {item}(s)"
+  SUCCESS_PERMISSION_REWARDED: "You have been granted the permission: {permission}"
+  SUCCESS_PERMISSION_REWARDED_WORLD: "You have been granted the permission: {permission} in world: {world}"
+  SUCCESS_COMMAND_REWARDED: "The command `{command}` has been run as your reward."
+  SUCCESS_ECONOMY_REWARDED: "You have been granted {currency}"

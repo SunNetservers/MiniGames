@@ -228,6 +228,31 @@ public enum MiniGameMessage implements TranslatableMessage {
      * The message displayed when a player joins an arena
      */
     SUCCESS_ARENA_JOINED,
+
+    /**
+     * The message displayed when a player is rewarded with an item
+     */
+    SUCCESS_ITEM_REWARDED,
+
+    /**
+     * The message displayed when a player is rewarded with a permission
+     */
+    SUCCESS_PERMISSION_REWARDED,
+
+    /**
+     * The message displayed when a player is rewarded with a permission, for a specific world
+     */
+    SUCCESS_PERMISSION_REWARDED_WORLD,
+
+    /**
+     * The message displayed when a player is rewarded by a command being run
+     */
+    SUCCESS_COMMAND_REWARDED,
+
+    /**
+     * The message displayed when a player is rewarded with an amount of currency
+     */
+    SUCCESS_ECONOMY_REWARDED,
     ;
 
     @Override

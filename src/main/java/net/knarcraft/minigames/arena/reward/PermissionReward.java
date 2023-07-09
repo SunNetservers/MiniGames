@@ -1,7 +1,7 @@
 package net.knarcraft.minigames.arena.reward;
 
-import net.knarcraft.minigames.config.Message;
-import net.knarcraft.minigames.container.PlaceholderContainer;
+import net.knarcraft.minigames.MiniGames;
+import net.knarcraft.minigames.config.MiniGameMessage;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -38,11 +38,12 @@ public class PermissionReward implements Reward {
     @Override
     public @NotNull String getGrantMessage() {
         if (world == null) {
-            return Message.SUCCESS_PERMISSION_REWARDED.getMessage("{permission}", permission);
+            return MiniGames.getInstance().getStringFormatter().replacePlaceholder(
+                    MiniGameMessage.SUCCESS_PERMISSION_REWARDED, "{permission}", permission);
         } else {
-            PlaceholderContainer placeholderContainer = new PlaceholderContainer();
-            placeholderContainer.add("{permission}", permission).add("{world}", world.getName());
-            return Message.SUCCESS_PERMISSION_REWARDED_WORLD.getMessage(placeholderContainer);
+            return MiniGames.getInstance().getStringFormatter().replacePlaceholders(
+                    MiniGameMessage.SUCCESS_PERMISSION_REWARDED_WORLD, new String[]{"{permission}", "{world}"},
+                    new String[]{permission, world.getName()});
         }
     }
 
