@@ -206,7 +206,7 @@ public class DropperArena implements Arena {
         try {
             DropperArenaStorageHelper.saveDropperArenaData(getData());
             return true;
-        } catch (IOException e) {
+        } catch (IOException exception) {
             return false;
         }
     }

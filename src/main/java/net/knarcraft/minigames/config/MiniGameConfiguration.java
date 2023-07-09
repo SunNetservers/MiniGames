@@ -1,6 +1,7 @@
 package net.knarcraft.minigames.config;
 
-import net.knarcraft.minigames.util.MaterialHelper;
+import net.knarcraft.knarlib.util.MaterialHelper;
+import net.knarcraft.minigames.MiniGames;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.jetbrains.annotations.NotNull;
@@ -46,7 +47,7 @@ public abstract class MiniGameConfiguration {
      */
     public @NotNull Set<Material> loadMaterialList(@NotNull String path) {
         List<?> blockWhitelist = configuration.getList(path, new ArrayList<>());
-        return MaterialHelper.loadMaterialList(blockWhitelist);
+        return MaterialHelper.loadMaterialList(blockWhitelist, "+", MiniGames.getInstance().getLogger());
     }
 
 }

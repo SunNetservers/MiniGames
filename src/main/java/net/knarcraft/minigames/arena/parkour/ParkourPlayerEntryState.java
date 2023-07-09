@@ -20,15 +20,14 @@ public class ParkourPlayerEntryState extends AbstractPlayerEntryState {
      *
      * @param player <p>The player whose state should be stored</p>
      */
-    public ParkourPlayerEntryState(@NotNull Player player, boolean makePlayerInvisible) {
-        super(player, makePlayerInvisible);
+    public ParkourPlayerEntryState(@NotNull Player player) {
+        super(player);
     }
 
     /**
      * Instantiates a new parkour player entry state
      *
      * @param playerId             <p>The id of the player whose state this should keep track of</p>
-     * @param makePlayerInvisible  <p>Whether players should be made invisible while in the arena</p>
      * @param entryLocation        <p>The location the player entered from</p>
      * @param originalIsFlying     <p>Whether the player was flying before entering the arena</p>
      * @param originalGameMode     <p>The game-mode of the player before entering the arena</p>
@@ -37,17 +36,15 @@ public class ParkourPlayerEntryState extends AbstractPlayerEntryState {
      * @param originalIsSwimming   <p>Whether the player was swimming before entering the arena</p>
      * @param originalCollideAble  <p>Whether the player was collide-able before entering the arena</p>
      */
-    public ParkourPlayerEntryState(@NotNull UUID playerId, boolean makePlayerInvisible, Location entryLocation,
+    public ParkourPlayerEntryState(@NotNull UUID playerId, Location entryLocation,
                                    boolean originalIsFlying, GameMode originalGameMode, boolean originalAllowFlight,
-                                   boolean originalInvulnerable, boolean originalIsSwimming,
-                                   boolean originalCollideAble) {
-        super(playerId, makePlayerInvisible, entryLocation, originalIsFlying, originalGameMode, originalAllowFlight,
+                                   boolean originalInvulnerable, boolean originalIsSwimming, boolean originalCollideAble) {
+        super(playerId, entryLocation, originalIsFlying, originalGameMode, originalAllowFlight,
                 originalInvulnerable, originalIsSwimming, originalCollideAble);
     }
 
     @Override
     public void setArenaState() {
-        super.setArenaState();
         Player player = getPlayer();
         if (player == null) {
             return;
@@ -56,7 +53,6 @@ public class ParkourPlayerEntryState extends AbstractPlayerEntryState {
         player.setFlying(false);
         player.setGameMode(GameMode.ADVENTURE);
         player.setSwimming(false);
-        player.setCollidable(false);
     }
 
     /**
@@ -67,16 +63,15 @@ public class ParkourPlayerEntryState extends AbstractPlayerEntryState {
     @SuppressWarnings("unused")
     public static ParkourPlayerEntryState deserialize(Map<String, Object> data) {
         UUID playerId = ((SerializableUUID) data.get("playerId")).getRawValue();
-        boolean makePlayerInvisible = (boolean) data.get("makePlayerInvisible");
         Location entryLocation = (Location) data.get("entryLocation");
-        boolean originalIsFlying = (boolean) data.get("originalIsFlying");
+        boolean originalIsFlying = getBoolean(data, "originalIsFlying");
         GameMode originalGameMode = GameMode.valueOf((String) data.get("originalGameMode"));
-        boolean originalAllowFlight = (boolean) data.get("originalAllowFlight");
-        boolean originalInvulnerable = (boolean) data.get("originalInvulnerable");
-        boolean originalIsSwimming = (boolean) data.get("originalIsSwimming");
-        boolean originalCollideAble = (boolean) data.get("originalCollideAble");
+        boolean originalAllowFlight = getBoolean(data, "originalAllowFlight");
+        boolean originalInvulnerable = getBoolean(data, "originalInvulnerable");
+        boolean originalIsSwimming = getBoolean(data, "originalIsSwimming");
+        boolean originalCollideAble = getBoolean(data, "originalCollideAble");
 
-        return new ParkourPlayerEntryState(playerId, makePlayerInvisible, entryLocation, originalIsFlying,
+        return new ParkourPlayerEntryState(playerId, entryLocation, originalIsFlying,
                 originalGameMode, originalAllowFlight, originalInvulnerable, originalIsSwimming, originalCollideAble);
     }
 

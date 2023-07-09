@@ -1,5 +1,6 @@
 package net.knarcraft.minigames.arena;
 
+import net.knarcraft.minigames.gui.ArenaGUI;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -27,9 +28,10 @@ public interface ArenaSession {
     /**
      * Triggers a quit for the player playing in this session
      *
-     * @param immediately <p>Whether to to the teleportation immediately, not using any timers</p>
+     * @param immediately   <p>Whether to to the teleportation immediately, not using any timers</p>
+     * @param removeSession <p>Whether to also remove the session. Should usually be true.</p>
      */
-    void triggerQuit(boolean immediately);
+    void triggerQuit(boolean immediately, boolean removeSession);
 
     /**
      * Gets the arena this session is being played in
@@ -37,5 +39,17 @@ public interface ArenaSession {
      * @return <p>The session's arena</p>
      */
     @NotNull Arena getArena();
+
+    /**
+     * Gets the GUI with this arena's options
+     *
+     * @return <p>This arena's GUI</p>
+     */
+    @NotNull ArenaGUI getGUI();
+
+    /**
+     * Resets the session to allow a player to try again
+     */
+    void reset();
 
 }

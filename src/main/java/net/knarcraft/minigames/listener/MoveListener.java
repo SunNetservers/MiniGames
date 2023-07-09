@@ -9,9 +9,10 @@ import net.knarcraft.minigames.arena.parkour.ParkourArena;
 import net.knarcraft.minigames.arena.parkour.ParkourArenaGameMode;
 import net.knarcraft.minigames.arena.parkour.ParkourArenaSession;
 import net.knarcraft.minigames.config.DropperConfiguration;
-import net.knarcraft.minigames.config.Message;
+import net.knarcraft.minigames.config.MiniGameMessage;
 import net.knarcraft.minigames.config.ParkourConfiguration;
 import net.knarcraft.minigames.config.SharedConfiguration;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -120,7 +121,8 @@ public class MoveListener implements Listener {
 
             // Register the checkpoint
             arenaSession.registerCheckpoint(checkpoint.clone());
-            player.sendMessage(Message.SUCCESS_CHECKPOINT_REACHED.getMessage());
+            MiniGames.getInstance().getStringFormatter().displaySuccessMessage(player,
+                    MiniGameMessage.SUCCESS_CHECKPOINT_REACHED);
             return;
         }
     }
@@ -132,14 +134,26 @@ public class MoveListener implements Listener {
      * @param arenaSession <p>The dropper session of the player triggering the event</p>
      */
     private void doDropperArenaChecks(@NotNull PlayerMoveEvent event, @NotNull DropperArenaSession arenaSession) {
-        if (event.getTo() == null) {
+        // If the player has yet to move in the arena, allow them to look around
+        boolean startedMoving = arenaSession.getStartedMoving();
+        if (event.getTo() == null ||
+                (!startedMoving && isSameLocation(event.getFrom(), event.getTo()))) {
             return;
         }
+
+        // Marks the player as started moving if necessary, so they can no longer hang in the air
+        if (!startedMoving) {
+            arenaSession.setStartedMoving();
+        }
+
         // Prevent the player from flying upwards while in flight mode
         if (event.getFrom().getY() < event.getTo().getY() ||
                 (dropperConfiguration.blockSneaking() && event.getPlayer().isSneaking()) ||
                 (dropperConfiguration.blockSprinting() && event.getPlayer().isSprinting())) {
             event.setCancelled(true);
+            // Force movement downwards once the player lets go
+            Bukkit.getScheduler().scheduleSyncDelayedTask(MiniGames.getInstance(),
+                    () -> updatePlayerVelocity(arenaSession), 1);
             return;
         }
 
@@ -152,6 +166,18 @@ public class MoveListener implements Listener {
 
         //Updates the player's velocity to the one set by the arena
         updatePlayerVelocity(arenaSession);
+    }
+
+    /**
+     * Checks if two locations are the same, excluding rotation
+     *
+     * @param location1 <p>The first location to check</p>
+     * @param location2 <p>The second location to check</p>
+     * @return <p>True if the locations are the same, excluding rotation</p>
+     */
+    private boolean isSameLocation(Location location1, Location location2) {
+        return location1.getX() == location2.getX() && location1.getY() == location2.getY() &&
+                location1.getZ() == location2.getZ();
     }
 
     /**

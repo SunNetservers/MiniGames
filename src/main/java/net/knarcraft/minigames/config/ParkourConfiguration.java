@@ -16,7 +16,6 @@ public class ParkourConfiguration extends MiniGameConfiguration {
     private boolean enforceCheckpointOrder;
     private boolean mustDoGroupedInSequence;
     private boolean ignoreRecordsUntilGroupBeatenOnce;
-    private boolean makePlayersInvisible;
     private Set<Material> killPlaneBlocks;
 
     /**
@@ -56,15 +55,6 @@ public class ParkourConfiguration extends MiniGameConfiguration {
     }
 
     /**
-     * Gets whether players should be made invisible while in an arena
-     *
-     * @return <p>Whether players should be made invisible</p>
-     */
-    public boolean makePlayersInvisible() {
-        return this.makePlayersInvisible;
-    }
-
-    /**
      * Gets all types of blocks constituting parkour arenas' kill planes
      *
      * @return <p>The types of blocks causing a player to fail a parkour map</p>
@@ -78,7 +68,6 @@ public class ParkourConfiguration extends MiniGameConfiguration {
         this.enforceCheckpointOrder = configuration.getBoolean(rootNode + "enforceCheckpointOrder", false);
         this.mustDoGroupedInSequence = configuration.getBoolean(rootNode + "mustDoGroupedInSequence", true);
         this.ignoreRecordsUntilGroupBeatenOnce = configuration.getBoolean(rootNode + "ignoreRecordsUntilGroupBeatenOnce", false);
-        this.makePlayersInvisible = configuration.getBoolean(rootNode + "makePlayersInvisible", false);
         this.killPlaneBlocks = loadMaterialList(rootNode + "killPlaneBlocks");
     }
 
@@ -89,7 +78,6 @@ public class ParkourConfiguration extends MiniGameConfiguration {
                         "Current configuration:" +
                         "\n" + "Must do groups in sequence: " + mustDoGroupedInSequence +
                         "\n" + "Ignore records until group beaten once: " + ignoreRecordsUntilGroupBeatenOnce +
-                        "\n" + "Make players invisible: " + makePlayersInvisible +
                         "\n" + "Kill plane blocks: ");
         for (Material material : killPlaneBlocks) {
             builder.append("\n  - ").append(material.name());

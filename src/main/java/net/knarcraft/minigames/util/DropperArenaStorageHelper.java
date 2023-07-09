@@ -9,8 +9,7 @@ import net.knarcraft.minigames.arena.dropper.DropperArenaGameMode;
 import net.knarcraft.minigames.arena.dropper.DropperArenaGroup;
 import net.knarcraft.minigames.arena.dropper.DropperArenaRecordsRegistry;
 import net.knarcraft.minigames.arena.dropper.DropperArenaStorageKey;
-import net.knarcraft.minigames.config.Message;
-import net.knarcraft.minigames.container.PlaceholderContainer;
+import net.knarcraft.minigames.config.MiniGameMessage;
 import net.knarcraft.minigames.container.SerializableMaterial;
 import net.knarcraft.minigames.container.SerializableUUID;
 import org.bukkit.Location;
@@ -161,8 +160,9 @@ public final class DropperArenaStorageHelper {
                 DropperArenaStorageKey.WIN_BLOCK_TYPE.getKey());
 
         if (arenaName == null || spawnLocation == null) {
-            MiniGames.log(Level.SEVERE, Message.ERROR_ARENA_NOT_LOADED.getMessage(new PlaceholderContainer().add(
-                    "{section}", configurationSection.getName()).add("{file}", "dropper_arenas")));
+            MiniGames.log(Level.SEVERE, MiniGames.getInstance().getStringFormatter().replacePlaceholders(
+                    MiniGameMessage.ERROR_ARENA_NOT_LOADED, new String[]{"{section}", "{file}"},
+                    new String[]{configurationSection.getName(), "dropper_arenas"}));
             return null;
         }
         if (winBlockType == null) {
@@ -172,8 +172,8 @@ public final class DropperArenaStorageHelper {
         // Generate new, empty arena data if not available
         DropperArenaData arenaData = loadDropperArenaData(arenaId);
         if (arenaData == null) {
-            MiniGames.log(Level.SEVERE, Message.ERROR_ARENA_DATA_NOT_LOADED.getMessage("{arena}",
-                    arenaId.toString()));
+            MiniGames.log(Level.SEVERE, MiniGames.getInstance().getStringFormatter().replacePlaceholder(
+                    MiniGameMessage.ERROR_ARENA_DATA_NOT_LOADED, "{arena}", arenaId.toString()));
             arenaData = getEmptyDropperData(arenaId);
         }
 

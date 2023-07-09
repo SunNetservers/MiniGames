@@ -1,10 +1,12 @@
 package net.knarcraft.minigames.arena.dropper;
 
+import net.knarcraft.knarlib.formatting.StringFormatter;
 import net.knarcraft.minigames.MiniGames;
 import net.knarcraft.minigames.arena.AbstractArenaSession;
 import net.knarcraft.minigames.arena.PlayerEntryState;
-import net.knarcraft.minigames.config.DropperConfiguration;
-import net.knarcraft.minigames.config.Message;
+import net.knarcraft.minigames.config.MiniGameMessage;
+import net.knarcraft.minigames.gui.ArenaGUI;
+import net.knarcraft.minigames.gui.DropperGUI;
 import net.knarcraft.minigames.util.PlayerTeleporter;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -19,6 +21,7 @@ public class DropperArenaSession extends AbstractArenaSession {
     private final @NotNull DropperArena arena;
     private final @NotNull Player player;
     private final @NotNull DropperArenaGameMode gameMode;
+    private boolean startedMoving = false;
 
     /**
      * Instantiates a new dropper arena session
@@ -34,12 +37,24 @@ public class DropperArenaSession extends AbstractArenaSession {
         this.player = player;
         this.gameMode = gameMode;
 
-        DropperConfiguration configuration = MiniGames.getInstance().getDropperConfiguration();
-        boolean makeInvisible = configuration.makePlayersInvisible();
-        boolean disableCollision = configuration.disableHitCollision();
-        this.entryState = new DropperPlayerEntryState(player, gameMode, makeInvisible, disableCollision,
-                dropperArena.getPlayerHorizontalVelocity());
+        this.entryState = new DropperPlayerEntryState(player, gameMode, dropperArena.getPlayerHorizontalVelocity());
         this.entryState.setArenaState();
+    }
+
+    /**
+     * Marks that this arena's player has started moving
+     */
+    public void setStartedMoving() {
+        this.startedMoving = true;
+    }
+
+    /**
+     * Gets whether the player of this session has started moving in the arena
+     *
+     * @return <p>True if the player has started moving</p>
+     */
+    public boolean getStartedMoving() {
+        return this.startedMoving;
     }
 
     /**
@@ -78,11 +93,13 @@ public class DropperArenaSession extends AbstractArenaSession {
             registerRecord();
         }
 
+        StringFormatter stringFormatter = MiniGames.getInstance().getStringFormatter();
+
         // Mark the arena as cleared
         if (this.arena.getData().setCompleted(this.gameMode, this.player)) {
-            this.player.sendMessage(Message.SUCCESS_ARENA_FIRST_CLEAR.getMessage());
+            stringFormatter.displaySuccessMessage(this.player, MiniGameMessage.SUCCESS_ARENA_FIRST_CLEAR);
         }
-        this.player.sendMessage(Message.SUCCESS_ARENA_WIN.getMessage());
+        stringFormatter.displaySuccessMessage(this.player, MiniGameMessage.SUCCESS_ARENA_WIN);
 
         // Teleport the player out of the arena
         teleportToExit(false);
@@ -99,6 +116,17 @@ public class DropperArenaSession extends AbstractArenaSession {
     @Override
     public @NotNull DropperArena getArena() {
         return this.arena;
+    }
+
+    @Override
+    public @NotNull ArenaGUI getGUI() {
+        return new DropperGUI(player);
+    }
+
+    @Override
+    public void reset() {
+        this.startedMoving = false;
+        super.reset();
     }
 
     @Override

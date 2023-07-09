@@ -1,10 +1,11 @@
 package net.knarcraft.minigames.command.dropper;
 
+import net.knarcraft.knarlib.formatting.StringFormatter;
 import net.knarcraft.minigames.MiniGames;
 import net.knarcraft.minigames.arena.dropper.DropperArena;
 import net.knarcraft.minigames.arena.dropper.DropperArenaGroup;
 import net.knarcraft.minigames.arena.dropper.DropperArenaHandler;
-import net.knarcraft.minigames.config.Message;
+import net.knarcraft.minigames.config.MiniGameMessage;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -60,13 +61,15 @@ public class DropperGroupListCommand implements TabExecutor {
     private boolean displayOrderedArenaNames(@NotNull DropperArenaHandler arenaHandler, @NotNull CommandSender sender,
                                              @NotNull String groupName) {
         DropperArenaGroup arenaGroup = arenaHandler.getGroup(groupName);
+        StringFormatter stringFormatter = MiniGames.getInstance().getStringFormatter();
         if (arenaGroup == null) {
-            sender.sendMessage(Message.ERROR_GROUP_NOT_FOUND.getMessage());
+            stringFormatter.displayErrorMessage(sender, MiniGameMessage.ERROR_GROUP_NOT_FOUND);
             return false;
         }
 
         // Send a list of all stages (arenas in the group)
-        StringBuilder builder = new StringBuilder(Message.SUCCESS_GROUP_STAGES.getMessage("{group}", groupName));
+        StringBuilder builder = new StringBuilder(stringFormatter.replacePlaceholder(
+                MiniGameMessage.SUCCESS_GROUP_STAGES, "{group}", groupName));
         int counter = 1;
         for (UUID arenaId : arenaGroup.getArenas()) {
             DropperArena arena = arenaHandler.getArena(arenaId);
@@ -74,7 +77,7 @@ public class DropperGroupListCommand implements TabExecutor {
                 builder.append(counter++).append(". ").append(arena.getArenaName()).append("\n");
             }
         }
-        sender.sendMessage(builder.toString());
+        stringFormatter.displaySuccessMessage(sender, builder.toString());
         return true;
     }
 

@@ -9,8 +9,7 @@ import net.knarcraft.minigames.arena.parkour.ParkourArenaGameMode;
 import net.knarcraft.minigames.arena.parkour.ParkourArenaGroup;
 import net.knarcraft.minigames.arena.parkour.ParkourArenaRecordsRegistry;
 import net.knarcraft.minigames.arena.parkour.ParkourArenaStorageKey;
-import net.knarcraft.minigames.config.Message;
-import net.knarcraft.minigames.container.PlaceholderContainer;
+import net.knarcraft.minigames.config.MiniGameMessage;
 import net.knarcraft.minigames.container.SerializableMaterial;
 import net.knarcraft.minigames.container.SerializableUUID;
 import org.bukkit.Location;
@@ -166,8 +165,9 @@ public final class ParkourArenaStorageHelper {
 
         // The arena name and spawn location must be present
         if (arenaName == null || spawnLocation == null) {
-            MiniGames.log(Level.SEVERE, Message.ERROR_ARENA_NOT_LOADED.getMessage(new PlaceholderContainer().add(
-                    "{section}", configurationSection.getName()).add("{file}", "parkour_arena")));
+            MiniGames.log(Level.SEVERE, MiniGames.getInstance().getStringFormatter().replacePlaceholders(
+                    MiniGameMessage.ERROR_ARENA_NOT_LOADED, new String[]{"{section}", "{file}"},
+                    new String[]{configurationSection.getName(), "parkour_arena"}));
             return null;
         }
 
@@ -179,8 +179,8 @@ public final class ParkourArenaStorageHelper {
         // Generate new, empty arena data if not available
         ParkourArenaData arenaData = loadParkourArenaData(arenaId);
         if (arenaData == null) {
-            MiniGames.log(Level.SEVERE, Message.ERROR_ARENA_DATA_NOT_LOADED.getMessage("{arena}",
-                    arenaId.toString()));
+            MiniGames.log(Level.SEVERE, MiniGames.getInstance().getStringFormatter().replacePlaceholder(
+                    MiniGameMessage.ERROR_ARENA_DATA_NOT_LOADED, "{arena}", arenaId.toString()));
             arenaData = getEmptyParkourData(arenaId);
         }
 

@@ -30,6 +30,11 @@ public abstract class AbstractArenaPlayerRegistry<K extends Arena> implements Ar
     }
 
     @Override
+    public @NotNull Set<UUID> getPlayingPlayers() {
+        return arenaPlayers.keySet();
+    }
+
+    @Override
     public @Nullable PlayerEntryState getEntryState(@NotNull UUID playerId) {
         return this.entryStates.get(playerId);
     }
@@ -65,13 +70,15 @@ public abstract class AbstractArenaPlayerRegistry<K extends Arena> implements Ar
 
     @Override
     public void removeForArena(K arena, boolean immediately) {
+        Set<UUID> removed = new HashSet<>();
         for (Map.Entry<UUID, ArenaSession> entry : this.arenaPlayers.entrySet()) {
             if (entry.getValue().getArena() == arena) {
                 // Kick the player gracefully
-                entry.getValue().triggerQuit(immediately);
-                this.arenaPlayers.remove(entry.getKey());
+                entry.getValue().triggerQuit(immediately, false);
+                removed.add(entry.getKey());
             }
         }
+        removed.forEach(this.arenaPlayers::remove);
     }
 
     /**

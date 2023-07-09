@@ -41,6 +41,7 @@ The only permission normal players will need is `minigames.join` which is set to
 |----------------------------------------|----------|-----------------------------|-------------------------------------------------------------------------------------|
 | /miniGamesReload                       | /mreload |                             | Reloads all data from disk.                                                         |
 | /miniGamesLeave                        | /mleave  |                             | Leaves the current mini-game.                                                       |
+| /miniGamesMenu                         | /mmenu   |                             | Shows a menu of actions if used while in an arena                                   |
 | /dropperList                           | /dlist   |                             | Lists available dropper arenas.                                                     |
 | [/dropperJoin](#dropperjoin)           | /djoin   | \<arena> \[mode]            | Joins the selected arena.                                                           |
 | /dropperCreate                         | /dcreate | \<name>                     | Creates a new dropper arena with the given name. The spawn is set to your location. |
@@ -153,16 +154,16 @@ This command allows editing the specified property for the specified parkour are
 
 These are all the options that can be changed for an arena.
 
-| Option          | Details                                                                                                                                                                     |
-|-----------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| name            | The name of the arena. Used mainly to select the arena in commands.                                                                                                         |
-| spawnLocation   | The spawn location of any player joining the arena. Use `56.546,64.0,44.45` to specify coordinates, or `here`, `this` or any other string to select your current location.  |
-| exitLocation    | The location players will be sent to when exiting the arena. If not set, the player will be sent to where they joined from. Valid values are the same as for spawnLocation. |
-| winBlockType    | The type of block players must hit to win the arena. It can be any material as long as it's a block, and not a type of air.                                                 |
-| winLocation     | The location players must reach to win the arena (see spawnLocation for valid values). If set, this overrides, and is used instead of, the win block type.                  |
-| checkpointAdd   | Adds a new checkpoint to the arena's checkpoints (see spawnLocation for valid values).                                                                                      |
-| checkpointClear | Clears all current checkpoints. Give any value to execute. If not given a value, current checkpoints are shown.                                                             |
-| killPlaneBlocks | A comma-separated list of materials which will force a loss on hit. +WOOL and other [material tags](#notes-about-material-tags) are supported as well.                      |
+| Option          | Details                                                                                                                                                                                       |
+|-----------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| name            | The name of the arena. Used mainly to select the arena in commands. Note that underscore (_) cannot be used if you want to utilize placeholders, as it's used to split placeholder arguments. |
+| spawnLocation   | The spawn location of any player joining the arena. Use `56.546,64.0,44.45` to specify coordinates, or `here`, `this` or any other string to select your current location.                    |
+| exitLocation    | The location players will be sent to when exiting the arena. If not set, the player will be sent to where they joined from. Valid values are the same as for spawnLocation.                   |
+| winBlockType    | The type of block players must hit to win the arena. It can be any material as long as it's a block, and not a type of air.                                                                   |
+| winLocation     | The location players must reach to win the arena (see spawnLocation for valid values). If set, this overrides, and is used instead of, the win block type.                                    |
+| checkpointAdd   | Adds a new checkpoint to the arena's checkpoints (see spawnLocation for valid values).                                                                                                        |
+| checkpointClear | Clears all current checkpoints. Give any value to execute. If not given a value, current checkpoints are shown.                                                                               |
+| killPlaneBlocks | A comma-separated list of materials which will force a loss on hit. +WOOL and other [material tags](#notes-about-material-tags) are supported as well.                                        |
 
 ## Configuration options
 
@@ -185,8 +186,6 @@ These are all the options that can be changed for an arena.
 | mustDoGroupedInSequence           | true/false          | true                                | Whether grouped dropper arenas must be played in the correct sequence                                                                                                                                                                                 |
 | ignoreRecordsUntilGroupBeatenOnce | true/false          | false                               | Whether records won't be registered unless the player has already beaten all arenas in a group. That means players are required to do a second play-through to register a record for a grouped arena.                                                 |
 | mustDoNormalModeFirst             | true/false          | true                                | Whether a player must do the normal/default game-mode before playing any other game-modes                                                                                                                                                             |
-| makePlayersInvisible              | true/false          | false                               | Whether players should be made invisible while playing in a dropper arena                                                                                                                                                                             |
-| disableHitCollision               | true/false          | true                                | Whether players should have their entity hit collision disabled while in an arena. This prevents players from pushing each-other if in the same arena.                                                                                                |
 | liquidHitBoxDepth                 | -1 < decimal < 0    | -0.8                                | This decides how far inside a non-solid block the player must go before detection triggers (-1, 0). The closer to -1 it is, the more accurate it will seem to the player, but the likelihood of not detecting the hit increases.                      | 
 | solidHitBoxDistance               | 0 < decimal < 1     | 0.2                                 | This decides the distance the player must be from a block below them before a hit triggers (0, 1). If too low, the likelihood of detecting the hit decreases, but it won't look like the player hit the block without being near.                     |
 | blockWhitelist                    | list                | [see this](#blockwhitelist-default) | A whitelist for which blocks won't trigger a loss when hit/passed through. The win block check happens before the loss check, so even blocks on the whitelist can be used as the win-block. "+" denotes a [material tag](#notes-about-material-tags). |
@@ -198,7 +197,6 @@ These are all the options that can be changed for an arena.
 | enforceCheckpointOrder            | true/false | false                                | Whether to enforce the order in which a player must reach checkpoints. Enabling this ensures that a player cannot trigger a previous checkpoint by accident. It also ensures players cannot skip a checkpoint, even if the arena layout makes it possible. |
 | mustDoGroupedInSequence           | true/false | true                                 | Whether grouped dropper arenas must be played in the correct sequence                                                                                                                                                                                      |
 | ignoreRecordsUntilGroupBeatenOnce | true/false | false                                | Whether records won't be registered unless the player has already beaten all arenas in a group. That means players are required to do a second play-through to register a record for a grouped arena.                                                      |
-| makePlayersInvisible              | true/false | false                                | Whether players should be made invisible while playing in a dropper arena                                                                                                                                                                                  |
 | killPlaneBlocks                   | list       | [see this](#killplaneblocks-default) | The types of blocks compromising parkour arenas' kill planes. Add any materials you want to use for the "bottom" of your parkour arenas. +WOOL and other [material tags](#notes-about-material-tags) are supported.                                        |
 
 #### blockWhitelist default:
@@ -260,6 +258,20 @@ Example tags:
 - +DRAGON_IMMUNE
 - +FENCE_GATES
 - +FENCES
+
+## Language customization
+
+Most or all strings are customizable. If you place a strings.yml file in the plugin folder, it will take
+priority over built-in languages. If you want to change strings, look at MiniGames/src/main/resources/strings.yml for
+the proper keys. All strings have the format: ENUM: "Displayed string". The enum must be identical as it defines which
+string you have changed. All strings belonging to a language are beneath the language code and indented with two spaces.
+
+The easiest way to add a new language is to copy an existing language and paste it into your custom strings.yml and
+change strings as necessary. If you don't include all strings, the remaining will use the built-in English translation.
+Remember to change the language code to whichever you use for your custom language.
+
+The interval messages are unique in that if several values are separated by comma (option1,option2,option3), a random
+message will be chosen each time it's displayed.
 
 ## License
 

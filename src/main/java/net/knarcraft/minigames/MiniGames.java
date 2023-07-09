@@ -1,7 +1,12 @@
 package net.knarcraft.minigames;
 
+import net.knarcraft.knargui.GUIListener;
+import net.knarcraft.knarlib.formatting.StringFormatter;
+import net.knarcraft.knarlib.formatting.Translator;
+import net.knarcraft.knarlib.property.ColorConversion;
 import net.knarcraft.minigames.arena.ArenaPlayerRegistry;
 import net.knarcraft.minigames.arena.ArenaSession;
+import net.knarcraft.minigames.arena.PlayerVisibilityManager;
 import net.knarcraft.minigames.arena.dropper.DropperArena;
 import net.knarcraft.minigames.arena.dropper.DropperArenaData;
 import net.knarcraft.minigames.arena.dropper.DropperArenaGameMode;
@@ -25,6 +30,7 @@ import net.knarcraft.minigames.arena.reward.EconomyReward;
 import net.knarcraft.minigames.arena.reward.ItemReward;
 import net.knarcraft.minigames.arena.reward.PermissionReward;
 import net.knarcraft.minigames.command.LeaveArenaCommand;
+import net.knarcraft.minigames.command.MenuCommand;
 import net.knarcraft.minigames.command.ReloadCommand;
 import net.knarcraft.minigames.command.dropper.CreateDropperArenaCommand;
 import net.knarcraft.minigames.command.dropper.DropperGroupListCommand;
@@ -49,16 +55,19 @@ import net.knarcraft.minigames.command.parkour.ParkourGroupSwapCommand;
 import net.knarcraft.minigames.command.parkour.RemoveParkourArenaCommand;
 import net.knarcraft.minigames.command.parkour.RemoveParkourArenaTabCompleter;
 import net.knarcraft.minigames.config.DropperConfiguration;
+import net.knarcraft.minigames.config.MiniGameMessage;
 import net.knarcraft.minigames.config.ParkourConfiguration;
 import net.knarcraft.minigames.config.SharedConfiguration;
 import net.knarcraft.minigames.container.SerializableMaterial;
 import net.knarcraft.minigames.container.SerializableUUID;
 import net.knarcraft.minigames.listener.CommandListener;
 import net.knarcraft.minigames.listener.DamageListener;
+import net.knarcraft.minigames.listener.InteractListener;
 import net.knarcraft.minigames.listener.MoveListener;
 import net.knarcraft.minigames.listener.PlayerStateChangeListener;
 import net.knarcraft.minigames.placeholder.DropperRecordExpansion;
 import net.knarcraft.minigames.placeholder.ParkourRecordExpansion;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.PluginCommand;
@@ -88,6 +97,9 @@ public final class MiniGames extends JavaPlugin {
     private ParkourRecordExpansion parkourRecordExpansion;
     private ParkourArenaHandler parkourArenaHandler;
     private ArenaPlayerRegistry<ParkourArena> parkourArenaPlayerRegistry;
+    private PlayerVisibilityManager playerVisibilityManager;
+    private Translator translator;
+    private StringFormatter stringFormatter;
 
     /**
      * Gets an instance of this plugin
@@ -164,6 +176,33 @@ public final class MiniGames extends JavaPlugin {
     }
 
     /**
+     * Gets the manager keeping track of player visibility
+     *
+     * @return <p>The player visibility manager</p>
+     */
+    public PlayerVisibilityManager getPlayerVisibilityManager() {
+        return this.playerVisibilityManager;
+    }
+
+    /**
+     * Gets the translator to get messages from
+     *
+     * @return <p>The translator</p>
+     */
+    public Translator getTranslator() {
+        return this.translator;
+    }
+
+    /**
+     * Gets the string formatter to get formatted messages from
+     *
+     * @return <p>The string formatter</p>
+     */
+    public StringFormatter getStringFormatter() {
+        return this.stringFormatter;
+    }
+
+    /**
      * Gets the current session of the given player
      *
      * @param playerId <p>The id of the player to get a session for</p>
@@ -198,6 +237,8 @@ public final class MiniGames extends JavaPlugin {
 
         // Reload configuration
         this.reloadConfig();
+        translator.loadLanguages(this.getDataFolder(), "en",
+                getConfig().getString("language", "en"));
         this.sharedConfiguration.load(this.getConfig());
         this.dropperConfiguration.load(this.getConfig());
         this.parkourConfiguration.load(this.getConfig());
@@ -235,47 +276,35 @@ public final class MiniGames extends JavaPlugin {
     public void onEnable() {
         // Plugin startup logic
         instance = this;
-        this.saveDefaultConfig();
-        getConfig().options().copyDefaults(true);
-        saveConfig();
-        reloadConfig();
-        this.sharedConfiguration = new SharedConfiguration(this.getConfig());
-        this.dropperConfiguration = new DropperConfiguration(this.getConfig());
-        this.parkourConfiguration = new ParkourConfiguration(this.getConfig());
-        this.dropperArenaPlayerRegistry = new DropperArenaPlayerRegistry();
-        this.dropperArenaHandler = new DropperArenaHandler(this.dropperArenaPlayerRegistry);
-        this.dropperArenaHandler.load();
-        this.parkourArenaPlayerRegistry = new ParkourArenaPlayerRegistry();
-        this.parkourArenaHandler = new ParkourArenaHandler(this.parkourArenaPlayerRegistry);
-        this.parkourArenaHandler.load();
 
-        PluginManager pluginManager = getServer().getPluginManager();
-        pluginManager.registerEvents(new DamageListener(), this);
-        pluginManager.registerEvents(new MoveListener(this.dropperConfiguration, this.parkourConfiguration), this);
-        pluginManager.registerEvents(new PlayerStateChangeListener(), this);
-        pluginManager.registerEvents(new CommandListener(), this);
+        // Load configuration
+        loadConfiguration();
 
-        registerCommand("miniGamesReload", new ReloadCommand(), null);
-        registerCommand("miniGamesLeave", new LeaveArenaCommand(), null);
+        // Register all listeners
+        registerListeners();
 
-        registerCommand("dropperCreate", new CreateDropperArenaCommand(), null);
-        registerCommand("dropperList", new ListDropperArenaCommand(), null);
-        registerCommand("dropperJoin", new JoinDropperArenaCommand(), new JoinDropperArenaTabCompleter());
-        registerCommand("dropperEdit", new EditDropperArenaCommand(this.dropperConfiguration), new EditDropperArenaTabCompleter());
-        registerCommand("dropperRemove", new RemoveDropperArenaCommand(), new RemoveDropperArenaTabCompleter());
-        registerCommand("dropperGroupSet", new DropperGroupSetCommand(), null);
-        registerCommand("dropperGroupSwap", new DropperGroupSwapCommand(), null);
-        registerCommand("dropperGroupList", new DropperGroupListCommand(), null);
+        // Register all commands
+        registerCommands();
 
-        registerCommand("parkourCreate", new CreateParkourArenaCommand(), null);
-        registerCommand("parkourList", new ListParkourArenaCommand(), null);
-        registerCommand("parkourJoin", new JoinParkourArenaCommand(), new JoinParkourArenaTabCompleter());
-        registerCommand("parkourEdit", new EditParkourArenaCommand(), new EditParkourArenaTabCompleter());
-        registerCommand("parkourRemove", new RemoveParkourArenaCommand(), new RemoveParkourArenaTabCompleter());
-        registerCommand("parkourGroupSet", new ParkourGroupSetCommand(), null);
-        registerCommand("parkourGroupSwap", new ParkourGroupSwapCommand(), null);
-        registerCommand("parkourGroupList", new ParkourGroupListCommand(), null);
+        // Integrate with other plugins
+        doPluginIntegration();
+    }
 
+    @Override
+    public void onDisable() {
+        // Kill all sessions before exiting
+        for (DropperArena arena : dropperArenaHandler.getArenas().values()) {
+            dropperArenaPlayerRegistry.removeForArena(arena, true);
+        }
+        for (ParkourArena arena : parkourArenaHandler.getArenas().values()) {
+            parkourArenaPlayerRegistry.removeForArena(arena, true);
+        }
+    }
+
+    /**
+     * Sets up integration with third-party plugins
+     */
+    private void doPluginIntegration() {
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
             this.dropperRecordExpansion = new DropperRecordExpansion(this);
             if (!this.dropperRecordExpansion.register()) {
@@ -288,15 +317,40 @@ public final class MiniGames extends JavaPlugin {
         }
     }
 
-    @Override
-    public void onDisable() {
-        // Kill all sessions before exiting
-        for (DropperArena arena : dropperArenaHandler.getArenas().values()) {
-            dropperArenaPlayerRegistry.removeForArena(arena, true);
-        }
-        for (ParkourArena arena : parkourArenaHandler.getArenas().values()) {
-            parkourArenaPlayerRegistry.removeForArena(arena, true);
-        }
+    /**
+     * Loads all configuration values used by this plugin
+     */
+    private void loadConfiguration() {
+        this.saveDefaultConfig();
+        getConfig().options().copyDefaults(true);
+        saveConfig();
+        reloadConfig();
+
+        setupStringFormatter();
+
+        this.sharedConfiguration = new SharedConfiguration(this.getConfig());
+        this.dropperConfiguration = new DropperConfiguration(this.getConfig());
+        this.parkourConfiguration = new ParkourConfiguration(this.getConfig());
+        this.dropperArenaPlayerRegistry = new DropperArenaPlayerRegistry();
+        this.dropperArenaHandler = new DropperArenaHandler(this.dropperArenaPlayerRegistry);
+        this.dropperArenaHandler.load();
+        this.parkourArenaPlayerRegistry = new ParkourArenaPlayerRegistry();
+        this.parkourArenaHandler = new ParkourArenaHandler(this.parkourArenaPlayerRegistry);
+        this.parkourArenaHandler.load();
+        this.playerVisibilityManager = new PlayerVisibilityManager();
+    }
+
+    /**
+     * Registers all listeners used by this plugin
+     */
+    private void registerListeners() {
+        PluginManager pluginManager = getServer().getPluginManager();
+        pluginManager.registerEvents(new DamageListener(), this);
+        pluginManager.registerEvents(new MoveListener(this.dropperConfiguration, this.parkourConfiguration), this);
+        pluginManager.registerEvents(new PlayerStateChangeListener(), this);
+        pluginManager.registerEvents(new CommandListener(), this);
+        pluginManager.registerEvents(new GUIListener(true), this);
+        pluginManager.registerEvents(new InteractListener(), this);
     }
 
     /**
@@ -317,6 +371,62 @@ public final class MiniGames extends JavaPlugin {
         } else {
             log(Level.SEVERE, "Unable to register the command " + commandName);
         }
+    }
+
+    /**
+     * Registers all commands used by this plugin
+     */
+    private void registerCommands() {
+        registerCommand("miniGamesReload", new ReloadCommand(), null);
+        registerCommand("miniGamesLeave", new LeaveArenaCommand(), null);
+        registerCommand("miniGamesMenu", new MenuCommand(), null);
+
+        registerDropperCommands();
+        registerParkourCommands();
+    }
+
+    /**
+     * Registers all commands related to droppers
+     */
+    private void registerDropperCommands() {
+        registerCommand("dropperCreate", new CreateDropperArenaCommand(), null);
+        registerCommand("dropperList", new ListDropperArenaCommand(), null);
+        registerCommand("dropperJoin", new JoinDropperArenaCommand(), new JoinDropperArenaTabCompleter());
+        registerCommand("dropperEdit", new EditDropperArenaCommand(this.dropperConfiguration), new EditDropperArenaTabCompleter());
+        registerCommand("dropperRemove", new RemoveDropperArenaCommand(), new RemoveDropperArenaTabCompleter());
+        registerCommand("dropperGroupSet", new DropperGroupSetCommand(), null);
+        registerCommand("dropperGroupSwap", new DropperGroupSwapCommand(), null);
+        registerCommand("dropperGroupList", new DropperGroupListCommand(), null);
+    }
+
+    /**
+     * Registers all commands related to parkour
+     */
+    private void registerParkourCommands() {
+        registerCommand("parkourCreate", new CreateParkourArenaCommand(), null);
+        registerCommand("parkourList", new ListParkourArenaCommand(), null);
+        registerCommand("parkourJoin", new JoinParkourArenaCommand(), new JoinParkourArenaTabCompleter());
+        registerCommand("parkourEdit", new EditParkourArenaCommand(), new EditParkourArenaTabCompleter());
+        registerCommand("parkourRemove", new RemoveParkourArenaCommand(), new RemoveParkourArenaTabCompleter());
+        registerCommand("parkourGroupSet", new ParkourGroupSetCommand(), null);
+        registerCommand("parkourGroupSwap", new ParkourGroupSwapCommand(), null);
+        registerCommand("parkourGroupList", new ParkourGroupListCommand(), null);
+    }
+
+    /**
+     * Sets up the translator and the string formatter
+     */
+    private void setupStringFormatter() {
+        translator = new Translator();
+        translator.registerMessageCategory(MiniGameMessage.ERROR_PLAYER_ONLY);
+        translator.loadLanguages(this.getDataFolder(), "en",
+                getConfig().getString("language", "en"));
+        stringFormatter = new StringFormatter(this.getDescription().getName(), translator);
+        stringFormatter.setColorConversion(ColorConversion.RGB);
+        stringFormatter.setNamePrefix("#546EED[&r&l");
+        stringFormatter.setNameSuffix("#546EED]");
+        stringFormatter.setErrorColor(ChatColor.RED);
+        stringFormatter.setSuccessColor(ChatColor.GREEN);
     }
 
 }
