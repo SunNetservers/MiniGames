@@ -86,6 +86,10 @@
             <id>knarcraft-repo</id>
             <url>https://git.knarcraft.net/api/packages/EpicKnarvik97/maven</url>
         </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -124,6 +128,12 @@
             <artifactId>knarlib</artifactId>
             <version>1.2.3</version>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.MilkBowl</groupId>
+            <artifactId>VaultAPI</artifactId>
+            <version>1.7</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>

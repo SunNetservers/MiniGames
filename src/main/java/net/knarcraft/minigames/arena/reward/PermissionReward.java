@@ -2,6 +2,7 @@ package net.knarcraft.minigames.arena.reward;
 
 import net.knarcraft.minigames.MiniGames;
 import net.knarcraft.minigames.config.MiniGameMessage;
+import net.knarcraft.minigames.manager.PermissionManager;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -9,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 
 /**
  * A reward that grants a specified permission when granted
@@ -31,8 +33,17 @@ public class PermissionReward implements Reward {
 
     @Override
     public boolean grant(@NotNull Player player) {
-        //TODO: Vault integration is required
-        return false;
+        if (!PermissionManager.isInitialized()) {
+            MiniGames.log(Level.SEVERE, "A permission reward has been set, but no Vault-compatible permission" +
+                    " plugin has been initialized.");
+            return false;
+        }
+        if (PermissionManager.hasPermission(player, this.permission, this.world != null ? this.world.getName() : null)) {
+            return false;
+        } else {
+            PermissionManager.addPermission(player, this.permission, this.world);
+            return true;
+        }
     }
 
     @Override

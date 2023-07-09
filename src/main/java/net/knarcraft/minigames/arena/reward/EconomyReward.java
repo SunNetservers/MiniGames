@@ -2,11 +2,13 @@ package net.knarcraft.minigames.arena.reward;
 
 import net.knarcraft.minigames.MiniGames;
 import net.knarcraft.minigames.config.MiniGameMessage;
+import net.knarcraft.minigames.manager.EconomyManager;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 
 /**
  * A reward that gives an amount of currency when it's granted
@@ -26,15 +28,19 @@ public class EconomyReward implements Reward {
 
     @Override
     public boolean grant(@NotNull Player player) {
-        //TODO: Requires Vault integration
-        return false;
+        if (!EconomyManager.isInitialized()) {
+            MiniGames.log(Level.SEVERE, "An economy reward has been set, but no Vault-compatible economy" +
+                    " plugin has been initialized.");
+            return false;
+        }
+        EconomyManager.deposit(player, amount);
+        return true;
     }
 
     @Override
     public @NotNull String getGrantMessage() {
-        //TODO: Print formatted currency amount and currency unit
         return MiniGames.getInstance().getStringFormatter().replacePlaceholder(MiniGameMessage.SUCCESS_ECONOMY_REWARDED,
-                "{currency}", String.valueOf(amount));
+                "{currency}", EconomyManager.format(amount));
     }
 
     @NotNull

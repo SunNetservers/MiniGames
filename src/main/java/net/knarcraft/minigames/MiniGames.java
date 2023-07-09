@@ -65,15 +65,21 @@ import net.knarcraft.minigames.listener.DamageListener;
 import net.knarcraft.minigames.listener.InteractListener;
 import net.knarcraft.minigames.listener.MoveListener;
 import net.knarcraft.minigames.listener.PlayerStateChangeListener;
+import net.knarcraft.minigames.manager.EconomyManager;
+import net.knarcraft.minigames.manager.PermissionManager;
 import net.knarcraft.minigames.placeholder.DropperRecordExpansion;
 import net.knarcraft.minigames.placeholder.ParkourRecordExpansion;
 import net.md_5.bungee.api.ChatColor;
+import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.RegisteredServiceProvider;
+import org.bukkit.plugin.ServicesManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -427,6 +433,27 @@ public final class MiniGames extends JavaPlugin {
         stringFormatter.setNameSuffix("#546EED]");
         stringFormatter.setErrorColor(ChatColor.RED);
         stringFormatter.setSuccessColor(ChatColor.GREEN);
+    }
+
+    /**
+     * Sets up Vault by getting plugins from their providers
+     */
+    private void setupVault() {
+        ServicesManager servicesManager = this.getServer().getServicesManager();
+        RegisteredServiceProvider<Permission> permissionProvider = servicesManager.getRegistration(Permission.class);
+        RegisteredServiceProvider<Economy> economyProvider = servicesManager.getRegistration(Economy.class);
+
+        if (permissionProvider != null) {
+            PermissionManager.initialize(permissionProvider.getProvider());
+        } else {
+            log(Level.WARNING, "No Vault permission provider found. Permission rewards are unavailable.");
+        }
+
+        if (economyProvider != null) {
+            EconomyManager.initialize(economyProvider.getProvider());
+        } else {
+            log(Level.WARNING, "No Vault economy provider found. Economy rewards are unavailable.");
+        }
     }
 
 }
