@@ -135,6 +135,36 @@ public enum MiniGameMessage implements TranslatableMessage {
      */
     ERROR_HARDCORE_NO_CHECKPOINTS,
 
+    /**
+     * The message displayed if a user specifies an invalid material
+     */
+    ERROR_INVALID_MATERIAL,
+
+    /**
+     * The message displayed if a user specifies an invalid world
+     */
+    ERROR_INVALID_WORLD,
+
+    /**
+     * The message displayed if a user specifies an invalid number
+     */
+    ERROR_INVALID_NUMBER,
+
+    /**
+     * The message displayed if a user specifies an invalid command (for a command reward)
+     */
+    ERROR_INVALID_COMMAND_STRING,
+
+    /**
+     * The message displayed if a user specified an invalid reward type
+     */
+    ERROR_REWARD_TYPE_INVALID,
+
+    /**
+     * The message displayed if a user specified an invalid reward condition
+     */
+    ERROR_REWARD_CONDITION_INVALID,
+
     /* **************** *
      * Success messages *
      * **************** */
@@ -253,6 +283,16 @@ public enum MiniGameMessage implements TranslatableMessage {
      * The message displayed when a player is rewarded with an amount of currency
      */
     SUCCESS_ECONOMY_REWARDED,
+
+    /**
+     * The message displayed when an arena reward has been successfully added
+     */
+    SUCCESS_REWARD_ADDED,
+
+    /**
+     * The message displayed when arena rewards have been cleared
+     */
+    SUCCESS_REWARDS_CLEARED,
     ;
 
     @Override

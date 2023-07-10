@@ -1,10 +1,13 @@
 package net.knarcraft.minigames.arena;
 
+import net.knarcraft.minigames.arena.reward.Reward;
+import net.knarcraft.minigames.arena.reward.RewardCondition;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -90,5 +93,28 @@ public interface Arena {
      * @return <p>This arena's exit location, or null if no such location is set.</p>
      */
     @Nullable Location getExitLocation();
+
+    /**
+     * Adds a reward to this arena
+     *
+     * @param rewardCondition <p>The condition for the reward to be granted</p>
+     * @param reward          <p>The reward to be granted</p>
+     */
+    void addReward(@NotNull RewardCondition rewardCondition, @NotNull Reward reward);
+
+    /**
+     * Clears this arena's rewards for the given condition
+     *
+     * @param rewardCondition <p>The reward condition to clear all rewards for</p>
+     */
+    void clearRewards(@NotNull RewardCondition rewardCondition);
+
+    /**
+     * Gets all rewards for the given reward condition
+     *
+     * @param rewardCondition <p>The condition to get the rewards for</p>
+     * @return <p>All rewards</p>
+     */
+    @NotNull Set<Reward> getRewards(RewardCondition rewardCondition);
 
 }

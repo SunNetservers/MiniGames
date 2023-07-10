@@ -5,6 +5,8 @@ import net.knarcraft.minigames.MiniGames;
 import net.knarcraft.minigames.arena.Arena;
 import net.knarcraft.minigames.arena.ArenaGameMode;
 import net.knarcraft.minigames.arena.ArenaRecordsRegistry;
+import net.knarcraft.minigames.arena.reward.Reward;
+import net.knarcraft.minigames.arena.reward.RewardCondition;
 import net.knarcraft.minigames.util.ParkourArenaStorageHelper;
 import net.knarcraft.minigames.util.StringSanitizer;
 import org.bukkit.Location;
@@ -82,21 +84,27 @@ public class ParkourArena implements Arena {
 
     private final @NotNull ParkourArenaHandler parkourArenaHandler;
 
+    private Map<RewardCondition, Set<Reward>> rewards = new HashMap<>();
+
     /**
      * Instantiates a new parkour arena
      *
-     * @param arenaId          <p>The id of the arena</p>
-     * @param arenaName        <p>The name of the arena</p>
-     * @param spawnLocation    <p>The location players spawn in when entering the arena</p>
-     * @param exitLocation     <p>The location the players are teleported to when exiting the arena, or null</p>
-     * @param winBlockType     <p>The material of the block players have to hit to win this parkour arena</p>
-     * @param winLocation      <p>The location a player has to reach to win this arena</p>
-     * @param parkourArenaData <p>The arena data keeping track of which players have done what in this arena</p>
-     * @param arenaHandler     <p>The arena handler used for saving any changes</p>
+     * @param arenaId             <p>The id of the arena</p>
+     * @param arenaName           <p>The name of the arena</p>
+     * @param spawnLocation       <p>The location players spawn in when entering the arena</p>
+     * @param exitLocation        <p>The location the players are teleported to when exiting the arena, or null</p>
+     * @param winBlockType        <p>The material of the block players have to hit to win this parkour arena</p>
+     * @param winLocation         <p>The location a player has to reach to win this arena</p>
+     * @param killPlaneBlockNames <p>The names of the type of blocks</p>
+     * @param checkpoints         <p>The checkpoints set for this arena</p>
+     * @param rewards             <p>The rewards given by this arena</p>
+     * @param parkourArenaData    <p>The arena data keeping track of which players have done what in this arena</p>
+     * @param arenaHandler        <p>The arena handler used for saving any changes</p>
      */
     public ParkourArena(@NotNull UUID arenaId, @NotNull String arenaName, @NotNull Location spawnLocation,
                         @Nullable Location exitLocation, @NotNull Material winBlockType, @Nullable Location winLocation,
                         @Nullable Set<String> killPlaneBlockNames, @NotNull List<Location> checkpoints,
+                        @NotNull Map<RewardCondition, Set<Reward>> rewards,
                         @NotNull ParkourArenaData parkourArenaData, @NotNull ParkourArenaHandler arenaHandler) {
         this.arenaId = arenaId;
         this.arenaName = arenaName;
@@ -110,6 +118,7 @@ public class ParkourArena implements Arena {
         this.checkpoints = checkpoints;
         this.parkourArenaData = parkourArenaData;
         this.parkourArenaHandler = arenaHandler;
+        this.rewards = rewards;
     }
 
     /**
@@ -165,6 +174,28 @@ public class ParkourArena implements Arena {
     @Override
     public @Nullable Location getExitLocation() {
         return this.exitLocation;
+    }
+
+    @Override
+    public void addReward(@NotNull RewardCondition rewardCondition, @NotNull Reward reward) {
+        this.rewards.computeIfAbsent(rewardCondition, k -> new HashSet<>());
+        this.rewards.get(rewardCondition).add(reward);
+        this.parkourArenaHandler.saveArenas();
+    }
+
+    @Override
+    public void clearRewards(@NotNull RewardCondition rewardCondition) {
+        this.rewards.remove(rewardCondition);
+        this.parkourArenaHandler.saveArenas();
+    }
+
+    @Override
+    public @NotNull Set<Reward> getRewards(RewardCondition rewardCondition) {
+        if (this.rewards.containsKey(rewardCondition)) {
+            return this.rewards.get(rewardCondition);
+        } else {
+            return new HashSet<>();
+        }
     }
 
     /**

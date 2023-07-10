@@ -2,9 +2,12 @@ package net.knarcraft.minigames.arena;
 
 import net.knarcraft.knarlib.formatting.StringFormatter;
 import net.knarcraft.minigames.MiniGames;
+import net.knarcraft.minigames.arena.reward.RewardCondition;
 import net.knarcraft.minigames.config.MiniGameMessage;
 import net.knarcraft.minigames.property.RecordResult;
+import net.knarcraft.minigames.property.RecordType;
 import net.knarcraft.minigames.util.PlayerTeleporter;
+import net.knarcraft.minigames.util.RewardHelper;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -59,9 +62,9 @@ public abstract class AbstractArenaSession implements ArenaSession {
      * Announces a record set by this player
      *
      * @param recordResult <p>The result of the record</p>
-     * @param type         <p>The type of record set (time or deaths)</p>
+     * @param recordType   <p>The type of record set (time or deaths)</p>
      */
-    protected void announceRecord(@NotNull RecordResult recordResult, @NotNull String type) {
+    protected void announceRecord(@NotNull RecordResult recordResult, @NotNull RecordType recordType) {
         if (recordResult == RecordResult.NONE) {
             return;
         }
@@ -75,11 +78,15 @@ public abstract class AbstractArenaSession implements ArenaSession {
             default -> throw new IllegalStateException("Unexpected value: " + recordResult);
         };
         StringFormatter stringFormatter = MiniGames.getInstance().getStringFormatter();
-        String recordInfo = stringFormatter.replacePlaceholder(recordInfoMiniGameMessage, "{recordType}", type);
+        String recordInfo = stringFormatter.replacePlaceholder(recordInfoMiniGameMessage, "{recordType}",
+                recordType.name().toLowerCase().replace("_", " "));
 
         stringFormatter.displaySuccessMessage(player, stringFormatter.replacePlaceholders(
                 MiniGameMessage.SUCCESS_RECORD_ACHIEVED, new String[]{"{gameMode}", "{recordInfo}"},
                 new String[]{gameModeString, recordInfo}));
+
+        // Reward the player
+        rewardRecord(recordResult, recordType);
     }
 
     /**
@@ -88,8 +95,32 @@ public abstract class AbstractArenaSession implements ArenaSession {
     protected void registerRecord() {
         ArenaRecordsRegistry recordsRegistry = this.arena.getData().getRecordRegistries().get(this.gameMode);
         long timeElapsed = System.currentTimeMillis() - this.startTime;
-        announceRecord(recordsRegistry.registerTimeRecord(this.player.getUniqueId(), timeElapsed), "time");
-        announceRecord(recordsRegistry.registerDeathRecord(this.player.getUniqueId(), this.deaths), "least deaths");
+        announceRecord(recordsRegistry.registerTimeRecord(this.player.getUniqueId(), timeElapsed), RecordType.TIME);
+        announceRecord(recordsRegistry.registerDeathRecord(this.player.getUniqueId(), this.deaths), RecordType.DEATHS);
+    }
+
+    /**
+     * Rewards the specified achieved record
+     *
+     * @param recordResult <p>The result of the record achieved</p>
+     * @param recordType   <p>The type of record achieved</p>
+     */
+    protected void rewardRecord(RecordResult recordResult, RecordType recordType) {
+        RewardCondition condition = null;
+        if (recordResult == RecordResult.WORLD_RECORD) {
+            if (recordType == RecordType.DEATHS) {
+                condition = RewardCondition.GLOBAL_DEATH_RECORD;
+            } else if (recordType == RecordType.TIME) {
+                condition = RewardCondition.GLOBAL_TIME_RECORD;
+            }
+        } else if (recordResult == RecordResult.PERSONAL_BEST) {
+            if (recordType == RecordType.DEATHS) {
+                condition = RewardCondition.PERSONAL_DEATH_RECORD;
+            } else if (recordType == RecordType.TIME) {
+                condition = RewardCondition.PERSONAL_TIME_RECORD;
+            }
+        }
+        RewardHelper.grantRewards(this.player, this.arena.getRewards(condition));
     }
 
     /**

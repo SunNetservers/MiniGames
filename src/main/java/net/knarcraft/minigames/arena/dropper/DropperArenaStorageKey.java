@@ -43,9 +43,14 @@ public enum DropperArenaStorageKey {
     WIN_BLOCK_TYPE("winBlockType"),
 
     /**
-     * The hey for this arena's data
+     * The key for this arena's data
      */
     DATA("arenaData"),
+
+    /**
+     * The key for this arena's rewards
+     */
+    REWARDS("rewards"),
     ;
 
     private final @NotNull String key;

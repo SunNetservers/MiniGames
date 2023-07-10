@@ -51,6 +51,11 @@ public enum ParkourArenaStorageKey {
      * The hey for this arena's data
      */
     DATA("arenaData"),
+
+    /**
+     * The key for this arena's rewards
+     */
+    REWARDS("rewards"),
     ;
 
     private final @NotNull String key;

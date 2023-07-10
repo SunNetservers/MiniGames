@@ -28,6 +28,12 @@ commands:
       - mmenu
     usage: /<command>
     description: Used to display an actions menu while in an arena
+  miniGamesReward:
+    aliases:
+      - mreward
+    usage: /<command> <add|clear> <dropper|parkour> <name> <condition> <type> [value] [value] ...
+    description: Used to set rewards for arenas
+    permission: minigames.edit
   dropperGroupSet:
     aliases:
       - dgset

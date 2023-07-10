@@ -9,6 +9,8 @@ import net.knarcraft.minigames.arena.parkour.ParkourArenaGameMode;
 import net.knarcraft.minigames.arena.parkour.ParkourArenaGroup;
 import net.knarcraft.minigames.arena.parkour.ParkourArenaRecordsRegistry;
 import net.knarcraft.minigames.arena.parkour.ParkourArenaStorageKey;
+import net.knarcraft.minigames.arena.reward.Reward;
+import net.knarcraft.minigames.arena.reward.RewardCondition;
 import net.knarcraft.minigames.config.MiniGameMessage;
 import net.knarcraft.minigames.container.SerializableMaterial;
 import net.knarcraft.minigames.container.SerializableUUID;
@@ -108,6 +110,7 @@ public final class ParkourArenaStorageHelper {
             configSection.set(ParkourArenaStorageKey.WIN_LOCATION.getKey(), arena.getWinLocation());
             configSection.set(ParkourArenaStorageKey.KILL_PLANE_BLOCKS.getKey(), arena.getKillPlaneBlockNames());
             configSection.set(ParkourArenaStorageKey.CHECKPOINTS.getKey(), arena.getCheckpoints());
+            RewardStorageHelper.saveRewards(arena, configSection, ParkourArenaStorageKey.REWARDS.getKey());
             saveParkourArenaData(arena.getData());
         }
         configuration.save(parkourArenaFile);
@@ -163,6 +166,9 @@ public final class ParkourArenaStorageHelper {
         List<?> killPlaneBlockNames = configurationSection.getList(ParkourArenaStorageKey.KILL_PLANE_BLOCKS.getKey());
         List<Location> checkpoints = (List<Location>) configurationSection.get(ParkourArenaStorageKey.CHECKPOINTS.getKey());
 
+        Map<RewardCondition, Set<Reward>> rewards = RewardStorageHelper.loadRewards(configurationSection,
+                ParkourArenaStorageKey.REWARDS.getKey());
+
         // The arena name and spawn location must be present
         if (arenaName == null || spawnLocation == null) {
             MiniGames.log(Level.SEVERE, MiniGames.getInstance().getStringFormatter().replacePlaceholders(
@@ -189,7 +195,8 @@ public final class ParkourArenaStorageHelper {
         }
 
         return new ParkourArena(arenaId, arenaName, spawnLocation, exitLocation, winBlockType.getRawValue(), winLocation,
-                (Set<String>) killPlaneBlockNames, checkpoints, arenaData, MiniGames.getInstance().getParkourArenaHandler());
+                (Set<String>) killPlaneBlockNames, checkpoints, rewards, arenaData,
+                MiniGames.getInstance().getParkourArenaHandler());
     }
 
     /**

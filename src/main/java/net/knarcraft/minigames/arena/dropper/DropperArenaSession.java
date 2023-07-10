@@ -4,10 +4,12 @@ import net.knarcraft.knarlib.formatting.StringFormatter;
 import net.knarcraft.minigames.MiniGames;
 import net.knarcraft.minigames.arena.AbstractArenaSession;
 import net.knarcraft.minigames.arena.PlayerEntryState;
+import net.knarcraft.minigames.arena.reward.RewardCondition;
 import net.knarcraft.minigames.config.MiniGameMessage;
 import net.knarcraft.minigames.gui.ArenaGUI;
 import net.knarcraft.minigames.gui.DropperGUI;
 import net.knarcraft.minigames.util.PlayerTeleporter;
+import net.knarcraft.minigames.util.RewardHelper;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -98,8 +100,10 @@ public class DropperArenaSession extends AbstractArenaSession {
         // Mark the arena as cleared
         if (this.arena.getData().setCompleted(this.gameMode, this.player)) {
             stringFormatter.displaySuccessMessage(this.player, MiniGameMessage.SUCCESS_ARENA_FIRST_CLEAR);
+            RewardHelper.grantRewards(this.player, this.arena.getRewards(RewardCondition.FIRST_WIN));
         }
         stringFormatter.displaySuccessMessage(this.player, MiniGameMessage.SUCCESS_ARENA_WIN);
+        RewardHelper.grantRewards(this.player, this.arena.getRewards(RewardCondition.WIN));
 
         // Teleport the player out of the arena
         teleportToExit(false);

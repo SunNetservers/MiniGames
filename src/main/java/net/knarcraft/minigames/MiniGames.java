@@ -29,9 +29,12 @@ import net.knarcraft.minigames.arena.reward.CommandReward;
 import net.knarcraft.minigames.arena.reward.EconomyReward;
 import net.knarcraft.minigames.arena.reward.ItemReward;
 import net.knarcraft.minigames.arena.reward.PermissionReward;
+import net.knarcraft.minigames.arena.reward.RewardCondition;
 import net.knarcraft.minigames.command.LeaveArenaCommand;
 import net.knarcraft.minigames.command.MenuCommand;
 import net.knarcraft.minigames.command.ReloadCommand;
+import net.knarcraft.minigames.command.SetArenaRewardCommand;
+import net.knarcraft.minigames.command.SetArenaRewardTabCompleter;
 import net.knarcraft.minigames.command.dropper.CreateDropperArenaCommand;
 import net.knarcraft.minigames.command.dropper.DropperGroupListCommand;
 import net.knarcraft.minigames.command.dropper.DropperGroupSetCommand;
@@ -276,6 +279,7 @@ public final class MiniGames extends JavaPlugin {
         ConfigurationSerialization.registerClass(EconomyReward.class);
         ConfigurationSerialization.registerClass(ItemReward.class);
         ConfigurationSerialization.registerClass(PermissionReward.class);
+        ConfigurationSerialization.registerClass(RewardCondition.class);
     }
 
     @Override
@@ -386,6 +390,7 @@ public final class MiniGames extends JavaPlugin {
         registerCommand("miniGamesReload", new ReloadCommand(), null);
         registerCommand("miniGamesLeave", new LeaveArenaCommand(), null);
         registerCommand("miniGamesMenu", new MenuCommand(), null);
+        registerCommand("miniGamesReward", new SetArenaRewardCommand(), new SetArenaRewardTabCompleter());
 
         registerDropperCommands();
         registerParkourCommands();

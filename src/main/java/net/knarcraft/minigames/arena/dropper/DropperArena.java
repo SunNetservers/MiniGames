@@ -4,6 +4,8 @@ import net.knarcraft.minigames.MiniGames;
 import net.knarcraft.minigames.arena.Arena;
 import net.knarcraft.minigames.arena.ArenaGameMode;
 import net.knarcraft.minigames.arena.ArenaRecordsRegistry;
+import net.knarcraft.minigames.arena.reward.Reward;
+import net.knarcraft.minigames.arena.reward.RewardCondition;
 import net.knarcraft.minigames.config.DropperConfiguration;
 import net.knarcraft.minigames.util.DropperArenaStorageHelper;
 import net.knarcraft.minigames.util.StringSanitizer;
@@ -15,7 +17,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import static net.knarcraft.minigames.util.InputValidationHelper.isInvalid;
@@ -70,6 +74,8 @@ public class DropperArena implements Arena {
 
     private final DropperArenaHandler dropperArenaHandler;
 
+    private Map<RewardCondition, Set<Reward>> rewards = new HashMap<>();
+
     private static final DropperConfiguration dropperConfiguration = MiniGames.getInstance().getDropperConfiguration();
 
     /**
@@ -82,13 +88,14 @@ public class DropperArena implements Arena {
      * @param playerVerticalVelocity   <p>The velocity to use for players' vertical velocity</p>
      * @param playerHorizontalVelocity <p>The velocity to use for players' horizontal velocity (-1 to 1)</p>
      * @param winBlockType             <p>The material of the block players have to hit to win this dropper arena</p>
+     * @param rewards                  <p>The rewards given by this arena</p>
      * @param dropperArenaData         <p>The arena data keeping track of which players have done what in this arena</p>
      * @param arenaHandler             <p>The arena handler used for saving any changes</p>
      */
     public DropperArena(@NotNull UUID arenaId, @NotNull String arenaName, @NotNull Location spawnLocation,
                         @Nullable Location exitLocation, double playerVerticalVelocity, float playerHorizontalVelocity,
-                        @NotNull Material winBlockType, @NotNull DropperArenaData dropperArenaData,
-                        @NotNull DropperArenaHandler arenaHandler) {
+                        @NotNull Material winBlockType, @NotNull Map<RewardCondition, Set<Reward>> rewards,
+                        @NotNull DropperArenaData dropperArenaData, @NotNull DropperArenaHandler arenaHandler) {
         this.arenaId = arenaId;
         this.arenaName = arenaName;
         this.spawnLocation = spawnLocation;
@@ -98,6 +105,7 @@ public class DropperArena implements Arena {
         this.winBlockType = winBlockType;
         this.dropperArenaData = dropperArenaData;
         this.dropperArenaHandler = arenaHandler;
+        this.rewards = rewards;
     }
 
     /**
@@ -153,6 +161,28 @@ public class DropperArena implements Arena {
     @Override
     public @Nullable Location getExitLocation() {
         return this.exitLocation != null ? this.exitLocation.clone() : null;
+    }
+
+    @Override
+    public void addReward(@NotNull RewardCondition rewardCondition, @NotNull Reward reward) {
+        this.rewards.computeIfAbsent(rewardCondition, k -> new HashSet<>());
+        this.rewards.get(rewardCondition).add(reward);
+        this.dropperArenaHandler.saveArenas();
+    }
+
+    @Override
+    public void clearRewards(@NotNull RewardCondition rewardCondition) {
+        this.rewards.remove(rewardCondition);
+        this.dropperArenaHandler.saveArenas();
+    }
+
+    @Override
+    public @NotNull Set<Reward> getRewards(RewardCondition rewardCondition) {
+        if (this.rewards.containsKey(rewardCondition) && this.rewards.get(rewardCondition) != null) {
+            return this.rewards.get(rewardCondition);
+        } else {
+            return new HashSet<>();
+        }
     }
 
     /**
@@ -237,7 +267,7 @@ public class DropperArena implements Arena {
             return false;
         } else {
             this.spawnLocation = newLocation;
-            dropperArenaHandler.saveArenas();
+            this.dropperArenaHandler.saveArenas();
             return true;
         }
     }
@@ -253,7 +283,7 @@ public class DropperArena implements Arena {
             return false;
         } else {
             this.exitLocation = newLocation;
-            dropperArenaHandler.saveArenas();
+            this.dropperArenaHandler.saveArenas();
             return true;
         }
     }
@@ -269,8 +299,8 @@ public class DropperArena implements Arena {
             String oldName = this.getArenaNameSanitized();
             this.arenaName = arenaName;
             // Update the arena lookup map to make sure the new name can be used immediately
-            dropperArenaHandler.updateLookupName(oldName, this.getArenaNameSanitized());
-            dropperArenaHandler.saveArenas();
+            this.dropperArenaHandler.updateLookupName(oldName, this.getArenaNameSanitized());
+            this.dropperArenaHandler.saveArenas();
             return true;
         } else {
             return false;
@@ -290,7 +320,7 @@ public class DropperArena implements Arena {
             return false;
         } else {
             this.winBlockType = material;
-            dropperArenaHandler.saveArenas();
+            this.dropperArenaHandler.saveArenas();
             return true;
         }
     }
@@ -308,7 +338,7 @@ public class DropperArena implements Arena {
             return false;
         } else {
             this.playerHorizontalVelocity = horizontalVelocity;
-            dropperArenaHandler.saveArenas();
+            this.dropperArenaHandler.saveArenas();
             return true;
         }
     }
@@ -324,7 +354,7 @@ public class DropperArena implements Arena {
             return false;
         } else {
             this.playerVerticalVelocity = verticalVelocity;
-            dropperArenaHandler.saveArenas();
+            this.dropperArenaHandler.saveArenas();
             return true;
         }
     }

@@ -9,6 +9,8 @@ import net.knarcraft.minigames.arena.dropper.DropperArenaGameMode;
 import net.knarcraft.minigames.arena.dropper.DropperArenaGroup;
 import net.knarcraft.minigames.arena.dropper.DropperArenaRecordsRegistry;
 import net.knarcraft.minigames.arena.dropper.DropperArenaStorageKey;
+import net.knarcraft.minigames.arena.reward.Reward;
+import net.knarcraft.minigames.arena.reward.RewardCondition;
 import net.knarcraft.minigames.config.MiniGameMessage;
 import net.knarcraft.minigames.container.SerializableMaterial;
 import net.knarcraft.minigames.container.SerializableUUID;
@@ -105,6 +107,7 @@ public final class DropperArenaStorageHelper {
             configSection.set(DropperArenaStorageKey.PLAYER_VERTICAL_VELOCITY.getKey(), arena.getPlayerVerticalVelocity());
             configSection.set(DropperArenaStorageKey.PLAYER_HORIZONTAL_VELOCITY.getKey(), arena.getPlayerHorizontalVelocity());
             configSection.set(DropperArenaStorageKey.WIN_BLOCK_TYPE.getKey(), new SerializableMaterial(arena.getWinBlockType()));
+            RewardStorageHelper.saveRewards(arena, configSection, DropperArenaStorageKey.REWARDS.getKey());
             saveDropperArenaData(arena.getData());
         }
         configuration.save(dropperArenaFile);
@@ -169,6 +172,9 @@ public final class DropperArenaStorageHelper {
             winBlockType = new SerializableMaterial(Material.WATER);
         }
 
+        Map<RewardCondition, Set<Reward>> rewards = RewardStorageHelper.loadRewards(configurationSection,
+                DropperArenaStorageKey.REWARDS.getKey());
+
         // Generate new, empty arena data if not available
         DropperArenaData arenaData = loadDropperArenaData(arenaId);
         if (arenaData == null) {
@@ -178,7 +184,7 @@ public final class DropperArenaStorageHelper {
         }
 
         return new DropperArena(arenaId, arenaName, spawnLocation, exitLocation, verticalVelocity, horizontalVelocity,
-                winBlockType.getRawValue(), arenaData, MiniGames.getInstance().getDropperArenaHandler());
+                winBlockType.getRawValue(), rewards, arenaData, MiniGames.getInstance().getDropperArenaHandler());
     }
 
     /**
