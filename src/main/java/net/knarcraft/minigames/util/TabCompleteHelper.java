@@ -1,18 +1,22 @@
 package net.knarcraft.minigames.util;
 
+import net.knarcraft.knarlib.util.TabCompletionHelper;
 import net.knarcraft.minigames.MiniGames;
 import net.knarcraft.minigames.arena.Arena;
 import net.knarcraft.minigames.arena.ArenaHandler;
 import net.knarcraft.minigames.arena.EditablePropertyType;
 import net.knarcraft.minigames.arena.dropper.DropperArenaEditableProperty;
 import net.knarcraft.minigames.arena.parkour.ParkourArenaEditableProperty;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.permissions.Permission;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.StringJoiner;
 
 /**
  * A helper-class for common tab-completions
@@ -20,6 +24,8 @@ import java.util.Map;
 public final class TabCompleteHelper {
 
     private static Map<EditablePropertyType, List<String>> tabCompleteSuggestions;
+    private static List<String> plugins;
+    private static Map<String, List<String>> permissions;
 
     private TabCompleteHelper() {
 
@@ -80,23 +86,6 @@ public final class TabCompleteHelper {
             arenaProperties.add(property.getArgumentString());
         }
         return arenaProperties;
-    }
-
-    /**
-     * Finds tab complete values that contain the typed text
-     *
-     * @param values    <p>The values to filter</p>
-     * @param typedText <p>The text the player has started typing</p>
-     * @return <p>The given string values that contain the player's typed text</p>
-     */
-    public static List<String> filterMatchingContains(@NotNull List<String> values, @NotNull String typedText) {
-        List<String> configValues = new ArrayList<>();
-        for (String value : values) {
-            if (value.toLowerCase().contains(typedText.toLowerCase())) {
-                configValues.add(value);
-            }
-        }
-        return configValues;
     }
 
     /**
@@ -213,6 +202,67 @@ public final class TabCompleteHelper {
         locations.add("here");
         locations.add("x,y,z");
         return locations;
+    }
+
+    /**
+     * Gets the tab complete value for the permission typed
+     *
+     * @param typedNode <p>The full permission node typed by the player</p>
+     * @return <p>All known valid auto-complete options</p>
+     */
+    public static List<String> tabCompletePermission(String typedNode) {
+        if (plugins == null) {
+            loadAvailablePermissions();
+        }
+        List<String> output;
+        if (typedNode.contains(".")) {
+            List<String> matchingPermissions = permissions.get(typedNode.substring(0, typedNode.lastIndexOf(".")));
+            if (matchingPermissions == null) {
+                output = new ArrayList<>();
+            } else {
+                //Filter by the typed text
+                output = TabCompletionHelper.filterMatchingStartsWith(matchingPermissions, typedNode);
+            }
+        } else {
+            output = plugins;
+        }
+
+        //Add previous permissions in the comma-separated lists as a prefix
+        return output;
+    }
+
+    /**
+     * Loads all permissions available from bukkit plugins
+     */
+    private static void loadAvailablePermissions() {
+        plugins = new ArrayList<>();
+        permissions = new HashMap<>();
+
+        for (Permission permission : Bukkit.getPluginManager().getPermissions()) {
+            loadPermission(permission.getName());
+        }
+    }
+
+    /**
+     * Loads a given permission into the proper lists and maps
+     *
+     * @param permissionName <p>The permission to load</p>
+     */
+    private static void loadPermission(String permissionName) {
+        String[] permissionParts = permissionName.split("\\.");
+        if (permissionParts.length == 1 && !plugins.contains(permissionParts[0])) {
+            plugins.add(permissionParts[0]);
+        } else if (permissionParts.length > 1) {
+            StringJoiner pathJoiner = new StringJoiner(".");
+            for (int j = 0; j < permissionParts.length - 1; j++) {
+                pathJoiner.add(permissionParts[j]);
+            }
+            String path = pathJoiner.toString();
+            List<String> permissionList = permissions.computeIfAbsent(path, k -> new ArrayList<>());
+            permissionList.add(permissionName);
+
+            loadPermission(path);
+        }
     }
 
 }

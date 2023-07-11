@@ -27,8 +27,7 @@ public class CommandReward implements Reward {
 
     @Override
     public boolean grant(@NotNull Player player) {
-        return Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(),
-                command.replaceAll("[<%(\\[]player(_|-name)?[>%)\\]]", player.getName()));
+        return Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), replaceNamePlaceholder(player, command));
     }
 
     @Override
@@ -43,6 +42,17 @@ public class CommandReward implements Reward {
         Map<String, Object> data = new HashMap<>();
         data.put("command", command);
         return data;
+    }
+
+    /**
+     * Replaces the name placeholder in the given input with the given player's name
+     *
+     * @param player <p>The player whose name should be used</p>
+     * @param input  <p>The input containing a name placeholder</p>
+     * @return <p>The input with the placeholder replaced</p>
+     */
+    private String replaceNamePlaceholder(@NotNull Player player, @NotNull String input) {
+        return input.replaceAll("[<%(\\[{]player[_\\-]?(name)?[>%)\\]}]", player.getName());
     }
 
     /**

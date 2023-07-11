@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static net.knarcraft.minigames.util.TabCompleteHelper.filterMatchingContains;
+import static net.knarcraft.knarlib.util.TabCompletionHelper.filterMatchingContains;
 
 /**
  * The command for swapping the order of two arenas in a group

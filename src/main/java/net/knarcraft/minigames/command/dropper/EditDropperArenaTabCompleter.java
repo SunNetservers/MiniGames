@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-import static net.knarcraft.minigames.util.TabCompleteHelper.filterMatchingContains;
+import static net.knarcraft.knarlib.util.TabCompletionHelper.filterMatchingContains;
 
 /**
  * The tab-completer for the edit arena command

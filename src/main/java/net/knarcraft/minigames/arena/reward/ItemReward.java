@@ -45,7 +45,7 @@ public class ItemReward implements Reward {
     public @NotNull String getGrantMessage() {
         return MiniGames.getInstance().getStringFormatter().replacePlaceholders(MiniGameMessage.SUCCESS_ITEM_REWARDED,
                 new String[]{"{amount}", "{item}"}, new String[]{String.valueOf(item.getAmount()),
-                        item.getType().getKey().getKey()});
+                        item.getType().getKey().getKey().replace("_", " ")});
     }
 
     @NotNull

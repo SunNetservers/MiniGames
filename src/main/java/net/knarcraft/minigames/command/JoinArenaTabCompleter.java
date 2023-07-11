@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
-import static net.knarcraft.minigames.util.TabCompleteHelper.filterMatchingContains;
+import static net.knarcraft.knarlib.util.TabCompletionHelper.filterMatchingContains;
 
 /**
  * An abstract class for an arena joining tab-completer

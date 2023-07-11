@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-import static net.knarcraft.minigames.util.TabCompleteHelper.filterMatchingContains;
+import static net.knarcraft.knarlib.util.TabCompletionHelper.filterMatchingContains;
 
 /**
  * The command for listing groups and the stages within

@@ -325,6 +325,11 @@ public final class MiniGames extends JavaPlugin {
                 log(Level.WARNING, "Unable to register PlaceholderAPI parkour expansion!");
             }
         }
+        if (Bukkit.getPluginManager().getPlugin("Vault") != null) {
+            setupVault();
+        } else {
+            log(Level.WARNING, "Vault not found. Economy and Permission rewards are unavailable.");
+        }
     }
 
     /**
