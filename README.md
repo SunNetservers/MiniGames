@@ -37,27 +37,75 @@ The only permission normal players will need is `minigames.join` which is set to
 
 ## Commands
 
-| Command                                | Alias    | Arguments                   | Description                                                                         |
-|----------------------------------------|----------|-----------------------------|-------------------------------------------------------------------------------------|
-| /miniGamesReload                       | /mreload |                             | Reloads all data from disk.                                                         |
-| /miniGamesLeave                        | /mleave  |                             | Leaves the current mini-game.                                                       |
-| /miniGamesMenu                         | /mmenu   |                             | Shows a menu of actions if used while in an arena                                   |
-| /dropperList                           | /dlist   |                             | Lists available dropper arenas.                                                     |
-| [/dropperJoin](#dropperjoin)           | /djoin   | \<arena> \[mode]            | Joins the selected arena.                                                           |
-| /dropperCreate                         | /dcreate | \<name>                     | Creates a new dropper arena with the given name. The spawn is set to your location. |
-| /dropperRemove                         | /dremove | \<arena>                    | Removes the specified dropper arena.                                                |
-| [/dropperEdit](#dropperedit)           | /dedit   | \<arena> \<option> \[value] | Gets or sets a dropper arena option.                                                |
-| [/dropperGroupSet](#droppergroupset)   | /dgset   | \<arena> \<group>           | Puts the given arena in the given group. Use "none" to remove an existing group.    |
-| /dropperGroupList                      | /dglist  | \[group]                    | Lists groups, or the stages of a group if a group is specified.                     |
-| [/dropperGroupSwap](#droppergroupswap) | /dgswap  | \<arena1> \<arena2>         | Swaps the two arenas in the group's ordered list.                                   |
-| /parkourList                           | /plist   |                             | Lists available parkour arenas.                                                     |
-| [/parkourJoin](#parkourjoin)           | /pjoin   | \<arena> \[mode]            | Joins the selected arena.                                                           |
-| /parkourCreate                         | /pcreate | \<name>                     | Creates a new parkour arena with the given name. The spawn is set to your location. |
-| /parkourRemove                         | /premove | \<arena>                    | Removes the specified parkour arena.                                                |
-| [/parkourEdit](#parkouredit)           | /pedit   | \<arena> \<option> \[value] | Gets or sets a parkour arena option.                                                |
-| /parkourGroupSet                       | /pgset   | \<arena> \<group>           | Puts the given arena in the given group. Use "none" to remove an existing group.    |
-| /parkourGroupList                      | /pglist  | \[group]                    | Lists groups, or the stages of a group if a group is specified.                     |
-| [/parkourGroupSwap](#droppergroupswap) | /pgswap  | \<arena1> \<arena2>         | Swaps the two arenas in the group's ordered list.                                   |
+| Command                                | Alias    | Arguments                    | Description                                                                         |
+|----------------------------------------|----------|------------------------------|-------------------------------------------------------------------------------------|
+| /miniGamesReload                       | /mreload |                              | Reloads all data from disk.                                                         |
+| /miniGamesLeave                        | /mleave  |                              | Leaves the current mini-game.                                                       |
+| /miniGamesMenu                         | /mmenu   |                              | Shows a menu of actions if used while in an arena                                   |
+| [/miniGamesReward](#minigamesreward)   | /mreward | [See this](#minigamesreward) | Adds or removes rewards for an arena                                                |
+| /dropperList                           | /dlist   |                              | Lists available dropper arenas.                                                     |
+| [/dropperJoin](#dropperjoin)           | /djoin   | \<arena> \[mode]             | Joins the selected arena.                                                           |
+| /dropperCreate                         | /dcreate | \<name>                      | Creates a new dropper arena with the given name. The spawn is set to your location. |
+| /dropperRemove                         | /dremove | \<arena>                     | Removes the specified dropper arena.                                                |
+| [/dropperEdit](#dropperedit)           | /dedit   | \<arena> \<option> \[value]  | Gets or sets a dropper arena option.                                                |
+| [/dropperGroupSet](#droppergroupset)   | /dgset   | \<arena> \<group>            | Puts the given arena in the given group. Use "none" to remove an existing group.    |
+| /dropperGroupList                      | /dglist  | \[group]                     | Lists groups, or the stages of a group if a group is specified.                     |
+| [/dropperGroupSwap](#droppergroupswap) | /dgswap  | \<arena1> \<arena2>          | Swaps the two arenas in the group's ordered list.                                   |
+| /parkourList                           | /plist   |                              | Lists available parkour arenas.                                                     |
+| [/parkourJoin](#parkourjoin)           | /pjoin   | \<arena> \[mode]             | Joins the selected arena.                                                           |
+| /parkourCreate                         | /pcreate | \<name>                      | Creates a new parkour arena with the given name. The spawn is set to your location. |
+| /parkourRemove                         | /premove | \<arena>                     | Removes the specified parkour arena.                                                |
+| [/parkourEdit](#parkouredit)           | /pedit   | \<arena> \<option> \[value]  | Gets or sets a parkour arena option.                                                |
+| /parkourGroupSet                       | /pgset   | \<arena> \<group>            | Puts the given arena in the given group. Use "none" to remove an existing group.    |
+| /parkourGroupList                      | /pglist  | \[group]                     | Lists groups, or the stages of a group if a group is specified.                     |
+| [/parkourGroupSwap](#droppergroupswap) | /pgswap  | \<arena1> \<arena2>          | Swaps the two arenas in the group's ordered list.                                   |
+
+### Command explanation mini-games
+
+#### /miniGamesReward
+
+This command is used to set the rewards for an arena. Rewards can be set for six conditions; a reward for each time the
+arena is cleared, a reward for the first time the arena is cleared, a reward for beating your own least deaths record, a
+reward for beating your own least time record, a record for beating the global least deaths record and a record for
+beating the global least time record. You can give an item, give money, give a permission or execute a console command
+with the winning player as an argument.
+
+Note, you can add as many rewards as you want for each reward condition, so you can add a permission and an amount of
+currency on the player's first win for example.
+
+`/mreward add dropper|parkour <name> <condition> <type> [value] [value] ...`
+
+`/mreward clear dropper|parkour <name> <condition>`
+
+| Argument  | Type                                                                                                      | Usage                                                       |
+|-----------|-----------------------------------------------------------------------------------------------------------|-------------------------------------------------------------|
+| action    | add / clear                                                                                               | Whether you are adding a reward or clearing rewards.        |
+| type      | dropper / parkour                                                                                         | The type of arena to change rewards for                     |
+| name      | _Arena name_                                                                                              | The name of the arena to change rewards for                 |
+| condition | WIN / FIRST_WIN / PERSONAL_DEATH_RECORD / PERSONAL_TIME_RECORD / GLOBAL_DEATH_RECORD / GLOBAL_TIME_RECORD | The condition to change rewards for.                        |
+| type      | COMMAND / ECONOMY / ITEM / PERMISSION                                                                     | The type of reward to add                                   |
+| value     | [See reward types](#reward-types)                                                                         | Input for the reward type. Valid values depend on the type. |
+
+##### Reward types
+
+###### Economy
+
+This reward requires an argument which is a number above zero, which is the amount of currency granted to players.
+
+###### Permission
+
+This reward requires an argument which is the permission string you want to grant the player.
+
+###### Command
+
+The reward requires the command as an argument. Type the full command with spaces and everything, but omit the `/` at
+the beginning of the command.
+
+###### Item
+
+If used with no arguments, the item in your main hand is used. You can specify a material in the first argument to give
+one item of the specified type. You can specify a positive whole number as the second argument to specify the amount of
+items to give.
 
 ### Command explanation dropper
 

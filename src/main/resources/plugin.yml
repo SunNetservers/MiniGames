@@ -31,7 +31,9 @@ commands:
   miniGamesReward:
     aliases:
       - mreward
-    usage: /<command> <add|clear> <dropper|parkour> <name> <condition> <type> [value] [value] ...
+    usage: |
+      /<command> add dropper|parkour <name> <condition> <type> [value] [value] ...
+      /<command> clear dropper|parkour <name> <condition>
     description: Used to set rewards for arenas
     permission: minigames.edit
   dropperGroupSet:
