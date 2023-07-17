@@ -100,7 +100,8 @@ This reward requires an argument which is the permission string you want to gran
 
 The reward requires the command as an argument. Type the full command with spaces and everything, but omit the `/` at
 the beginning of the command. Use %player_name% or anything that matches the
-RegEx `"[<%(\\[{]player[_\\-]?(name)?[>%)\\]}]"` as the placeholder for the rewarded player's name.
+RegEx `[<%(\\[{]player[_\\-]?(name)?[>%)\\]}]` (<player>. <player-name>, %player_name%, {player}, etc.) as the
+placeholder for the rewarded player's name.
 
 ###### Item
 
