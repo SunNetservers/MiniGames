@@ -39,7 +39,6 @@ public class CreateDropperArenaCommand implements CommandExecutor {
         }
 
         DropperArenaHandler arenaHandler = MiniGames.getInstance().getDropperArenaHandler();
-
         DropperArena existingArena = arenaHandler.getArena(arenaName);
         if (existingArena != null) {
             MiniGames.getInstance().getStringFormatter().displayErrorMessage(commandSender,

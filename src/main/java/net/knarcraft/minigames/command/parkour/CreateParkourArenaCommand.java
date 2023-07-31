@@ -40,7 +40,6 @@ public class CreateParkourArenaCommand implements CommandExecutor {
         }
 
         ParkourArenaHandler arenaHandler = MiniGames.getInstance().getParkourArenaHandler();
-
         ParkourArena existingArena = arenaHandler.getArena(arenaName);
         if (existingArena != null) {
             stringFormatter.displayErrorMessage(commandSender, MiniGameMessage.ERROR_ARENA_NAME_COLLISION);

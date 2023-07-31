@@ -82,15 +82,15 @@ commands:
     aliases:
       - dcreate
     permission: minigames.create.dropper
-    usage: |
-      /<command> <arena> <property> [new value]
-      - Valid properties: name, spawnLocation, exitLocation, verticalVelocity, horizontalVelocity, winBlockType
+    usage: /<command> <arena>
     description: Used to create a new dropper arena
   dropperEdit:
     aliases:
       - dedit
     permission: minigames.edit.dropper
-    usage: /<command> (Details not finalized)
+    usage: |
+      /<command> <arena> <property> [new value]
+      - Valid properties: name, spawnLocation, exitLocation, verticalVelocity, horizontalVelocity, winBlockType
     description: Used to edit an existing dropper arena
   dropperRemove:
     aliases:
@@ -143,15 +143,15 @@ commands:
     aliases:
       - pcreate
     permission: minigames.create.parkour
-    usage: |
-      /<command> <arena> <property> [new value]
-      - Valid properties: name, spawnLocation, exitLocation, winBlockType, winLocation, checkpointAdd, checkpointClear, killPlaneBlocks
+    usage: /<command> <arena>
     description: Used to create a new parkour arena
   parkourEdit:
     aliases:
       - pedit
     permission: minigames.edit.parkour
-    usage: /<command> (Details not finalized)
+    usage: |
+      /<command> <arena> <property> [new value]
+      - Valid properties: name, spawnLocation, exitLocation, winBlockType, winLocation, checkpointAdd, checkpointClear, killPlaneBlocks
     description: Used to edit an existing parkour arena
   parkourRemove:
     aliases:
