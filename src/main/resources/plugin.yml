@@ -155,7 +155,7 @@ commands:
     description: Used to edit an existing parkour arena
   parkourRemove:
     aliases:
-      - dremove
+      - premove
     permission: minigames.remove.parkour
     usage: /<command> <arena>
     description: Used to remove an existing parkour arena
