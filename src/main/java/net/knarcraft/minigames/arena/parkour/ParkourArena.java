@@ -395,6 +395,7 @@ public class ParkourArena implements Arena {
      */
     public boolean setKillPlaneBlocks(@NotNull Set<String> killPlaneBlockNames) {
         if (killPlaneBlockNames.isEmpty()) {
+            this.killPlaneBlockNames = null;
             this.killPlaneBlocks = null;
         } else {
             Set<Material> parsed = MaterialHelper.loadMaterialList(new ArrayList<>(killPlaneBlockNames), "+",
@@ -402,6 +403,7 @@ public class ParkourArena implements Arena {
             if (parsed.isEmpty()) {
                 return false;
             }
+            this.killPlaneBlockNames = killPlaneBlockNames;
             this.killPlaneBlocks = parsed;
         }
         this.parkourArenaHandler.saveArenas();
