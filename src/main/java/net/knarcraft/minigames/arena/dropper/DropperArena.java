@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.logging.Level;
 
 import static net.knarcraft.minigames.util.InputValidationHelper.isInvalid;
 
@@ -167,13 +168,13 @@ public class DropperArena implements Arena {
     public void addReward(@NotNull RewardCondition rewardCondition, @NotNull Reward reward) {
         this.rewards.computeIfAbsent(rewardCondition, k -> new HashSet<>());
         this.rewards.get(rewardCondition).add(reward);
-        this.dropperArenaHandler.saveArenas();
+        this.saveArena();
     }
 
     @Override
     public void clearRewards(@NotNull RewardCondition rewardCondition) {
         this.rewards.remove(rewardCondition);
-        this.dropperArenaHandler.saveArenas();
+        this.saveArena();
     }
 
     @Override
@@ -267,7 +268,7 @@ public class DropperArena implements Arena {
             return false;
         } else {
             this.spawnLocation = newLocation;
-            this.dropperArenaHandler.saveArenas();
+            this.saveArena();
             return true;
         }
     }
@@ -283,7 +284,7 @@ public class DropperArena implements Arena {
             return false;
         } else {
             this.exitLocation = newLocation;
-            this.dropperArenaHandler.saveArenas();
+            this.saveArena();
             return true;
         }
     }
@@ -300,7 +301,7 @@ public class DropperArena implements Arena {
             this.arenaName = arenaName;
             // Update the arena lookup map to make sure the new name can be used immediately
             this.dropperArenaHandler.updateLookupName(oldName, this.getArenaNameSanitized());
-            this.dropperArenaHandler.saveArenas();
+            this.saveArena();
             return true;
         } else {
             return false;
@@ -320,7 +321,7 @@ public class DropperArena implements Arena {
             return false;
         } else {
             this.winBlockType = material;
-            this.dropperArenaHandler.saveArenas();
+            this.saveArena();
             return true;
         }
     }
@@ -338,7 +339,7 @@ public class DropperArena implements Arena {
             return false;
         } else {
             this.playerHorizontalVelocity = horizontalVelocity;
-            this.dropperArenaHandler.saveArenas();
+            this.saveArena();
             return true;
         }
     }
@@ -354,8 +355,21 @@ public class DropperArena implements Arena {
             return false;
         } else {
             this.playerVerticalVelocity = verticalVelocity;
-            this.dropperArenaHandler.saveArenas();
+            this.saveArena();
             return true;
+        }
+    }
+
+    /**
+     * Saves this arena to disk
+     */
+    public void saveArena() {
+        try {
+            DropperArenaStorageHelper.saveSingleDropperArena(this);
+        } catch (IOException exception) {
+            MiniGames.log(Level.SEVERE, "Unable to save arena! " +
+                    "Data loss can occur!");
+            MiniGames.log(Level.SEVERE, exception.getMessage());
         }
     }
 

@@ -97,20 +97,44 @@ public final class DropperArenaStorageHelper {
         YamlConfiguration configuration = new YamlConfiguration();
         ConfigurationSection arenaSection = configuration.createSection(dropperArenasConfigurationSection);
         for (DropperArena arena : arenas.values()) {
-            //Note: While the arena name is used as the key, as the key has to be sanitized, the un-sanitized arena name
-            // must be stored as well
-            @NotNull ConfigurationSection configSection = arenaSection.createSection(arena.getArenaId().toString());
-            configSection.set(DropperArenaStorageKey.ID.getKey(), new SerializableUUID(arena.getArenaId()));
-            configSection.set(DropperArenaStorageKey.NAME.getKey(), arena.getArenaName());
-            configSection.set(DropperArenaStorageKey.SPAWN_LOCATION.getKey(), arena.getSpawnLocation());
-            configSection.set(DropperArenaStorageKey.EXIT_LOCATION.getKey(), arena.getExitLocation());
-            configSection.set(DropperArenaStorageKey.PLAYER_VERTICAL_VELOCITY.getKey(), arena.getPlayerVerticalVelocity());
-            configSection.set(DropperArenaStorageKey.PLAYER_HORIZONTAL_VELOCITY.getKey(), arena.getPlayerHorizontalVelocity());
-            configSection.set(DropperArenaStorageKey.WIN_BLOCK_TYPE.getKey(), new SerializableMaterial(arena.getWinBlockType()));
-            RewardStorageHelper.saveRewards(arena, configSection, DropperArenaStorageKey.REWARDS.getKey());
-            saveDropperArenaData(arena.getData());
+            saveDropperArena(arenaSection, arena);
         }
         configuration.save(dropperArenaFile);
+    }
+
+    /**
+     * Saves a single arena
+     *
+     * @param arena <p>The arena to save</p>
+     * @throws IOException <p>If unable to write to the file</p>
+     */
+    public static void saveSingleDropperArena(DropperArena arena) throws IOException {
+        YamlConfiguration configuration = new YamlConfiguration();
+        ConfigurationSection arenaSection = configuration.createSection(dropperArenasConfigurationSection);
+        saveDropperArena(arenaSection, arena);
+        configuration.save(dropperArenaFile);
+    }
+
+    /**
+     * Updates the given configuration section with the arena's data, and stores arena data for the arena
+     *
+     * @param arenaSection <p>The configuration section to update</p>
+     * @param arena        <p>The arena to save</p>
+     * @throws IOException <p>If unable to save the arena data</p>
+     */
+    public static void saveDropperArena(ConfigurationSection arenaSection, DropperArena arena) throws IOException {
+        //Note: While the arena name is used as the key, as the key has to be sanitized, the un-sanitized arena name
+        // must be stored as well
+        @NotNull ConfigurationSection configSection = arenaSection.createSection(arena.getArenaId().toString());
+        configSection.set(DropperArenaStorageKey.ID.getKey(), new SerializableUUID(arena.getArenaId()));
+        configSection.set(DropperArenaStorageKey.NAME.getKey(), arena.getArenaName());
+        configSection.set(DropperArenaStorageKey.SPAWN_LOCATION.getKey(), arena.getSpawnLocation());
+        configSection.set(DropperArenaStorageKey.EXIT_LOCATION.getKey(), arena.getExitLocation());
+        configSection.set(DropperArenaStorageKey.PLAYER_VERTICAL_VELOCITY.getKey(), arena.getPlayerVerticalVelocity());
+        configSection.set(DropperArenaStorageKey.PLAYER_HORIZONTAL_VELOCITY.getKey(), arena.getPlayerHorizontalVelocity());
+        configSection.set(DropperArenaStorageKey.WIN_BLOCK_TYPE.getKey(), new SerializableMaterial(arena.getWinBlockType()));
+        RewardStorageHelper.saveRewards(arena, configSection, DropperArenaStorageKey.REWARDS.getKey());
+        saveDropperArenaData(arena.getData());
     }
 
     /**

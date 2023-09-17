@@ -99,21 +99,59 @@ public final class ParkourArenaStorageHelper {
         YamlConfiguration configuration = new YamlConfiguration();
         ConfigurationSection arenaSection = configuration.createSection(parkourArenasConfigurationSection);
         for (ParkourArena arena : arenas.values()) {
-            //Note: While the arena name is used as the key, as the key has to be sanitized, the un-sanitized arena name
-            // must be stored as well
-            @NotNull ConfigurationSection configSection = arenaSection.createSection(arena.getArenaId().toString());
-            configSection.set(ParkourArenaStorageKey.ID.getKey(), new SerializableUUID(arena.getArenaId()));
-            configSection.set(ParkourArenaStorageKey.NAME.getKey(), arena.getArenaName());
-            configSection.set(ParkourArenaStorageKey.SPAWN_LOCATION.getKey(), arena.getSpawnLocation());
-            configSection.set(ParkourArenaStorageKey.EXIT_LOCATION.getKey(), arena.getExitLocation());
-            configSection.set(ParkourArenaStorageKey.WIN_BLOCK_TYPE.getKey(), new SerializableMaterial(arena.getWinBlockType()));
-            configSection.set(ParkourArenaStorageKey.WIN_LOCATION.getKey(), arena.getWinLocation());
-            configSection.set(ParkourArenaStorageKey.KILL_PLANE_BLOCKS.getKey(), arena.getKillPlaneBlockNames());
-            configSection.set(ParkourArenaStorageKey.CHECKPOINTS.getKey(), arena.getCheckpoints());
-            RewardStorageHelper.saveRewards(arena, configSection, ParkourArenaStorageKey.REWARDS.getKey());
-            saveParkourArenaData(arena.getData());
+            saveParkourArena(arenaSection, arena);
         }
         configuration.save(parkourArenaFile);
+    }
+
+    /**
+     * Saves a single arena
+     *
+     * @param arena <p>The arena to save</p>
+     * @throws IOException <p>If unable to write to the file</p>
+     */
+    public static void saveSingleParkourArena(ParkourArena arena) throws IOException {
+        YamlConfiguration configuration = new YamlConfiguration();
+        ConfigurationSection arenaSection = configuration.createSection(parkourArenasConfigurationSection);
+        saveParkourArena(arenaSection, arena);
+        configuration.save(parkourArenaFile);
+    }
+
+    /**
+     * Updates the given configuration section with the arena's data, and stores arena data for the arena
+     *
+     * @param arenaSection <p>The configuration section to update</p>
+     * @param arena        <p>The arena to save</p>
+     * @throws IOException <p>If unable to save the arena data</p>
+     */
+    public static void saveParkourArena(ConfigurationSection arenaSection, ParkourArena arena) throws IOException {
+        //Note: While the arena name is used as the key, as the key has to be sanitized, the un-sanitized arena name
+        // must be stored as well
+        @NotNull ConfigurationSection configSection = arenaSection.createSection(arena.getArenaId().toString());
+        configSection.set(ParkourArenaStorageKey.ID.getKey(), new SerializableUUID(arena.getArenaId()));
+        configSection.set(ParkourArenaStorageKey.NAME.getKey(), arena.getArenaName());
+        configSection.set(ParkourArenaStorageKey.SPAWN_LOCATION.getKey(), arena.getSpawnLocation());
+        configSection.set(ParkourArenaStorageKey.EXIT_LOCATION.getKey(), arena.getExitLocation());
+        configSection.set(ParkourArenaStorageKey.WIN_BLOCK_TYPE.getKey(), new SerializableMaterial(arena.getWinBlockType()));
+        configSection.set(ParkourArenaStorageKey.WIN_LOCATION.getKey(), arena.getWinLocation());
+        configSection.set(ParkourArenaStorageKey.KILL_PLANE_BLOCKS.getKey(), getKillPlaneBlocks(arena));
+        configSection.set(ParkourArenaStorageKey.CHECKPOINTS.getKey(), arena.getCheckpoints());
+        RewardStorageHelper.saveRewards(arena, configSection, ParkourArenaStorageKey.REWARDS.getKey());
+        saveParkourArenaData(arena.getData());
+    }
+
+    /**
+     * Gets a list of the kill plane blocks for the given arena
+     *
+     * @param arena <p>The arena to get kill plane blocks for</p>
+     * @return <p>The kill plane blocks</p>
+     */
+    private static List<String> getKillPlaneBlocks(ParkourArena arena) {
+        if (arena.getKillPlaneBlockNames() == null) {
+            return new ArrayList<>();
+        } else {
+            return new ArrayList<>(arena.getKillPlaneBlockNames());
+        }
     }
 
     /**
@@ -163,7 +201,13 @@ public final class ParkourArenaStorageHelper {
         Location winLocation = (Location) configurationSection.get(ParkourArenaStorageKey.WIN_LOCATION.getKey());
         SerializableMaterial winBlockType = (SerializableMaterial) configurationSection.get(
                 ParkourArenaStorageKey.WIN_BLOCK_TYPE.getKey());
-        List<?> killPlaneBlockNames = configurationSection.getList(ParkourArenaStorageKey.KILL_PLANE_BLOCKS.getKey());
+        List<?> killPlaneBlockNamesList = configurationSection.getList(ParkourArenaStorageKey.KILL_PLANE_BLOCKS.getKey());
+        Set<String> killPlaneBlockNames;
+        if (killPlaneBlockNamesList == null) {
+            killPlaneBlockNames = new HashSet<>();
+        } else {
+            killPlaneBlockNames = new HashSet<>((List<String>) killPlaneBlockNamesList);
+        }
         List<Location> checkpoints = (List<Location>) configurationSection.get(ParkourArenaStorageKey.CHECKPOINTS.getKey());
 
         Map<RewardCondition, Set<Reward>> rewards = RewardStorageHelper.loadRewards(configurationSection,
@@ -195,8 +239,7 @@ public final class ParkourArenaStorageHelper {
         }
 
         return new ParkourArena(arenaId, arenaName, spawnLocation, exitLocation, winBlockType.getRawValue(), winLocation,
-                (Set<String>) killPlaneBlockNames, checkpoints, rewards, arenaData,
-                MiniGames.getInstance().getParkourArenaHandler());
+                killPlaneBlockNames, checkpoints, rewards, arenaData, MiniGames.getInstance().getParkourArenaHandler());
     }
 
     /**

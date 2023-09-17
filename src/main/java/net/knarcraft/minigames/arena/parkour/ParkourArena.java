@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.logging.Level;
 
 import static net.knarcraft.minigames.util.InputValidationHelper.isInvalid;
 
@@ -180,13 +181,13 @@ public class ParkourArena implements Arena {
     public void addReward(@NotNull RewardCondition rewardCondition, @NotNull Reward reward) {
         this.rewards.computeIfAbsent(rewardCondition, k -> new HashSet<>());
         this.rewards.get(rewardCondition).add(reward);
-        this.parkourArenaHandler.saveArenas();
+        this.saveArena();
     }
 
     @Override
     public void clearRewards(@NotNull RewardCondition rewardCondition) {
         this.rewards.remove(rewardCondition);
-        this.parkourArenaHandler.saveArenas();
+        this.saveArena();
     }
 
     @Override
@@ -314,7 +315,7 @@ public class ParkourArena implements Arena {
             return false;
         } else {
             this.spawnLocation = newLocation;
-            this.parkourArenaHandler.saveArenas();
+            this.saveArena();
             return true;
         }
     }
@@ -330,7 +331,7 @@ public class ParkourArena implements Arena {
             return false;
         } else {
             this.exitLocation = newLocation;
-            this.parkourArenaHandler.saveArenas();
+            this.saveArena();
             return true;
         }
     }
@@ -347,7 +348,7 @@ public class ParkourArena implements Arena {
             this.arenaName = arenaName;
             // Update the arena lookup map to make sure the new name can be used immediately
             this.parkourArenaHandler.updateLookupName(oldName, this.getArenaNameSanitized());
-            this.parkourArenaHandler.saveArenas();
+            this.saveArena();
             return true;
         } else {
             return false;
@@ -367,7 +368,7 @@ public class ParkourArena implements Arena {
             return false;
         } else {
             this.winBlockType = material;
-            this.parkourArenaHandler.saveArenas();
+            this.saveArena();
             return true;
         }
     }
@@ -383,7 +384,7 @@ public class ParkourArena implements Arena {
             return false;
         } else {
             this.winLocation = newLocation.clone();
-            this.parkourArenaHandler.saveArenas();
+            this.saveArena();
             return true;
         }
     }
@@ -406,7 +407,7 @@ public class ParkourArena implements Arena {
             this.killPlaneBlockNames = killPlaneBlockNames;
             this.killPlaneBlocks = parsed;
         }
-        this.parkourArenaHandler.saveArenas();
+        this.saveArena();
         return true;
     }
 
@@ -422,7 +423,7 @@ public class ParkourArena implements Arena {
         }
 
         this.checkpoints.add(checkpoint.clone());
-        this.parkourArenaHandler.saveArenas();
+        this.saveArena();
         return true;
     }
 
@@ -437,8 +438,21 @@ public class ParkourArena implements Arena {
         }
 
         this.checkpoints.clear();
-        this.parkourArenaHandler.saveArenas();
+        this.saveArena();
         return true;
+    }
+
+    /**
+     * Saves this arena to disk
+     */
+    public void saveArena() {
+        try {
+            ParkourArenaStorageHelper.saveSingleParkourArena(this);
+        } catch (IOException exception) {
+            MiniGames.log(Level.SEVERE, "Unable to save arena! " +
+                    "Data loss can occur!");
+            MiniGames.log(Level.SEVERE, exception.getMessage());
+        }
     }
 
     @Override
