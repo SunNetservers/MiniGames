@@ -122,7 +122,7 @@ public final class DropperArenaStorageHelper {
      * @param arena        <p>The arena to save</p>
      * @throws IOException <p>If unable to save the arena data</p>
      */
-    public static void saveDropperArena(ConfigurationSection arenaSection, DropperArena arena) throws IOException {
+    private static void saveDropperArena(ConfigurationSection arenaSection, DropperArena arena) throws IOException {
         //Note: While the arena name is used as the key, as the key has to be sanitized, the un-sanitized arena name
         // must be stored as well
         @NotNull ConfigurationSection configSection = arenaSection.createSection(arena.getArenaId().toString());
