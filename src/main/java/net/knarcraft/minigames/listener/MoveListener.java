@@ -191,14 +191,18 @@ public class MoveListener implements Listener {
      */
     private boolean checkForSpecialBlock(ArenaSession arenaSession, Location toLocation) {
         SharedConfiguration sharedConfiguration = MiniGames.getInstance().getSharedConfiguration();
-        double liquidDepth = sharedConfiguration.getLiquidHitBoxDepth();
         double solidDepth = sharedConfiguration.getSolidHitBoxDistance();
-
+        double liquidDepth = sharedConfiguration.getLiquidHitBoxDepth();
         Arena arena = arenaSession.getArena();
 
         // For water, only trigger when the player enters the water, but trigger earlier for everything else
-        double depth = arena.winLocationIsSolid() ? solidDepth : liquidDepth;
-        for (Block block : getBlocksBeneathLocation(toLocation, depth)) {
+        Set<Block> potentialWinTriggerBlocks;
+        if (arena.winLocationIsSolid()) {
+            potentialWinTriggerBlocks = getBlocksBeneathLocation(toLocation, solidDepth);
+        } else {
+            potentialWinTriggerBlocks = getBlocksBeneathLocation(toLocation, liquidDepth);
+        }
+        for (Block block : potentialWinTriggerBlocks) {
             if (arena.willCauseWin(block)) {
                 arenaSession.triggerWin();
                 return true;
@@ -207,7 +211,15 @@ public class MoveListener implements Listener {
 
         // Check if the player is about to hit a non-air and non-liquid block
         for (Block block : getBlocksBeneathLocation(toLocation, solidDepth)) {
-            if (!block.getType().isAir() && arena.willCauseLoss(block)) {
+            if (!block.getType().isAir() && !block.isLiquid() && arena.willCauseLoss(block)) {
+                arenaSession.triggerLoss();
+                return true;
+            }
+        }
+
+        // Check if the player has entered a liquid that causes a loss
+        for (Block block : getBlocksBeneathLocation(toLocation, liquidDepth)) {
+            if (block.isLiquid() && arena.willCauseLoss(block)) {
                 arenaSession.triggerLoss();
                 return true;
             }
