@@ -3,6 +3,7 @@ package net.knarcraft.minigames.listener;
 import net.knarcraft.minigames.MiniGames;
 import net.knarcraft.minigames.arena.Arena;
 import net.knarcraft.minigames.arena.ArenaSession;
+import net.knarcraft.minigames.arena.dropper.DropperArena;
 import net.knarcraft.minigames.arena.dropper.DropperArenaGameMode;
 import net.knarcraft.minigames.arena.dropper.DropperArenaSession;
 import net.knarcraft.minigames.arena.parkour.ParkourArena;
@@ -19,6 +20,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
@@ -69,7 +71,7 @@ public class MoveListener implements Listener {
      */
     private void doParkourArenaChecks(@NotNull PlayerMoveEvent event, ParkourArenaSession arenaSession) {
         // Ignore movement which won't cause the player's block to change
-        if (event.getTo() == null || event.getFrom().getBlock() == event.getTo().getBlock()) {
+        if (event.getTo() == null || isSameLocation(event.getFrom(), event.getTo())) {
             return;
         }
 
@@ -189,7 +191,7 @@ public class MoveListener implements Listener {
      * @param toLocation   <p>The location the player's session is about to hit</p>
      * @return <p>True if a special block has been hit</p>
      */
-    private boolean checkForSpecialBlock(ArenaSession arenaSession, Location toLocation) {
+    private boolean checkForSpecialBlock(@NotNull ArenaSession arenaSession, @NotNull Location toLocation) {
         SharedConfiguration sharedConfiguration = MiniGames.getInstance().getSharedConfiguration();
         double solidDepth = sharedConfiguration.getSolidHitBoxDistance();
         double liquidDepth = sharedConfiguration.getLiquidHitBoxDepth();
@@ -209,19 +211,73 @@ public class MoveListener implements Listener {
             }
         }
 
-        // Check if the player is about to hit a non-air and non-liquid block
-        for (Block block : getBlocksBeneathLocation(toLocation, solidDepth)) {
-            if (!block.getType().isAir() && !block.isLiquid() && arena.willCauseLoss(block)) {
-                arenaSession.triggerLoss();
-                return true;
+        if (arena instanceof DropperArena) {
+            // Check if the player is about to hit a non-air and non-liquid block
+            for (Block block : getBlocksBeneathLocation(toLocation, solidDepth)) {
+                if (!block.getType().isAir() && !block.isLiquid() && arena.willCauseLoss(block)) {
+                    arenaSession.triggerLoss();
+                    return true;
+                }
+            }
+
+            // Check if the player has entered a liquid that causes a loss
+            for (Block block : getBlocksBeneathLocation(toLocation, liquidDepth)) {
+                if (block.isLiquid() && arena.willCauseLoss(block)) {
+                    arenaSession.triggerLoss();
+                    return true;
+                }
+            }
+        } else if (arena instanceof ParkourArena) {
+            return checkParkourDeathBlock(arenaSession, toLocation);
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks if a player is moving onto a block part of the parkour death plane
+     *
+     * @param arenaSession <p>The player's arena session</p>
+     * @param toLocation   <p>The location the player is moving to</p>
+     * @return <p>True if the player hit a death block</p>
+     */
+    private boolean checkParkourDeathBlock(@NotNull ArenaSession arenaSession,
+                                           @NotNull Location toLocation) {
+        // If the player is standing on a non-full block, event.getTo will give the correct block, but if not, the 
+        // block below has to be checked instead.
+        Set<Block> blocksBelow = getBlocksBeneathLocation(toLocation, 0);
+        Set<Block> adjustedBlocks = new HashSet<>();
+        for (Block block : blocksBelow) {
+            if (block.getType().isAir()) {
+                block = block.getLocation().clone().subtract(0, 0.2, 0).getBlock();
+                // Only trigger hit detection for passable blocks if the player is in the block
+                if (block.isPassable()) {
+                    continue;
+                }
+            }
+            if (arenaSession.getArena().willCauseLoss(block)) {
+                adjustedBlocks.add(block);
             }
         }
 
-        // Check if the player has entered a liquid that causes a loss
-        for (Block block : getBlocksBeneathLocation(toLocation, liquidDepth)) {
-            if (block.isLiquid() && arena.willCauseLoss(block)) {
+        // Create a hit-box approximate to the player's real hit-box
+        BoundingBox playerBox = new BoundingBox(0, -0.1, 0, 0.6, 1, 0.6).shift(
+                toLocation).shift(-0.3, 0, -0.3);
+        for (Block block : adjustedBlocks) {
+            // For liquids, or anything without a proper collision shape, trigger collision
+            if (block.isLiquid() || block.getCollisionShape().getBoundingBoxes().isEmpty()) {
                 arenaSession.triggerLoss();
                 return true;
+            }
+
+            // Check whether the player's actual hit-box is intersecting with a block
+            for (BoundingBox boundingBox : block.getCollisionShape().getBoundingBoxes()) {
+                // A collision shape's bounding box is relative to 0,0 and therefore must be adjusted to the block's 
+                // location. Then overlap is checked by the player's collision box and the shifted bounding box.
+                if (playerBox.overlaps(boundingBox.clone().shift(block.getLocation()))) {
+                    arenaSession.triggerLoss();
+                    return true;
+                }
             }
         }
 
