@@ -261,7 +261,9 @@ public class MoveListener implements Listener {
         }
 
         // Create a hit-box approximate to the player's real hit-box
-        BoundingBox playerBox = new BoundingBox(0, -0.1, 0, 0.6, 1, 0.6).shift(
+        double horizontalHitBox = ((ParkourArena) arenaSession.getArena()).getHorizontalKillPlaneHitBox();
+        BoundingBox playerBox = new BoundingBox(-horizontalHitBox, -0.1, -horizontalHitBox,
+                0.6 + horizontalHitBox, 1, 0.6 + horizontalHitBox).shift(
                 toLocation).shift(-0.3, 0, -0.3);
         for (Block block : adjustedBlocks) {
             // For liquids, or anything without a proper collision shape, trigger collision

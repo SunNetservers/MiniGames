@@ -62,7 +62,12 @@ public enum ParkourArenaEditableProperty {
      */
     KILL_PLANE_BLOCKS("killPlaneBlocks", (arena) -> String.valueOf(arena.getKillPlaneBlockNames()),
             EditablePropertyType.MATERIAL_LIST),
-    ;
+
+    /**
+     * The horizontal hit-box of kill blocks
+     */
+    HORIZONTAL_KILL_PLANE_HIT_BOX("horizontalKillPlaneHitBox",
+            (arena) -> String.valueOf(arena.getHorizontalKillPlaneHitBox()), EditablePropertyType.DOUBLE);
 
     private final @NotNull String argumentString;
     private final Function<ParkourArena, String> currentValueProvider;

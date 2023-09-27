@@ -104,9 +104,28 @@ public final class TabCompleteHelper {
             tabCompleteSuggestions.put(EditablePropertyType.BLOCK_TYPE, getBlockTypeSuggestions());
             tabCompleteSuggestions.put(EditablePropertyType.CHECKPOINT_CLEAR, getCheckpointClearSuggestions());
             tabCompleteSuggestions.put(EditablePropertyType.MATERIAL_LIST, getMaterialListSuggestions());
+            tabCompleteSuggestions.put(EditablePropertyType.DOUBLE, getDoubleSuggestions());
         }
 
         return tabCompleteSuggestions.get(propertyType);
+    }
+
+    /**
+     * Gets suggestions for double values
+     *
+     * @return <p>A list of suggestions</p>
+     */
+    private static List<String> getDoubleSuggestions() {
+        List<String> suggestions = new ArrayList<>();
+        suggestions.add("0");
+        suggestions.add("0.01");
+        suggestions.add("0.1");
+        suggestions.add("0.2");
+        suggestions.add("0.3");
+        suggestions.add("0.4");
+        suggestions.add("0.5");
+        suggestions.add("1");
+        return suggestions;
     }
 
     /**

@@ -135,6 +135,7 @@ public final class ParkourArenaStorageHelper {
         configSection.set(ParkourArenaStorageKey.WIN_BLOCK_TYPE.getKey(), new SerializableMaterial(arena.getWinBlockType()));
         configSection.set(ParkourArenaStorageKey.WIN_LOCATION.getKey(), arena.getWinLocation());
         configSection.set(ParkourArenaStorageKey.KILL_PLANE_BLOCKS.getKey(), getKillPlaneBlocks(arena));
+        configSection.set(ParkourArenaStorageKey.HORIZONTAL_KILL_PLANE_HIT_BOX.getKey(), arena.getHorizontalKillPlaneHitBox());
         configSection.set(ParkourArenaStorageKey.CHECKPOINTS.getKey(), arena.getCheckpoints());
         RewardStorageHelper.saveRewards(arena, configSection, ParkourArenaStorageKey.REWARDS.getKey());
         saveParkourArenaData(arena.getData());
@@ -208,6 +209,8 @@ public final class ParkourArenaStorageHelper {
         } else {
             killPlaneBlockNames = new HashSet<>((List<String>) killPlaneBlockNamesList);
         }
+        double horizontalKillPlaneHitBox = configurationSection.getDouble(
+                ParkourArenaStorageKey.HORIZONTAL_KILL_PLANE_HIT_BOX.getKey(), 0);
         List<Location> checkpoints = (List<Location>) configurationSection.get(ParkourArenaStorageKey.CHECKPOINTS.getKey());
 
         Map<RewardCondition, Set<Reward>> rewards = RewardStorageHelper.loadRewards(configurationSection,
@@ -239,7 +242,8 @@ public final class ParkourArenaStorageHelper {
         }
 
         return new ParkourArena(arenaId, arenaName, spawnLocation, exitLocation, winBlockType.getRawValue(), winLocation,
-                killPlaneBlockNames, checkpoints, rewards, arenaData, MiniGames.getInstance().getParkourArenaHandler());
+                killPlaneBlockNames, horizontalKillPlaneHitBox, checkpoints, rewards, arenaData,
+                MiniGames.getInstance().getParkourArenaHandler());
     }
 
     /**

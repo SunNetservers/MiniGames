@@ -204,16 +204,17 @@ This command allows editing the specified property for the specified parkour are
 
 These are all the options that can be changed for an arena.
 
-| Option          | Details                                                                                                                                                                                       |
-|-----------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| name            | The name of the arena. Used mainly to select the arena in commands. Note that underscore (_) cannot be used if you want to utilize placeholders, as it's used to split placeholder arguments. |
-| spawnLocation   | The spawn location of any player joining the arena. Use `56.546,64.0,44.45` to specify coordinates, or `here`, `this` or any other string to select your current location.                    |
-| exitLocation    | The location players will be sent to when exiting the arena. If not set, the player will be sent to where they joined from. Valid values are the same as for spawnLocation.                   |
-| winBlockType    | The type of block players must hit to win the arena. It can be any material as long as it's a block, and not a type of air.                                                                   |
-| winLocation     | The location players must reach to win the arena (see spawnLocation for valid values). If set, this overrides, and is used instead of, the win block type.                                    |
-| checkpointAdd   | Adds a new checkpoint to the arena's checkpoints (see spawnLocation for valid values).                                                                                                        |
-| checkpointClear | Clears all current checkpoints. Give any value to execute. If not given a value, current checkpoints are shown.                                                                               |
-| killPlaneBlocks | A comma-separated list of materials which will force a loss on hit. +WOOL and other [material tags](#notes-about-material-tags) are supported as well.                                        |
+| Option                    | Details                                                                                                                                                                                       |
+|---------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| name                      | The name of the arena. Used mainly to select the arena in commands. Note that underscore (_) cannot be used if you want to utilize placeholders, as it's used to split placeholder arguments. |
+| spawnLocation             | The spawn location of any player joining the arena. Use `56.546,64.0,44.45` to specify coordinates, or `here`, `this` or any other string to select your current location.                    |
+| exitLocation              | The location players will be sent to when exiting the arena. If not set, the player will be sent to where they joined from. Valid values are the same as for spawnLocation.                   |
+| winBlockType              | The type of block players must hit to win the arena. It can be any material as long as it's a block, and not a type of air.                                                                   |
+| winLocation               | The location players must reach to win the arena (see spawnLocation for valid values). If set, this overrides, and is used instead of, the win block type.                                    |
+| checkpointAdd             | Adds a new checkpoint to the arena's checkpoints (see spawnLocation for valid values).                                                                                                        |
+| checkpointClear           | Clears all current checkpoints. Give any value to execute. If not given a value, current checkpoints are shown.                                                                               |
+| killPlaneBlocks           | A comma-separated list of materials which will force a loss on hit. +WOOL and other [material tags](#notes-about-material-tags) are supported as well.                                        |
+| horizontalKillPlaneHitBox | The number of blocks away kill plane blocks will trigger horizontally (0-1). This only affects things less than 1 block wide, such as horizontal lightning and end rods.                      |
 
 ## Configuration options
 

@@ -38,6 +38,11 @@ public enum EditablePropertyType {
     /**
      * The property is a comma-separated list of materials
      */
-    MATERIAL_LIST
+    MATERIAL_LIST,
+
+    /**
+     * The property is any double value
+     */
+    DOUBLE,
 
 }

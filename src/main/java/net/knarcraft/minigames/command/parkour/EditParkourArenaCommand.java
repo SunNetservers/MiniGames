@@ -60,7 +60,12 @@ public class EditParkourArenaCommand implements CommandExecutor {
                     new String[]{editableProperty.getArgumentString(), value}));
             return true;
         } else {
-            boolean successful = changeValue(specifiedArena, editableProperty, arguments[2], player);
+            boolean successful;
+            try {
+                successful = changeValue(specifiedArena, editableProperty, arguments[2], player);
+            } catch (NumberFormatException exception) {
+                successful = false;
+            }
             if (successful) {
                 stringFormatter.displaySuccessMessage(player, stringFormatter.replacePlaceholder(
                         MiniGameMessage.SUCCESS_PROPERTY_CHANGED, "{property}",
@@ -80,9 +85,10 @@ public class EditParkourArenaCommand implements CommandExecutor {
      * @param value    <p>The new value of the property</p>
      * @param player   <p>The player trying to change the value</p>
      * @return <p>True if the value was successfully changed</p>
+     * @throws NumberFormatException <p>If unable to parse a given numeric value</p>
      */
     private boolean changeValue(@NotNull ParkourArena arena, @NotNull ParkourArenaEditableProperty property,
-                                @NotNull String value, @NotNull Player player) {
+                                @NotNull String value, @NotNull Player player) throws NumberFormatException {
         return switch (property) {
             case WIN_BLOCK_TYPE -> arena.setWinBlockType(parseMaterial(value));
             case SPAWN_LOCATION -> arena.setSpawnLocation(parseLocation(player, value));
@@ -92,6 +98,7 @@ public class EditParkourArenaCommand implements CommandExecutor {
             case CHECKPOINT_ADD -> arena.addCheckpoint(parseLocation(player, value));
             case CHECKPOINT_CLEAR -> arena.clearCheckpoints();
             case KILL_PLANE_BLOCKS -> arena.setKillPlaneBlocks(new HashSet<>(List.of(value.split(","))));
+            case HORIZONTAL_KILL_PLANE_HIT_BOX -> arena.setHorizontalKillPlaneHitBox(Double.parseDouble(value));
         };
     }
 

@@ -74,6 +74,11 @@ public class ParkourArena implements Arena {
     private @Nullable Set<Material> killPlaneBlocks;
 
     /**
+     * The number of horizontal blocks the hit-box of kill plane blocks should cover
+     */
+    private double horizontalKillPlaneHitBox;
+
+    /**
      * The checkpoints for this arena. Entering a checkpoint overrides the player's spawn location.
      */
     private final @NotNull List<Location> checkpoints;
@@ -90,21 +95,23 @@ public class ParkourArena implements Arena {
     /**
      * Instantiates a new parkour arena
      *
-     * @param arenaId             <p>The id of the arena</p>
-     * @param arenaName           <p>The name of the arena</p>
-     * @param spawnLocation       <p>The location players spawn in when entering the arena</p>
-     * @param exitLocation        <p>The location the players are teleported to when exiting the arena, or null</p>
-     * @param winBlockType        <p>The material of the block players have to hit to win this parkour arena</p>
-     * @param winLocation         <p>The location a player has to reach to win this arena</p>
-     * @param killPlaneBlockNames <p>The names of the type of blocks</p>
-     * @param checkpoints         <p>The checkpoints set for this arena</p>
-     * @param rewards             <p>The rewards given by this arena</p>
-     * @param parkourArenaData    <p>The arena data keeping track of which players have done what in this arena</p>
-     * @param arenaHandler        <p>The arena handler used for saving any changes</p>
+     * @param arenaId                   <p>The id of the arena</p>
+     * @param arenaName                 <p>The name of the arena</p>
+     * @param spawnLocation             <p>The location players spawn in when entering the arena</p>
+     * @param exitLocation              <p>The location the players are teleported to when exiting the arena, or null</p>
+     * @param winBlockType              <p>The material of the block players have to hit to win this parkour arena</p>
+     * @param winLocation               <p>The location a player has to reach to win this arena</p>
+     * @param killPlaneBlockNames       <p>The names of the type of blocks</p>
+     * @param horizontalKillPlaneHitBox <p>The number of horizontal blocks the hit-box of kill plane blocks should cover</p>
+     * @param checkpoints               <p>The checkpoints set for this arena</p>
+     * @param rewards                   <p>The rewards given by this arena</p>
+     * @param parkourArenaData          <p>The arena data keeping track of which players have done what in this arena</p>
+     * @param arenaHandler              <p>The arena handler used for saving any changes</p>
      */
     public ParkourArena(@NotNull UUID arenaId, @NotNull String arenaName, @NotNull Location spawnLocation,
                         @Nullable Location exitLocation, @NotNull Material winBlockType, @Nullable Location winLocation,
-                        @Nullable Set<String> killPlaneBlockNames, @NotNull List<Location> checkpoints,
+                        @Nullable Set<String> killPlaneBlockNames, double horizontalKillPlaneHitBox,
+                        @NotNull List<Location> checkpoints,
                         @NotNull Map<RewardCondition, Set<Reward>> rewards,
                         @NotNull ParkourArenaData parkourArenaData, @NotNull ParkourArenaHandler arenaHandler) {
         this.arenaId = arenaId;
@@ -116,6 +123,7 @@ public class ParkourArena implements Arena {
         this.killPlaneBlockNames = killPlaneBlockNames;
         this.killPlaneBlocks = this.killPlaneBlockNames == null ? null : MaterialHelper.loadMaterialList(
                 new ArrayList<>(killPlaneBlockNames), "+", MiniGames.getInstance().getLogger());
+        this.horizontalKillPlaneHitBox = horizontalKillPlaneHitBox;
         this.checkpoints = checkpoints;
         this.parkourArenaData = parkourArenaData;
         this.parkourArenaHandler = arenaHandler;
@@ -150,6 +158,7 @@ public class ParkourArena implements Arena {
         this.killPlaneBlocks = null;
         this.checkpoints = new ArrayList<>();
         this.parkourArenaHandler = arenaHandler;
+        this.horizontalKillPlaneHitBox = 0.1;
     }
 
     @Override
@@ -239,6 +248,37 @@ public class ParkourArena implements Arena {
      */
     public @Nullable Set<String> getKillPlaneBlockNames() {
         return this.killPlaneBlockNames;
+    }
+
+    /**
+     * Gets the number of horizontal blocks the hit-box of kill plane blocks should cover
+     *
+     * <p>This is kind of hard to explain, but basically, when the player is less than the specified amount of blocks
+     * away from a kill plane block horizontally, a fail will be triggered. Sane values for this would usually be
+     * between 0.01 amd 1.</p>
+     *
+     * @return <p>The number of horizontal blocks the hit-box of kill plane blocks should cover</p>
+     */
+    public double getHorizontalKillPlaneHitBox() {
+        return this.horizontalKillPlaneHitBox;
+    }
+
+    /**
+     * Sets the number of horizontal blocks the hit-box of kill plane blocks should cover
+     *
+     * <p>This is kind of hard to explain, but basically, when the player is less than the specified amount of blocks
+     * away from a kill plane block horizontally, a fail will be triggered. Sane values for this would usually be
+     * between 0.01 amd 1.</p>
+     *
+     * @param horizontalKillPlaneHitBox <p>The number of horizontal blocks the hit-box of kill plane blocks should cover</p>
+     */
+    public boolean setHorizontalKillPlaneHitBox(double horizontalKillPlaneHitBox) {
+        if (horizontalKillPlaneHitBox > 1 || horizontalKillPlaneHitBox < -1) {
+            return false;
+        }
+        this.horizontalKillPlaneHitBox = horizontalKillPlaneHitBox;
+        this.saveArena();
+        return true;
     }
 
     /**
