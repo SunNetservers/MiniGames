@@ -98,7 +98,7 @@ public class EditParkourArenaCommand implements CommandExecutor {
             case CHECKPOINT_ADD -> arena.addCheckpoint(parseLocation(player, value));
             case CHECKPOINT_CLEAR -> arena.clearCheckpoints();
             case KILL_PLANE_BLOCKS -> arena.setKillPlaneBlocks(new HashSet<>(List.of(value.split(","))));
-            case HORIZONTAL_KILL_PLANE_HIT_BOX -> arena.setHorizontalKillPlaneHitBox(Double.parseDouble(value));
+            case OBSTACLE_BLOCKS -> arena.setObstacleBlocks(new HashSet<>(List.of(value.split(","))));
         };
     }
 

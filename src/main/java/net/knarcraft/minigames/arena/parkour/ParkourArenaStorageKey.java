@@ -43,9 +43,9 @@ public enum ParkourArenaStorageKey {
     KILL_PLANE_BLOCKS("killPlaneBlocks"),
 
     /**
-     * The key for this arena's horizontal kill plane hit box
+     * The key for this arena's obstacle blocks (overrides the config)
      */
-    HORIZONTAL_KILL_PLANE_HIT_BOX("horizontalKillPlaneHitBox"),
+    OBSTACLE_BLOCKS("obstacleBlocks"),
 
     /**
      * The key for this arena's checkpoint locations

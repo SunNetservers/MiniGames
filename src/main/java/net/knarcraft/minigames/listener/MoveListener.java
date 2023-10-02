@@ -15,6 +15,7 @@ import net.knarcraft.minigames.config.ParkourConfiguration;
 import net.knarcraft.minigames.config.SharedConfiguration;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -34,6 +35,8 @@ import java.util.Set;
  */
 public class MoveListener implements Listener {
 
+    private static final BoundingBox fullBlockBox = new BoundingBox(0, 0, 0, 1, 1, 1);
+
     private final DropperConfiguration dropperConfiguration;
     private final ParkourConfiguration parkourConfiguration;
 
@@ -51,12 +54,15 @@ public class MoveListener implements Listener {
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
         // Ignore if no actual movement is happening
-        if (event.getFrom().equals(event.getTo()) || event.getTo() == null) {
+        if (event.getTo() == null) {
             return;
         }
 
         ArenaSession session = MiniGames.getInstance().getSession(event.getPlayer().getUniqueId());
         if (session instanceof DropperArenaSession dropperSession) {
+            if (event.getFrom().equals(event.getTo())) {
+                return;
+            }
             doDropperArenaChecks(event, dropperSession);
         } else if (session instanceof ParkourArenaSession parkourSession) {
             doParkourArenaChecks(event, parkourSession);
@@ -70,8 +76,7 @@ public class MoveListener implements Listener {
      * @param arenaSession <p>The dropper session of the player triggering the event</p>
      */
     private void doParkourArenaChecks(@NotNull PlayerMoveEvent event, ParkourArenaSession arenaSession) {
-        // Ignore movement which won't cause the player's block to change
-        if (event.getTo() == null || isSameLocation(event.getFrom(), event.getTo())) {
+        if (event.getTo() == null) {
             return;
         }
 
@@ -228,7 +233,7 @@ public class MoveListener implements Listener {
                 }
             }
         } else if (arena instanceof ParkourArena) {
-            return checkParkourDeathBlock(arenaSession, toLocation);
+            return checkParkourDeathBlock((ParkourArenaSession) arenaSession, toLocation);
         }
 
         return false;
@@ -241,35 +246,49 @@ public class MoveListener implements Listener {
      * @param toLocation   <p>The location the player is moving to</p>
      * @return <p>True if the player hit a death block</p>
      */
-    private boolean checkParkourDeathBlock(@NotNull ArenaSession arenaSession,
+    private boolean checkParkourDeathBlock(@NotNull ParkourArenaSession arenaSession,
                                            @NotNull Location toLocation) {
-        // If the player is standing on a non-full block, event.getTo will give the correct block, but if not, the 
-        // block below has to be checked instead.
-        Set<Block> blocksBelow = getBlocksBeneathLocation(toLocation, 0);
-        Set<Block> adjustedBlocks = new HashSet<>();
-        for (Block block : blocksBelow) {
-            if (block.getType().isAir()) {
-                block = block.getLocation().clone().subtract(0, 0.2, 0).getBlock();
-                // Only trigger hit detection for passable blocks if the player is in the block
-                if (block.isPassable()) {
-                    continue;
-                }
-            }
-            if (arenaSession.getArena().willCauseLoss(block)) {
-                adjustedBlocks.add(block);
-            }
+        // A simple check, only for kill blocks
+        if (isOnKillBlock(arenaSession, toLocation)) {
+            return true;
+        }
+
+        // As the check for obstacle blocks is extensive, it's skipped if possible
+        Set<Material> obstacleBlocks = arenaSession.getArena().getObstacleBlocks();
+        if (obstacleBlocks.isEmpty()) {
+            return false;
         }
 
         // Create a hit-box approximate to the player's real hit-box
-        double horizontalHitBox = ((ParkourArena) arenaSession.getArena()).getHorizontalKillPlaneHitBox();
-        BoundingBox playerBox = new BoundingBox(-horizontalHitBox, -0.1, -horizontalHitBox,
-                0.6 + horizontalHitBox, 1, 0.6 + horizontalHitBox).shift(
+        double playerHeight = 1.8;
+        Player player = Bukkit.getPlayer(arenaSession.getEntryState().getPlayerId());
+        if (player != null && player.isSneaking()) {
+            playerHeight = 1.5;
+        }
+        BoundingBox playerBox = new BoundingBox(-0.05, -0.05, -0.05,
+                0.6 + 0.05, playerHeight + 0.05, 0.6 + 0.05).shift(
+                toLocation).shift(-0.3, -0.05, -0.3);
+        BoundingBox playerPassableBox = new BoundingBox(0.2, 0.5, 0.2,
+                0.4, playerHeight - 0.5, 0.4).shift(
                 toLocation).shift(-0.3, 0, -0.3);
-        for (Block block : adjustedBlocks) {
-            // For liquids, or anything without a proper collision shape, trigger collision
+        Set<Block> possiblyHitBlocks = new HashSet<>();
+        possiblyHitBlocks.addAll(getBlocksBeneathLocation(toLocation, 0, 0.01));
+        possiblyHitBlocks.addAll(getBlocksBeneathLocation(toLocation, 1, 0.01));
+        possiblyHitBlocks.addAll(getBlocksBeneathLocation(toLocation, -1, 0.01));
+        possiblyHitBlocks.addAll(getBlocksBeneathLocation(toLocation, -2, 0.01));
+
+        for (Block block : possiblyHitBlocks) {
+            if (!obstacleBlocks.contains(block.getType())) {
+                continue;
+            }
+
+            // For liquids, or anything without a proper collision shape, trigger collision if the player is partly 
+            // inside when treated as a full block
             if (block.isLiquid() || block.getCollisionShape().getBoundingBoxes().isEmpty()) {
-                arenaSession.triggerLoss();
-                return true;
+                if (playerPassableBox.overlaps(fullBlockBox.clone().shift(block.getLocation()))) {
+                    arenaSession.triggerLoss();
+                    return true;
+                }
             }
 
             // Check whether the player's actual hit-box is intersecting with a block
@@ -287,18 +306,65 @@ public class MoveListener implements Listener {
     }
 
     /**
+     * As simple check for whether a player is moving on top of a kill block
+     *
+     * @param arenaSession <p>The arena session the player is in</p>
+     * @param toLocation   <p>The location the player is moving to</p>
+     * @return <p>True if the player is on a kill block, and a loss has been triggered</p>
+     */
+    private boolean isOnKillBlock(ParkourArenaSession arenaSession, Location toLocation) {
+        // If the player is standing on a non-full block, event.getTo will give the correct block, but if not, the 
+        // block below has to be checked instead.
+        Set<Block> blocksBelow = getBlocksBeneathLocation(toLocation, 0);
+        Set<Material> killPlaneBlocks = arenaSession.getArena().getKillPlaneBlocks();
+        for (Block block : blocksBelow) {
+            if (block.getType().isAir()) {
+                block = block.getLocation().clone().subtract(0, 0.2, 0).getBlock();
+                // Only trigger hit detection for passable blocks if the player is in the block
+                if (block.isPassable()) {
+                    continue;
+                }
+            }
+            if (killPlaneBlocks.contains(block.getType())) {
+                arenaSession.triggerLoss();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Gets the blocks at the given location that will be affected by the player's hit-box
      *
      * @param location <p>The location to check</p>
      * @return <p>The blocks beneath the player</p>
      */
     private Set<Block> getBlocksBeneathLocation(Location location, double depth) {
+        return getBlocksBeneathLocation(location, depth, 0);
+    }
+
+    /**
+     * Gets the blocks at the given location that will be affected by the player's hit-box
+     *
+     * @param location   <p>The location to check</p>
+     * @param extraRange <p>Extra range of the square used for finding blocks</p>
+     * @return <p>The blocks beneath the player</p>
+     */
+    private Set<Block> getBlocksBeneathLocation(Location location, double depth, double extraRange) {
         Set<Block> blocksBeneath = new HashSet<>();
-        double halfPlayerWidth = 0.3;
+        double halfPlayerWidth = 0.3 + extraRange;
         blocksBeneath.add(location.clone().subtract(halfPlayerWidth, depth, halfPlayerWidth).getBlock());
         blocksBeneath.add(location.clone().subtract(-halfPlayerWidth, depth, halfPlayerWidth).getBlock());
         blocksBeneath.add(location.clone().subtract(halfPlayerWidth, depth, -halfPlayerWidth).getBlock());
         blocksBeneath.add(location.clone().subtract(-halfPlayerWidth, depth, -halfPlayerWidth).getBlock());
+        // Once a certain size is reached, if the player is in the centre of a block, 9 must be accounted for
+        if (halfPlayerWidth > 0.5) {
+            blocksBeneath.add(location.getBlock());
+            blocksBeneath.add(location.clone().subtract(halfPlayerWidth, depth, 0).getBlock());
+            blocksBeneath.add(location.clone().subtract(-halfPlayerWidth, depth, 0).getBlock());
+            blocksBeneath.add(location.clone().subtract(0, depth, -halfPlayerWidth).getBlock());
+            blocksBeneath.add(location.clone().subtract(0, depth, halfPlayerWidth).getBlock());
+        }
         return blocksBeneath;
     }
 

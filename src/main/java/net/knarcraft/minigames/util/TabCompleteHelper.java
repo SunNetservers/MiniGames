@@ -137,6 +137,7 @@ public final class TabCompleteHelper {
         List<String> suggestions = new ArrayList<>();
         suggestions.add("LAVA,MAGMA_BLOCK");
         suggestions.add("WATER,MAGMA_BLOCK,LAVA,+BUTTONS,+CORALS");
+        suggestions.add("CHAIN,END_ROD,LIGHTNING_ROD");
         return suggestions;
     }
 

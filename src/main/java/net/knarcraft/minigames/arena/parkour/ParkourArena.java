@@ -74,9 +74,14 @@ public class ParkourArena implements Arena {
     private @Nullable Set<Material> killPlaneBlocks;
 
     /**
-     * The number of horizontal blocks the hit-box of kill plane blocks should cover
+     * The names of the block types serving as obstacles for this arena
      */
-    private double horizontalKillPlaneHitBox;
+    private @Nullable Set<String> obstacleBlockNames;
+
+    /**
+     * The block types serving as obstacles for this arena
+     */
+    private @Nullable Set<Material> obstacleBlocks;
 
     /**
      * The checkpoints for this arena. Entering a checkpoint overrides the player's spawn location.
@@ -95,22 +100,22 @@ public class ParkourArena implements Arena {
     /**
      * Instantiates a new parkour arena
      *
-     * @param arenaId                   <p>The id of the arena</p>
-     * @param arenaName                 <p>The name of the arena</p>
-     * @param spawnLocation             <p>The location players spawn in when entering the arena</p>
-     * @param exitLocation              <p>The location the players are teleported to when exiting the arena, or null</p>
-     * @param winBlockType              <p>The material of the block players have to hit to win this parkour arena</p>
-     * @param winLocation               <p>The location a player has to reach to win this arena</p>
-     * @param killPlaneBlockNames       <p>The names of the type of blocks</p>
-     * @param horizontalKillPlaneHitBox <p>The number of horizontal blocks the hit-box of kill plane blocks should cover</p>
-     * @param checkpoints               <p>The checkpoints set for this arena</p>
-     * @param rewards                   <p>The rewards given by this arena</p>
-     * @param parkourArenaData          <p>The arena data keeping track of which players have done what in this arena</p>
-     * @param arenaHandler              <p>The arena handler used for saving any changes</p>
+     * @param arenaId             <p>The id of the arena</p>
+     * @param arenaName           <p>The name of the arena</p>
+     * @param spawnLocation       <p>The location players spawn in when entering the arena</p>
+     * @param exitLocation        <p>The location the players are teleported to when exiting the arena, or null</p>
+     * @param winBlockType        <p>The material of the block players have to hit to win this parkour arena</p>
+     * @param winLocation         <p>The location a player has to reach to win this arena</p>
+     * @param killPlaneBlockNames <p>The names of the types of blocks that trigger a loss when stepped on</p>
+     * @param obstacleBlockNames  <p>The names of the types of blocks that trigger a loss when touched</p>
+     * @param checkpoints         <p>The checkpoints set for this arena</p>
+     * @param rewards             <p>The rewards given by this arena</p>
+     * @param parkourArenaData    <p>The arena data keeping track of which players have done what in this arena</p>
+     * @param arenaHandler        <p>The arena handler used for saving any changes</p>
      */
     public ParkourArena(@NotNull UUID arenaId, @NotNull String arenaName, @NotNull Location spawnLocation,
                         @Nullable Location exitLocation, @NotNull Material winBlockType, @Nullable Location winLocation,
-                        @Nullable Set<String> killPlaneBlockNames, double horizontalKillPlaneHitBox,
+                        @Nullable Set<String> killPlaneBlockNames, @Nullable Set<String> obstacleBlockNames,
                         @NotNull List<Location> checkpoints,
                         @NotNull Map<RewardCondition, Set<Reward>> rewards,
                         @NotNull ParkourArenaData parkourArenaData, @NotNull ParkourArenaHandler arenaHandler) {
@@ -123,7 +128,9 @@ public class ParkourArena implements Arena {
         this.killPlaneBlockNames = killPlaneBlockNames;
         this.killPlaneBlocks = this.killPlaneBlockNames == null ? null : MaterialHelper.loadMaterialList(
                 new ArrayList<>(killPlaneBlockNames), "+", MiniGames.getInstance().getLogger());
-        this.horizontalKillPlaneHitBox = horizontalKillPlaneHitBox;
+        this.obstacleBlockNames = obstacleBlockNames;
+        this.obstacleBlocks = this.obstacleBlockNames == null ? null : MaterialHelper.loadMaterialList(
+                new ArrayList<>(obstacleBlockNames), "+", MiniGames.getInstance().getLogger());
         this.checkpoints = checkpoints;
         this.parkourArenaData = parkourArenaData;
         this.parkourArenaHandler = arenaHandler;
@@ -156,9 +163,9 @@ public class ParkourArena implements Arena {
         this.parkourArenaData = new ParkourArenaData(this.arenaId, recordRegistries, new HashMap<>());
         this.winBlockType = Material.EMERALD_BLOCK;
         this.killPlaneBlocks = null;
+        this.obstacleBlocks = null;
         this.checkpoints = new ArrayList<>();
         this.parkourArenaHandler = arenaHandler;
-        this.horizontalKillPlaneHitBox = 0.1;
     }
 
     @Override
@@ -251,34 +258,25 @@ public class ParkourArena implements Arena {
     }
 
     /**
-     * Gets the number of horizontal blocks the hit-box of kill plane blocks should cover
+     * Gets the block types used for this parkour arena's obstacle blocks
      *
-     * <p>This is kind of hard to explain, but basically, when the player is less than the specified amount of blocks
-     * away from a kill plane block horizontally, a fail will be triggered. Sane values for this would usually be
-     * between 0.01 amd 1.</p>
-     *
-     * @return <p>The number of horizontal blocks the hit-box of kill plane blocks should cover</p>
+     * @return <p>The types of blocks used as obstacles</p>
      */
-    public double getHorizontalKillPlaneHitBox() {
-        return this.horizontalKillPlaneHitBox;
+    public @NotNull Set<Material> getObstacleBlocks() {
+        if (this.obstacleBlocks != null) {
+            return new HashSet<>(this.obstacleBlocks);
+        } else {
+            return MiniGames.getInstance().getParkourConfiguration().getObstacleBlocks();
+        }
     }
 
     /**
-     * Sets the number of horizontal blocks the hit-box of kill plane blocks should cover
+     * Gets the names of the blocks used as this arena's obstacle blocks
      *
-     * <p>This is kind of hard to explain, but basically, when the player is less than the specified amount of blocks
-     * away from a kill plane block horizontally, a fail will be triggered. Sane values for this would usually be
-     * between 0.01 amd 1.</p>
-     *
-     * @param horizontalKillPlaneHitBox <p>The number of horizontal blocks the hit-box of kill plane blocks should cover</p>
+     * @return <p>The names of the blocks used as this arena's obstacle blocks</p>
      */
-    public boolean setHorizontalKillPlaneHitBox(double horizontalKillPlaneHitBox) {
-        if (horizontalKillPlaneHitBox > 1 || horizontalKillPlaneHitBox < -1) {
-            return false;
-        }
-        this.horizontalKillPlaneHitBox = horizontalKillPlaneHitBox;
-        this.saveArena();
-        return true;
+    public @Nullable Set<String> getObstacleBlockNames() {
+        return this.obstacleBlockNames;
     }
 
     /**
@@ -335,7 +333,7 @@ public class ParkourArena implements Arena {
 
     @Override
     public boolean willCauseLoss(Block block) {
-        return this.getKillPlaneBlocks().contains(block.getType());
+        return this.getKillPlaneBlocks().contains(block.getType()) || this.getObstacleBlocks().contains(block.getType());
     }
 
     @Override
@@ -446,6 +444,28 @@ public class ParkourArena implements Arena {
             }
             this.killPlaneBlockNames = killPlaneBlockNames;
             this.killPlaneBlocks = parsed;
+        }
+        this.saveArena();
+        return true;
+    }
+
+    /**
+     * Sets the type of blocks used as obstacle blocks
+     *
+     * @param obstacleBlockNames <p>The names of the obstacle blocks</p>
+     */
+    public boolean setObstacleBlocks(@NotNull Set<String> obstacleBlockNames) {
+        if (obstacleBlockNames.isEmpty()) {
+            this.obstacleBlockNames = null;
+            this.obstacleBlocks = null;
+        } else {
+            Set<Material> parsed = MaterialHelper.loadMaterialList(new ArrayList<>(obstacleBlockNames), "+",
+                    MiniGames.getInstance().getLogger());
+            if (parsed.isEmpty()) {
+                return false;
+            }
+            this.obstacleBlockNames = obstacleBlockNames;
+            this.obstacleBlocks = parsed;
         }
         this.saveArena();
         return true;

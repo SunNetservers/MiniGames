@@ -135,7 +135,7 @@ public final class ParkourArenaStorageHelper {
         configSection.set(ParkourArenaStorageKey.WIN_BLOCK_TYPE.getKey(), new SerializableMaterial(arena.getWinBlockType()));
         configSection.set(ParkourArenaStorageKey.WIN_LOCATION.getKey(), arena.getWinLocation());
         configSection.set(ParkourArenaStorageKey.KILL_PLANE_BLOCKS.getKey(), getKillPlaneBlocks(arena));
-        configSection.set(ParkourArenaStorageKey.HORIZONTAL_KILL_PLANE_HIT_BOX.getKey(), arena.getHorizontalKillPlaneHitBox());
+        configSection.set(ParkourArenaStorageKey.OBSTACLE_BLOCKS.getKey(), getObstacleBlocks(arena));
         configSection.set(ParkourArenaStorageKey.CHECKPOINTS.getKey(), arena.getCheckpoints());
         RewardStorageHelper.saveRewards(arena, configSection, ParkourArenaStorageKey.REWARDS.getKey());
         saveParkourArenaData(arena.getData());
@@ -152,6 +152,20 @@ public final class ParkourArenaStorageHelper {
             return new ArrayList<>();
         } else {
             return new ArrayList<>(arena.getKillPlaneBlockNames());
+        }
+    }
+
+    /**
+     * Gets a list of the obstacle blocks for the given arena
+     *
+     * @param arena <p>The arena to get obstacle blocks for</p>
+     * @return <p>The obstacle blocks</p>
+     */
+    private static List<String> getObstacleBlocks(ParkourArena arena) {
+        if (arena.getObstacleBlockNames() == null) {
+            return new ArrayList<>();
+        } else {
+            return new ArrayList<>(arena.getObstacleBlockNames());
         }
     }
 
@@ -205,12 +219,17 @@ public final class ParkourArenaStorageHelper {
         List<?> killPlaneBlockNamesList = configurationSection.getList(ParkourArenaStorageKey.KILL_PLANE_BLOCKS.getKey());
         Set<String> killPlaneBlockNames;
         if (killPlaneBlockNamesList == null) {
-            killPlaneBlockNames = new HashSet<>();
+            killPlaneBlockNames = null;
         } else {
             killPlaneBlockNames = new HashSet<>((List<String>) killPlaneBlockNamesList);
         }
-        double horizontalKillPlaneHitBox = configurationSection.getDouble(
-                ParkourArenaStorageKey.HORIZONTAL_KILL_PLANE_HIT_BOX.getKey(), 0);
+        List<?> obstacleBlockNamesList = configurationSection.getList(ParkourArenaStorageKey.OBSTACLE_BLOCKS.getKey());
+        Set<String> obstacleBlockNames;
+        if (obstacleBlockNamesList == null) {
+            obstacleBlockNames = null;
+        } else {
+            obstacleBlockNames = new HashSet<>((List<String>) obstacleBlockNamesList);
+        }
         List<Location> checkpoints = (List<Location>) configurationSection.get(ParkourArenaStorageKey.CHECKPOINTS.getKey());
 
         Map<RewardCondition, Set<Reward>> rewards = RewardStorageHelper.loadRewards(configurationSection,
@@ -242,7 +261,7 @@ public final class ParkourArenaStorageHelper {
         }
 
         return new ParkourArena(arenaId, arenaName, spawnLocation, exitLocation, winBlockType.getRawValue(), winLocation,
-                killPlaneBlockNames, horizontalKillPlaneHitBox, checkpoints, rewards, arenaData,
+                killPlaneBlockNames, obstacleBlockNames, checkpoints, rewards, arenaData,
                 MiniGames.getInstance().getParkourArenaHandler());
     }
 

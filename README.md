@@ -213,8 +213,8 @@ These are all the options that can be changed for an arena.
 | winLocation               | The location players must reach to win the arena (see spawnLocation for valid values). If set, this overrides, and is used instead of, the win block type.                                    |
 | checkpointAdd             | Adds a new checkpoint to the arena's checkpoints (see spawnLocation for valid values).                                                                                                        |
 | checkpointClear           | Clears all current checkpoints. Give any value to execute. If not given a value, current checkpoints are shown.                                                                               |
-| killPlaneBlocks           | A comma-separated list of materials which will force a loss on hit. +WOOL and other [material tags](#notes-about-material-tags) are supported as well.                                        |
-| horizontalKillPlaneHitBox | The number of blocks away kill plane blocks will trigger horizontally (0-1). This only affects things less than 1 block wide, such as horizontal lightning and end rods.                      |
+| killPlaneBlocks           | A comma-separated list of materials which will force a loss when stepped on. +WOOL and other [material tags](#notes-about-material-tags) are supported as well.                               |
+| obstacleBlocks            | A comma-separated list of materials which will force a loss when touched from any direction. +WOOL and other [material tags](#notes-about-material-tags) are supported as well.               |
 
 ## Configuration options
 
@@ -249,6 +249,7 @@ These are all the options that can be changed for an arena.
 | mustDoGroupedInSequence           | true/false | true                                 | Whether grouped dropper arenas must be played in the correct sequence                                                                                                                                                                                      |
 | ignoreRecordsUntilGroupBeatenOnce | true/false | false                                | Whether records won't be registered unless the player has already beaten all arenas in a group. That means players are required to do a second play-through to register a record for a grouped arena.                                                      |
 | killPlaneBlocks                   | list       | [see this](#killplaneblocks-default) | The types of blocks compromising parkour arenas' kill planes. Add any materials you want to use for the "bottom" of your parkour arenas. +WOOL and other [material tags](#notes-about-material-tags) are supported.                                        |
+| obstacleBlocks                    | list       | [see this](#obstacleblocks-default)  | The types of blocks treated as obstacles in every direction. +WOOL and other [material tags](#notes-about-material-tags) are supported.                                                                                                                    |
 
 #### blockWhitelist default:
 
@@ -269,6 +270,12 @@ These are all the options that can be changed for an arena.
 
 - LAVA
 - MAGMA_BLOCK
+
+#### obstacleBlocks default:
+
+- END_ROD
+- LIGHTNING_ROD
+- CHAIN
 
 ## Record placeholders
 

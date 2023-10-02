@@ -17,6 +17,7 @@ public class ParkourConfiguration extends MiniGameConfiguration {
     private boolean mustDoGroupedInSequence;
     private boolean ignoreRecordsUntilGroupBeatenOnce;
     private Set<Material> killPlaneBlocks;
+    private Set<Material> obstacleBlocks;
 
     /**
      * Instantiates a new dropper configuration
@@ -63,12 +64,22 @@ public class ParkourConfiguration extends MiniGameConfiguration {
         return new HashSet<>(this.killPlaneBlocks);
     }
 
+    /**
+     * Gets all types of blocks constituting parkour arena's obstacle blocks
+     *
+     * @return <p>The types of blocks constituting parkour arena's obstacle blocks</p>
+     */
+    public Set<Material> getObstacleBlocks() {
+        return new HashSet<>(this.obstacleBlocks);
+    }
+
     @Override
     protected void load() {
         this.enforceCheckpointOrder = configuration.getBoolean(rootNode + "enforceCheckpointOrder", false);
         this.mustDoGroupedInSequence = configuration.getBoolean(rootNode + "mustDoGroupedInSequence", true);
         this.ignoreRecordsUntilGroupBeatenOnce = configuration.getBoolean(rootNode + "ignoreRecordsUntilGroupBeatenOnce", false);
         this.killPlaneBlocks = loadMaterialList(rootNode + "killPlaneBlocks");
+        this.obstacleBlocks = loadMaterialList(rootNode + "obstacleBlocks");
     }
 
     @Override
@@ -80,6 +91,10 @@ public class ParkourConfiguration extends MiniGameConfiguration {
                         "\n" + "Ignore records until group beaten once: " + ignoreRecordsUntilGroupBeatenOnce +
                         "\n" + "Kill plane blocks: ");
         for (Material material : killPlaneBlocks) {
+            builder.append("\n  - ").append(material.name());
+        }
+        builder.append("\n" + "Obstacle blocks: ");
+        for (Material material : obstacleBlocks) {
             builder.append("\n  - ").append(material.name());
         }
         return builder.toString();

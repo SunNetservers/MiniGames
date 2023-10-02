@@ -20,6 +20,12 @@ parkour:
   killPlaneBlocks:
     - LAVA
     - MAGMA_BLOCK
+  
+  # The blocks treated as obstacles in a parkour arena, which will trigger a loss in any direction
+  obstacleBlocks:
+    - END_ROD
+    - LIGHTNING_ROD
+    - CHAIN
 dropper:
   # Whether to block using the shift key to drop faster than the intended drop speed
   blockSneaking: true
