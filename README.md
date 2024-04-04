@@ -204,26 +204,26 @@ This command allows editing the specified property for the specified parkour are
 
 These are all the options that can be changed for an arena.
 
-| Option                    | Details                                                                                                                                                                                       |
-|---------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| name                      | The name of the arena. Used mainly to select the arena in commands. Note that underscore (_) cannot be used if you want to utilize placeholders, as it's used to split placeholder arguments. |
-| spawnLocation             | The spawn location of any player joining the arena. Use `56.546,64.0,44.45` to specify coordinates, or `here`, `this` or any other string to select your current location.                    |
-| exitLocation              | The location players will be sent to when exiting the arena. If not set, the player will be sent to where they joined from. Valid values are the same as for spawnLocation.                   |
-| winBlockType              | The type of block players must hit to win the arena. It can be any material as long as it's a block, and not a type of air.                                                                   |
-| winLocation               | The location players must reach to win the arena (see spawnLocation for valid values). If set, this overrides, and is used instead of, the win block type.                                    |
-| checkpointAdd             | Adds a new checkpoint to the arena's checkpoints (see spawnLocation for valid values).                                                                                                        |
-| checkpointClear           | Clears all current checkpoints. Give any value to execute. If not given a value, current checkpoints are shown.                                                                               |
-| killPlaneBlocks           | A comma-separated list of materials which will force a loss when stepped on. +WOOL and other [material tags](#notes-about-material-tags) are supported as well.                               |
-| obstacleBlocks            | A comma-separated list of materials which will force a loss when touched from any direction. +WOOL and other [material tags](#notes-about-material-tags) are supported as well.               |
+| Option          | Details                                                                                                                                                                                       |
+|-----------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| name            | The name of the arena. Used mainly to select the arena in commands. Note that underscore (_) cannot be used if you want to utilize placeholders, as it's used to split placeholder arguments. |
+| spawnLocation   | The spawn location of any player joining the arena. Use `56.546,64.0,44.45` to specify coordinates, or `here`, `this` or any other string to select your current location.                    |
+| exitLocation    | The location players will be sent to when exiting the arena. If not set, the player will be sent to where they joined from. Valid values are the same as for spawnLocation.                   |
+| winBlockType    | The type of block players must hit to win the arena. It can be any material as long as it's a block, and not a type of air.                                                                   |
+| winLocation     | The location players must reach to win the arena (see spawnLocation for valid values). If set, this overrides, and is used instead of, the win block type.                                    |
+| checkpointAdd   | Adds a new checkpoint to the arena's checkpoints (see spawnLocation for valid values).                                                                                                        |
+| checkpointClear | Clears all current checkpoints. Give any value to execute. If not given a value, current checkpoints are shown.                                                                               |
+| killPlaneBlocks | A comma-separated list of materials which will force a loss when stepped on. +WOOL and other [material tags](#notes-about-material-tags) are supported as well.                               |
+| obstacleBlocks  | A comma-separated list of materials which will force a loss when touched from any direction. +WOOL and other [material tags](#notes-about-material-tags) are supported as well.               |
 
 ## Configuration options
 
 ### Shared
 
-| Name                              | Type                | Default                             | Description                                                                                                                                                                                                                       |
-|-----------------------------------|---------------------|-------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| liquidHitBoxDepth                 | -1 < decimal < 0    | -0.8                                | This decides how far inside a non-solid block the player must go before detection triggers (-1, 0). The closer to -1 it is, the more accurate it will seem to the player, but the likelihood of not detecting the hit increases.  | 
-| solidHitBoxDistance               | 0 < decimal < 1     | 0.2                                 | This decides the distance the player must be from a block below them before a hit triggers (0, 1). If too low, the likelihood of detecting the hit decreases, but it won't look like the player hit the block without being near. |
+| Name                | Type             | Default | Description                                                                                                                                                                                                                       |
+|---------------------|------------------|---------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| liquidHitBoxDepth   | -1 < decimal < 0 | -0.8    | This decides how far inside a non-solid block the player must go before detection triggers (-1, 0). The closer to -1 it is, the more accurate it will seem to the player, but the likelihood of not detecting the hit increases.  | 
+| solidHitBoxDistance | 0 < decimal < 1  | 0.2     | This decides the distance the player must be from a block below them before a hit triggers (0, 1). If too low, the likelihood of detecting the hit decreases, but it won't look like the player hit the block without being near. |
 
 ### Dropper
 
