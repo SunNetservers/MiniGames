@@ -11,8 +11,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.potion.PotionEffect;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -34,6 +36,7 @@ public abstract class AbstractPlayerEntryState implements PlayerEntryState {
     private final boolean originalInvulnerable;
     private final boolean originalIsSwimming;
     private final boolean originalCollideAble;
+    private final Collection<PotionEffect> originalPotionEffects;
 
     /**
      * Instantiates a new abstract player entry state
@@ -49,24 +52,31 @@ public abstract class AbstractPlayerEntryState implements PlayerEntryState {
         this.originalInvulnerable = player.isInvulnerable();
         this.originalIsSwimming = player.isSwimming();
         this.originalCollideAble = player.isCollidable();
+
+        // Store and clear potion effects
+        this.originalPotionEffects = getPlayer().getActivePotionEffects();
+        for (PotionEffect potionEffect : this.originalPotionEffects) {
+            player.removePotionEffect(potionEffect.getType());
+        }
     }
 
     /**
      * Instantiates a new abstract player entry state
      *
-     * @param playerId             <p>The id of the player whose state this should keep track of</p>
-     * @param entryLocation        <p>The location the player entered from</p>
-     * @param originalIsFlying     <p>Whether the player was flying before entering the arena</p>
-     * @param originalGameMode     <p>The game-mode of the player before entering the arena</p>
-     * @param originalAllowFlight  <p>Whether the player was allowed flight before entering the arena</p>
-     * @param originalInvulnerable <p>Whether the player was invulnerable before entering the arena</p>
-     * @param originalIsSwimming   <p>Whether the player was swimming before entering the arena</p>
-     * @param originalCollideAble  <p>Whether the player was collide-able before entering the arena</p>
+     * @param playerId              <p>The id of the player whose state this should keep track of</p>
+     * @param entryLocation         <p>The location the player entered from</p>
+     * @param originalIsFlying      <p>Whether the player was flying before entering the arena</p>
+     * @param originalGameMode      <p>The game-mode of the player before entering the arena</p>
+     * @param originalAllowFlight   <p>Whether the player was allowed flight before entering the arena</p>
+     * @param originalInvulnerable  <p>Whether the player was invulnerable before entering the arena</p>
+     * @param originalIsSwimming    <p>Whether the player was swimming before entering the arena</p>
+     * @param originalCollideAble   <p>Whether the player was collide-able before entering the arena</p>
+     * @param originalPotionEffects <p>The potion effects applied to the player when joining</p>
      */
     public AbstractPlayerEntryState(@NotNull UUID playerId, Location entryLocation,
                                     boolean originalIsFlying, GameMode originalGameMode, boolean originalAllowFlight,
                                     boolean originalInvulnerable, boolean originalIsSwimming,
-                                    boolean originalCollideAble) {
+                                    boolean originalCollideAble, Collection<PotionEffect> originalPotionEffects) {
         this.playerId = playerId;
         this.entryLocation = entryLocation;
         this.originalIsFlying = originalIsFlying;
@@ -75,6 +85,7 @@ public abstract class AbstractPlayerEntryState implements PlayerEntryState {
         this.originalInvulnerable = originalInvulnerable;
         this.originalIsSwimming = originalIsSwimming;
         this.originalCollideAble = originalCollideAble;
+        this.originalPotionEffects = originalPotionEffects;
     }
 
     @Override
@@ -100,6 +111,9 @@ public abstract class AbstractPlayerEntryState implements PlayerEntryState {
         player.setGameMode(this.originalGameMode);
         player.setInvulnerable(this.originalInvulnerable);
         player.setSwimming(this.originalIsSwimming);
+        for (PotionEffect potionEffect : originalPotionEffects) {
+            player.addPotionEffect(potionEffect);
+        }
         removeMenuItem(player);
     }
 
@@ -134,6 +148,7 @@ public abstract class AbstractPlayerEntryState implements PlayerEntryState {
         data.put("originalInvulnerable", this.originalInvulnerable);
         data.put("originalIsSwimming", this.originalIsSwimming);
         data.put("originalCollideAble", this.originalCollideAble);
+        data.put("originalPotionEffects", this.originalPotionEffects);
         return data;
     }
 

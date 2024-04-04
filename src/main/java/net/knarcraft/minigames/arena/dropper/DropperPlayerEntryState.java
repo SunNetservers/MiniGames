@@ -5,8 +5,11 @@ import net.knarcraft.minigames.container.SerializableUUID;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Map;
 import java.util.UUID;
 
@@ -35,24 +38,26 @@ public class DropperPlayerEntryState extends AbstractPlayerEntryState {
     /**
      * Instantiates a new parkour player entry state
      *
-     * @param playerId             <p>The id of the player whose state this should keep track of</p>
-     * @param entryLocation        <p>The location the player entered from</p>
-     * @param originalIsFlying     <p>Whether the player was flying before entering the arena</p>
-     * @param originalGameMode     <p>The game-mode of the player before entering the arena</p>
-     * @param originalAllowFlight  <p>Whether the player was allowed flight before entering the arena</p>
-     * @param originalInvulnerable <p>Whether the player was invulnerable before entering the arena</p>
-     * @param originalIsSwimming   <p>Whether the player was swimming before entering the arena</p>
-     * @param originalFlySpeed     <p>The fly-speed of the player before entering the arena</p>
-     * @param horizontalVelocity   <p>The horizontal velocity of the player before entering the arena</p>
-     * @param originalCollideAble  <p>Whether the player was collide-able before entering the arena</p>
+     * @param playerId              <p>The id of the player whose state this should keep track of</p>
+     * @param entryLocation         <p>The location the player entered from</p>
+     * @param originalIsFlying      <p>Whether the player was flying before entering the arena</p>
+     * @param originalGameMode      <p>The game-mode of the player before entering the arena</p>
+     * @param originalAllowFlight   <p>Whether the player was allowed flight before entering the arena</p>
+     * @param originalInvulnerable  <p>Whether the player was invulnerable before entering the arena</p>
+     * @param originalIsSwimming    <p>Whether the player was swimming before entering the arena</p>
+     * @param originalFlySpeed      <p>The fly-speed of the player before entering the arena</p>
+     * @param horizontalVelocity    <p>The horizontal velocity of the player before entering the arena</p>
+     * @param originalCollideAble   <p>Whether the player was collide-able before entering the arena</p>
+     * @param originalPotionEffects <p>The potion effects applied to the player when joining</p>
      */
     public DropperPlayerEntryState(@NotNull UUID playerId, Location entryLocation,
                                    boolean originalIsFlying, GameMode originalGameMode, boolean originalAllowFlight,
                                    boolean originalInvulnerable, boolean originalIsSwimming,
                                    float originalFlySpeed, float horizontalVelocity,
-                                   DropperArenaGameMode arenaGameMode, boolean originalCollideAble) {
+                                   DropperArenaGameMode arenaGameMode, boolean originalCollideAble,
+                                   Collection<PotionEffect> originalPotionEffects) {
         super(playerId, entryLocation, originalIsFlying, originalGameMode, originalAllowFlight,
-                originalInvulnerable, originalIsSwimming, originalCollideAble);
+                originalInvulnerable, originalIsSwimming, originalCollideAble, originalPotionEffects);
         this.originalFlySpeed = originalFlySpeed;
         this.horizontalVelocity = horizontalVelocity;
         this.arenaGameMode = arenaGameMode;
@@ -108,7 +113,7 @@ public class DropperPlayerEntryState extends AbstractPlayerEntryState {
      *
      * @return <p>The data to deserialize</p>
      */
-    @SuppressWarnings("unused")
+    @SuppressWarnings({"unused", "unchecked"})
     public static DropperPlayerEntryState deserialize(Map<String, Object> data) {
         UUID playerId = ((SerializableUUID) data.get("playerId")).getRawValue();
         Location entryLocation = (Location) data.get("entryLocation");
@@ -121,10 +126,12 @@ public class DropperPlayerEntryState extends AbstractPlayerEntryState {
         float horizontalVelocity = ((Number) data.get("horizontalVelocity")).floatValue();
         DropperArenaGameMode arenaGameMode = (DropperArenaGameMode) data.get("arenaGameMode");
         boolean originalCollideAble = getBoolean(data, "originalCollideAble");
+        Collection<PotionEffect> originalPotionEffect =
+                (Collection<PotionEffect>) data.getOrDefault("originalPotionEffects", new ArrayList<>());
 
         return new DropperPlayerEntryState(playerId, entryLocation, originalIsFlying,
                 originalGameMode, originalAllowFlight, originalInvulnerable, originalIsSwimming,
-                originalFlySpeed, horizontalVelocity, arenaGameMode, originalCollideAble);
+                originalFlySpeed, horizontalVelocity, arenaGameMode, originalCollideAble, originalPotionEffect);
     }
 
 }
