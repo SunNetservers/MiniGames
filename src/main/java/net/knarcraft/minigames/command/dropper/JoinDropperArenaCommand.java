@@ -38,7 +38,7 @@ public class JoinDropperArenaCommand implements CommandExecutor {
         // Disallow joining if the player is already in a mini-game arena
         if (MiniGames.getInstance().getSession(player.getUniqueId()) != null) {
             stringFormatter.displayErrorMessage(commandSender, MiniGameMessage.ERROR_ALREADY_PLAYING);
-            return false;
+            return true;
         }
 
         // Make sure the arena exists
@@ -51,10 +51,11 @@ public class JoinDropperArenaCommand implements CommandExecutor {
         // Deny vehicles as allowing this is tricky, and will cause problems in some cases
         if (player.isInsideVehicle() || !player.getPassengers().isEmpty()) {
             stringFormatter.displayErrorMessage(commandSender, MiniGameMessage.ERROR_JOIN_IN_VEHICLE_OR_PASSENGER);
-            return false;
+            return true;
         }
 
-        return joinArena(specifiedArena, player, arguments);
+        joinArena(specifiedArena, player, arguments);
+        return true;
     }
 
     /**
@@ -63,13 +64,12 @@ public class JoinDropperArenaCommand implements CommandExecutor {
      * @param specifiedArena <p>The arena the player wants to join</p>
      * @param player         <p>The player joining the arena</p>
      * @param arguments      <p>The arguments given</p>
-     * @return <p>Whether the arena was joined successfully</p>
      */
-    private boolean joinArena(DropperArena specifiedArena, Player player, String[] arguments) {
+    private void joinArena(DropperArena specifiedArena, Player player, String[] arguments) {
         // Find the specified game-mode
         DropperArenaGameMode gameMode;
         if (arguments.length > 1) {
-            gameMode = DropperArenaGameMode.matchGamemode(arguments[1]);
+            gameMode = DropperArenaGameMode.matchGameMode(arguments[1]);
         } else {
             gameMode = DropperArenaGameMode.DEFAULT;
         }
@@ -77,7 +77,7 @@ public class JoinDropperArenaCommand implements CommandExecutor {
         // Make sure the player has beaten the necessary levels
         DropperArenaGroup arenaGroup = MiniGames.getInstance().getDropperArenaHandler().getGroup(specifiedArena.getArenaId());
         if (arenaGroup != null && !doGroupChecks(specifiedArena, arenaGroup, gameMode, player)) {
-            return false;
+            return;
         }
 
         StringFormatter stringFormatter = MiniGames.getInstance().getStringFormatter();
@@ -87,7 +87,7 @@ public class JoinDropperArenaCommand implements CommandExecutor {
                 gameMode != DropperArenaGameMode.DEFAULT &&
                 specifiedArena.getData().hasNotCompleted(DropperArenaGameMode.DEFAULT, player)) {
             stringFormatter.displayErrorMessage(player, MiniGameMessage.ERROR_NORMAL_MODE_REQUIRED);
-            return false;
+            return;
         }
 
         // Register the player's session
@@ -103,14 +103,12 @@ public class JoinDropperArenaCommand implements CommandExecutor {
         if (!teleported) {
             stringFormatter.displayErrorMessage(player, MiniGameMessage.ERROR_ARENA_TELEPORT_FAILED);
             newSession.triggerQuit(false, true);
-            return false;
         } else {
             // Update the player's state to follow the arena's rules
             newSession.getEntryState().setArenaState();
 
             player.getInventory().addItem(GUIHelper.getGUIOpenItem());
             stringFormatter.displaySuccessMessage(player, MiniGameMessage.SUCCESS_ARENA_JOINED);
-            return true;
         }
     }
 

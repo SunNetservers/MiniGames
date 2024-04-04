@@ -34,11 +34,11 @@ public enum DropperArenaGameMode implements ConfigurationSerializable, ArenaGame
      * @param gameMode <p>The game-mode string to match</p>
      * @return <p>The specified arena game-mode</p>
      */
-    public static @NotNull DropperArenaGameMode matchGamemode(@NotNull String gameMode) {
+    public static @NotNull DropperArenaGameMode matchGameMode(@NotNull String gameMode) {
         String sanitized = gameMode.trim().toLowerCase();
         if (sanitized.matches("(invert(ed)?|inverse)")) {
             return DropperArenaGameMode.INVERTED;
-        } else if (sanitized.matches("rand(om)?")) {
+        } else if (sanitized.matches("rand(om)?_?(inverted)?")) {
             return DropperArenaGameMode.RANDOM_INVERTED;
         } else {
             return DropperArenaGameMode.DEFAULT;

@@ -26,7 +26,7 @@ public class DropperRecordExpansion extends RecordExpansion {
 
     @Override
     protected @NotNull ArenaGameMode parseGameMode(@NotNull String gameMode) {
-        return DropperArenaGameMode.matchGamemode(gameMode);
+        return DropperArenaGameMode.matchGameMode(gameMode);
     }
 
 }

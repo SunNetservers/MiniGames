@@ -38,7 +38,7 @@ public class JoinParkourArenaCommand implements CommandExecutor {
         // Disallow joining if the player is already in a mini-game arena
         if (MiniGames.getInstance().getSession(player.getUniqueId()) != null) {
             stringFormatter.displayErrorMessage(commandSender, MiniGameMessage.ERROR_ALREADY_PLAYING);
-            return false;
+            return true;
         }
 
         // Make sure the arena exists
@@ -51,10 +51,11 @@ public class JoinParkourArenaCommand implements CommandExecutor {
         // Deny vehicles as allowing this is tricky, and will cause problems in some cases
         if (player.isInsideVehicle() || !player.getPassengers().isEmpty()) {
             stringFormatter.displayErrorMessage(commandSender, MiniGameMessage.ERROR_JOIN_IN_VEHICLE_OR_PASSENGER);
-            return false;
+            return true;
         }
 
-        return joinArena(specifiedArena, player, arguments);
+        joinArena(specifiedArena, player, arguments);
+        return true;
     }
 
     /**
@@ -63,9 +64,8 @@ public class JoinParkourArenaCommand implements CommandExecutor {
      * @param specifiedArena <p>The arena the player wants to join</p>
      * @param player         <p>The player joining the arena</p>
      * @param arguments      <p>The arguments given</p>
-     * @return <p>Whether the arena was joined successfully</p>
      */
-    private boolean joinArena(ParkourArena specifiedArena, Player player, String[] arguments) {
+    private void joinArena(ParkourArena specifiedArena, Player player, String[] arguments) {
         // Find the specified game-mode
         ParkourArenaGameMode gameMode;
         if (arguments.length > 1) {
@@ -78,13 +78,13 @@ public class JoinParkourArenaCommand implements CommandExecutor {
         if (specifiedArena.hasNoCheckpoints() && gameMode == ParkourArenaGameMode.HARDCORE) {
             MiniGames.getInstance().getStringFormatter().displayErrorMessage(player,
                     MiniGameMessage.ERROR_HARDCORE_NO_CHECKPOINTS);
-            return false;
+            return;
         }
 
         // Make sure the player has beaten the necessary levels
         ParkourArenaGroup arenaGroup = MiniGames.getInstance().getParkourArenaHandler().getGroup(specifiedArena.getArenaId());
         if (arenaGroup != null && !doGroupChecks(specifiedArena, arenaGroup, gameMode, player)) {
-            return false;
+            return;
         }
 
         // Register the player's session
@@ -101,7 +101,6 @@ public class JoinParkourArenaCommand implements CommandExecutor {
             MiniGames.getInstance().getStringFormatter().displayErrorMessage(player,
                     MiniGameMessage.ERROR_ARENA_TELEPORT_FAILED);
             newSession.triggerQuit(false, true);
-            return false;
         } else {
             // Update the player's state to follow the arena's rules
             newSession.getEntryState().setArenaState();
@@ -109,7 +108,6 @@ public class JoinParkourArenaCommand implements CommandExecutor {
             player.getInventory().addItem(GUIHelper.getGUIOpenItem());
             MiniGames.getInstance().getStringFormatter().displaySuccessMessage(player,
                     MiniGameMessage.SUCCESS_ARENA_JOINED);
-            return true;
         }
     }
 
