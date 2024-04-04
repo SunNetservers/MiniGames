@@ -313,8 +313,8 @@ public abstract class RecordExpansion extends PlaceholderExpansion {
     private String getRecordData(@NotNull InfoType infoType, @NotNull ArenaRecord<?> arenaRecord) {
         return switch (infoType) {
             case PLAYER -> getPlayerName(arenaRecord.getUserId());
-            case VALUE -> arenaRecord.getRecord().toString();
-            case COMBINED -> getPlayerName(arenaRecord.getUserId()) + ": " + arenaRecord.getRecord().toString();
+            case VALUE -> arenaRecord.getAsString();
+            case COMBINED -> getPlayerName(arenaRecord.getUserId()) + ": " + arenaRecord.getAsString();
         };
     }
 

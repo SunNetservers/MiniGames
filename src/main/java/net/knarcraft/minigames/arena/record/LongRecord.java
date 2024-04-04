@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * A record storing a Long
+ * A record storing a Long time
  */
 public class LongRecord extends SummableArenaRecord<Long> {
 
@@ -27,6 +27,22 @@ public class LongRecord extends SummableArenaRecord<Long> {
     @Override
     public SummableArenaRecord<Long> sum(Long value) {
         return new LongRecord(this.getUserId(), this.getRecord() + value);
+    }
+
+    @Override
+    public String getAsString() {
+        int seconds = (int) Math.floor(getRecord() / 1000.0);
+        int minutes = 0;
+        if (seconds > 60) {
+            minutes = (int) Math.floor(seconds / 60.0);
+            seconds = seconds % 60;
+        }
+
+        if (minutes > 0) {
+            return minutes + "m" + seconds + "s";
+        } else {
+            return seconds + "s";
+        }
     }
 
     /**

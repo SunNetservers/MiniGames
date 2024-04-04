@@ -44,6 +44,13 @@ public abstract class ArenaRecord<K extends Comparable<K>> implements Comparable
         return record;
     }
 
+    /**
+     * Gets this as a string that should be printed on a sign
+     *
+     * @return <p>This as a string</p>
+     */
+    public abstract String getAsString();
+
     @Override
     public boolean equals(Object other) {
         return other instanceof ArenaRecord<?> && userId.equals(((ArenaRecord<?>) other).userId);
@@ -70,7 +77,7 @@ public abstract class ArenaRecord<K extends Comparable<K>> implements Comparable
 
     @Override
     public String toString() {
-        return userId + ": " + record;
+        return userId + ":" + record;
     }
 
 }

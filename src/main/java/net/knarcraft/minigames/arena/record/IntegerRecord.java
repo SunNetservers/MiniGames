@@ -20,6 +20,11 @@ public class IntegerRecord extends SummableArenaRecord<Integer> {
     }
 
     @Override
+    public String getAsString() {
+        return String.valueOf(this.getRecord());
+    }
+
+    @Override
     public SummableArenaRecord<Integer> sum(Integer value) {
         return new IntegerRecord(this.getUserId(), this.getRecord() + value);
     }

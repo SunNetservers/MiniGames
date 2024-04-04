@@ -20,6 +20,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.yaml.snakeyaml.error.YAMLException;
 
 import java.io.File;
 import java.io.IOException;
@@ -249,9 +250,14 @@ public final class DropperArenaStorageHelper {
      * @return <p>The loaded arena data</p>
      */
     private static @Nullable DropperArenaData loadDropperArenaData(@NotNull UUID arenaId) {
-        File arenaDataFile = getDropperArenaDataFile(arenaId);
-        YamlConfiguration configuration = YamlConfiguration.loadConfiguration(arenaDataFile);
-        return (DropperArenaData) configuration.get(DropperArenaStorageKey.DATA.getKey());
+        try {
+            File arenaDataFile = getDropperArenaDataFile(arenaId);
+            YamlConfiguration configuration = YamlConfiguration.loadConfiguration(arenaDataFile);
+            return (DropperArenaData) configuration.get(DropperArenaStorageKey.DATA.getKey());
+        } catch (YAMLException exception) {
+            MiniGames.log(Level.SEVERE, "Unable to load arena data from arena " + arenaId);
+            return null;
+        }
     }
 
     /**

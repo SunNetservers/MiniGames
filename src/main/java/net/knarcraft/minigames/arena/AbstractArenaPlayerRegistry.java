@@ -104,7 +104,7 @@ public abstract class AbstractArenaPlayerRegistry<K extends Arena> implements Ar
         for (PlayerEntryState entryState : entryStates) {
             this.entryStates.put(entryState.getPlayerId(), entryState);
         }
-        if (this.entryStates.size() > 0) {
+        if (!this.entryStates.isEmpty()) {
             MiniGames.log(Level.WARNING, entryStates.size() + " un-exited sessions found. This happens if " +
                     "players leave in the middle of a game, or if the server crashes. MiniGames will do its best " +
                     "to fix the players' states.");
