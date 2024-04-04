@@ -109,8 +109,11 @@ public final class DropperArenaStorageHelper {
      * @throws IOException <p>If unable to write to the file</p>
      */
     public static void saveSingleDropperArena(DropperArena arena) throws IOException {
-        YamlConfiguration configuration = new YamlConfiguration();
-        ConfigurationSection arenaSection = configuration.createSection(dropperArenasConfigurationSection);
+        YamlConfiguration configuration = YamlConfiguration.loadConfiguration(dropperArenaFile);
+        ConfigurationSection arenaSection = configuration.getConfigurationSection(dropperArenasConfigurationSection);
+        if (arenaSection == null) {
+            arenaSection = configuration.createSection(dropperArenasConfigurationSection);
+        }
         saveDropperArena(arenaSection, arena);
         configuration.save(dropperArenaFile);
     }

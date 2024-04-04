@@ -111,8 +111,11 @@ public final class ParkourArenaStorageHelper {
      * @throws IOException <p>If unable to write to the file</p>
      */
     public static void saveSingleParkourArena(ParkourArena arena) throws IOException {
-        YamlConfiguration configuration = new YamlConfiguration();
-        ConfigurationSection arenaSection = configuration.createSection(parkourArenasConfigurationSection);
+        YamlConfiguration configuration = YamlConfiguration.loadConfiguration(parkourArenaFile);
+        ConfigurationSection arenaSection = configuration.getConfigurationSection(parkourArenasConfigurationSection);
+        if (arenaSection == null) {
+            arenaSection = configuration.createSection(parkourArenasConfigurationSection);
+        }
         saveParkourArena(arenaSection, arena);
         configuration.save(parkourArenaFile);
     }
