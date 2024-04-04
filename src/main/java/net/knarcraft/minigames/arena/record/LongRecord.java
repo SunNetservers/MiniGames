@@ -31,17 +31,17 @@ public class LongRecord extends SummableArenaRecord<Long> {
 
     @Override
     public String getAsString() {
-        int seconds = (int) Math.floor(getRecord() / 1000.0);
-        int minutes = 0;
+        double seconds = getRecord() / 1000.0;
+        double minutes = 0;
         if (seconds > 60) {
-            minutes = (int) Math.floor(seconds / 60.0);
+            minutes = seconds / 60.0;
             seconds = seconds % 60;
         }
 
         if (minutes > 0) {
-            return minutes + "m" + seconds + "s";
+            return String.format("%.0fm%.2fs", minutes, seconds);
         } else {
-            return seconds + "s";
+            return String.format("%.2fs", seconds);
         }
     }
 
@@ -53,7 +53,8 @@ public class LongRecord extends SummableArenaRecord<Long> {
      */
     @SuppressWarnings("unused")
     public static LongRecord deserialize(@NotNull Map<String, Object> data) {
-        return new LongRecord(((SerializableUUID) data.get("userId")).getRawValue(), ((Number) data.get("record")).longValue());
+        return new LongRecord(((SerializableUUID) data.get("userId")).getRawValue(),
+                ((Number) data.get("record")).longValue());
     }
 
 }
