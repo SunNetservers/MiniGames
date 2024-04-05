@@ -2,6 +2,7 @@ package net.knarcraft.minigames.util;
 
 import net.knarcraft.knargui.item.GUIItemFactory;
 import net.knarcraft.knargui.item.PlayerHeadGUIItemFactory;
+import net.knarcraft.knargui.item.SimpleGUIItemFactory;
 import net.knarcraft.minigames.MiniGames;
 import net.knarcraft.minigames.arena.ArenaSession;
 import net.knarcraft.minigames.gui.MiniGamesGUI;
@@ -64,7 +65,7 @@ public final class GUIHelper {
      * @return <p>The item used for opening the GUI</p>
      */
     public static ItemStack getGUIOpenItemBedrock() {
-        GUIItemFactory factory = new GUIItemFactory(Material.BEACON);
+        GUIItemFactory factory = new SimpleGUIItemFactory(Material.BEACON);
         factory.setName(ChatColor.AQUA + "MiniGames Menu");
         ItemStack item = factory.build();
         ItemMeta meta = item.getItemMeta();

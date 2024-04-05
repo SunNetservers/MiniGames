@@ -16,12 +16,12 @@ public class DropperGUI extends ArenaGUI {
     public DropperGUI(Player player) {
         super(9, "Dropper");
         if (MiniGames.getInstance().getPlayerVisibilityManager().isHidingPlayers(player)) {
-            setItem(0, getTogglePlayersItemEnabled());
+            setItem(0, getTogglePlayersItemEnabled(player));
         } else {
             setItem(0, getTogglePlayersItemDisabled());
         }
         setItem(2, getLeaveItem());
-        setItem(4, getRestartItem());
+        setItem(4, getRestartItemJava());
 
         setAnyClickAction(0, getTogglePlayersAction(MiniGames.getInstance().getDropperArenaPlayerRegistry(), 0));
         setAnyClickAction(2, getLeaveAction());

@@ -16,18 +16,18 @@ public class ParkourGUIBedrock extends ArenaGUI {
     public ParkourGUIBedrock(Player player) {
         super(27, "Parkour");
         if (MiniGames.getInstance().getPlayerVisibilityManager().isHidingPlayers(player)) {
-            setItem(9, getTogglePlayersItemEnabledBedrock());
+            setItem(10, getTogglePlayersItemEnabled(player));
         } else {
-            setItem(9, getTogglePlayersItemDisabled());
+            setItem(10, getTogglePlayersItemDisabled());
         }
-        setItem(11, getGiveUpItem());
-        setItem(13, getLeaveItem());
-        setItem(15, getRestartItemBedrock());
+        setItem(12, getGiveUpItem());
+        setItem(14, getLeaveItem());
+        setItem(16, getRestartItemBedrock());
 
-        setAnyClickAction(9, getTogglePlayersAction(MiniGames.getInstance().getParkourArenaPlayerRegistry(), 9));
-        setAnyClickAction(11, getGiveUpAction());
-        setAnyClickAction(13, getLeaveAction());
-        setAnyClickAction(15, getRestartAction());
+        setAnyClickAction(10, getTogglePlayersAction(MiniGames.getInstance().getParkourArenaPlayerRegistry(), 10));
+        setAnyClickAction(12, getGiveUpAction());
+        setAnyClickAction(14, getLeaveAction());
+        setAnyClickAction(16, getRestartAction());
     }
 
 }

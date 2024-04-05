@@ -16,18 +16,18 @@ public class ParkourGUI extends ArenaGUI {
     public ParkourGUI(Player player) {
         super(9, "Parkour");
         if (MiniGames.getInstance().getPlayerVisibilityManager().isHidingPlayers(player)) {
-            setItem(0, getTogglePlayersItemEnabled());
+            setItem(1, getTogglePlayersItemEnabled(player));
         } else {
-            setItem(0, getTogglePlayersItemDisabled());
+            setItem(1, getTogglePlayersItemDisabled());
         }
-        setItem(2, getGiveUpItem());
-        setItem(4, getLeaveItem());
-        setItem(6, getRestartItem());
+        setItem(3, getGiveUpItem());
+        setItem(5, getLeaveItem());
+        setItem(7, getRestartItemJava());
 
-        setAnyClickAction(0, getTogglePlayersAction(MiniGames.getInstance().getParkourArenaPlayerRegistry(), 0));
-        setAnyClickAction(2, getGiveUpAction());
-        setAnyClickAction(4, getLeaveAction());
-        setAnyClickAction(6, getRestartAction());
+        setAnyClickAction(1, getTogglePlayersAction(MiniGames.getInstance().getParkourArenaPlayerRegistry(), 1));
+        setAnyClickAction(3, getGiveUpAction());
+        setAnyClickAction(5, getLeaveAction());
+        setAnyClickAction(7, getRestartAction());
     }
 
 }

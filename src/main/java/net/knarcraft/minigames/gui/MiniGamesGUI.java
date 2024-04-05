@@ -16,7 +16,7 @@ public class MiniGamesGUI extends ArenaGUI {
     public MiniGamesGUI(Player player) {
         super(9, "MiniGames");
         if (MiniGames.getInstance().getPlayerVisibilityManager().isHidingPlayers(player)) {
-            setItem(0, getTogglePlayersItemEnabled());
+            setItem(0, getTogglePlayersItemEnabled(player));
         } else {
             setItem(0, getTogglePlayersItemDisabled());
         }
