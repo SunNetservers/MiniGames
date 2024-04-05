@@ -21,7 +21,7 @@ public class MiniGamesGUI extends ArenaGUI {
             setItem(0, getTogglePlayersItemDisabled());
         }
 
-        setAnyClickAction(0, getTogglePlayersAction(null));
+        setAnyClickAction(0, getTogglePlayersAction(null, 0));
     }
 
 }

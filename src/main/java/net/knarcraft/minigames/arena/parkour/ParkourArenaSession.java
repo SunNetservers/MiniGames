@@ -8,6 +8,8 @@ import net.knarcraft.minigames.arena.reward.RewardCondition;
 import net.knarcraft.minigames.config.MiniGameMessage;
 import net.knarcraft.minigames.gui.ArenaGUI;
 import net.knarcraft.minigames.gui.ParkourGUI;
+import net.knarcraft.minigames.gui.ParkourGUIBedrock;
+import net.knarcraft.minigames.util.GeyserHelper;
 import net.knarcraft.minigames.util.PlayerTeleporter;
 import net.knarcraft.minigames.util.RewardHelper;
 import org.bukkit.Location;
@@ -120,7 +122,11 @@ public class ParkourArenaSession extends AbstractArenaSession {
 
     @Override
     public @NotNull ArenaGUI getGUI() {
-        return new ParkourGUI(player);
+        if (GeyserHelper.isGeyserPlayer(this.player)) {
+            return new ParkourGUIBedrock(this.player);
+        } else {
+            return new ParkourGUI(this.player);
+        }
     }
 
     @Override
@@ -135,8 +141,8 @@ public class ParkourArenaSession extends AbstractArenaSession {
         boolean removedSession = MiniGames.getInstance().getParkourArenaPlayerRegistry().removePlayer(
                 player.getUniqueId(), true);
         if (!removedSession) {
-            MiniGames.log(Level.SEVERE, "Unable to remove parkour arena session for " + player.getName() + ". " +
-                    "This will have unintended consequences.");
+            MiniGames.log(Level.SEVERE, "Unable to remove parkour arena session for " + this.player.getName() +
+                    ". This will have unintended consequences.");
         }
     }
 

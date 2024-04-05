@@ -23,7 +23,7 @@ public class DropperGUI extends ArenaGUI {
         setItem(2, getLeaveItem());
         setItem(4, getRestartItem());
 
-        setAnyClickAction(0, getTogglePlayersAction(MiniGames.getInstance().getDropperArenaPlayerRegistry()));
+        setAnyClickAction(0, getTogglePlayersAction(MiniGames.getInstance().getDropperArenaPlayerRegistry(), 0));
         setAnyClickAction(2, getLeaveAction());
         setAnyClickAction(4, getRestartAction());
     }

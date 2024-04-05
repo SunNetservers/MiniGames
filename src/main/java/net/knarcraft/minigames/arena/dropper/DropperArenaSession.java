@@ -8,6 +8,8 @@ import net.knarcraft.minigames.arena.reward.RewardCondition;
 import net.knarcraft.minigames.config.MiniGameMessage;
 import net.knarcraft.minigames.gui.ArenaGUI;
 import net.knarcraft.minigames.gui.DropperGUI;
+import net.knarcraft.minigames.gui.DropperGUIBedrock;
+import net.knarcraft.minigames.util.GeyserHelper;
 import net.knarcraft.minigames.util.PlayerTeleporter;
 import net.knarcraft.minigames.util.RewardHelper;
 import org.bukkit.entity.Player;
@@ -124,7 +126,11 @@ public class DropperArenaSession extends AbstractArenaSession {
 
     @Override
     public @NotNull ArenaGUI getGUI() {
-        return new DropperGUI(player);
+        if (GeyserHelper.isGeyserPlayer(this.player)) {
+            return new DropperGUIBedrock(this.player);
+        } else {
+            return new DropperGUI(this.player);
+        }
     }
 
     @Override
@@ -137,7 +143,7 @@ public class DropperArenaSession extends AbstractArenaSession {
     protected void removeSession() {
         // Remove this session for game sessions to stop listeners from fiddling more with the player
         boolean removedSession = MiniGames.getInstance().getDropperArenaPlayerRegistry().removePlayer(
-                player.getUniqueId(), true);
+                this.player.getUniqueId(), true);
         if (!removedSession) {
             MiniGames.log(Level.SEVERE, "Unable to remove dropper arena session for " + player.getName() + ". " +
                     "This will have unintended consequences.");

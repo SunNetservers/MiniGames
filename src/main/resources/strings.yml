@@ -29,6 +29,7 @@ en:
   ERROR_INVALID_COMMAND_STRING: "You specified an invalid command. Make sure you don't add a slash in front of the command definition."
   ERROR_REWARD_TYPE_INVALID: "You have specified an invalid reward type"
   ERROR_REWARD_CONDITION_INVALID: "You have specified an invalid reward condition"
+  ERROR_GEYSER_DROPPER: "Because of version differences, droppers don't work properly using the Bedrock client. Please use Minecraft Java Edition instead."
   SUCCESS_ARENA_GROUP_UPDATED: "The arena's group has been updated"
   SUCCESS_PLUGIN_RELOADED: "Plugin reloaded!"
   SUCCESS_ARENA_CREATED: "The arena was successfully created!"

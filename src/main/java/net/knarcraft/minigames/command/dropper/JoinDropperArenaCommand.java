@@ -10,6 +10,7 @@ import net.knarcraft.minigames.arena.dropper.DropperArenaSession;
 import net.knarcraft.minigames.config.DropperConfiguration;
 import net.knarcraft.minigames.config.MiniGameMessage;
 import net.knarcraft.minigames.util.GUIHelper;
+import net.knarcraft.minigames.util.GeyserHelper;
 import net.knarcraft.minigames.util.PlayerTeleporter;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -33,6 +34,11 @@ public class JoinDropperArenaCommand implements CommandExecutor {
 
         if (arguments.length < 1) {
             return false;
+        }
+
+        if (GeyserHelper.isGeyserPlayer(player)) {
+            stringFormatter.displayErrorMessage(commandSender, MiniGameMessage.ERROR_GEYSER_DROPPER);
+            return true;
         }
 
         // Disallow joining if the player is already in a mini-game arena
@@ -107,7 +113,7 @@ public class JoinDropperArenaCommand implements CommandExecutor {
             // Update the player's state to follow the arena's rules
             newSession.getEntryState().setArenaState();
 
-            player.getInventory().addItem(GUIHelper.getGUIOpenItem());
+            player.getInventory().addItem(GUIHelper.getGUIOpenItem(player));
             stringFormatter.displaySuccessMessage(player, MiniGameMessage.SUCCESS_ARENA_JOINED);
         }
     }

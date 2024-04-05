@@ -8,6 +8,7 @@ import net.knarcraft.minigames.MiniGames;
 import net.knarcraft.minigames.arena.ArenaPlayerRegistry;
 import net.knarcraft.minigames.arena.ArenaSession;
 import net.knarcraft.minigames.arena.PlayerVisibilityManager;
+import net.knarcraft.minigames.arena.parkour.ParkourArenaSession;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.ClickType;
@@ -47,6 +48,20 @@ public abstract class ArenaGUI extends AbstractGUI {
     }
 
     /**
+     * Gets an item describing a retry arena action
+     *
+     * @return <p>An arena restart item</p>
+     */
+    protected ItemStack getRestartItemBedrock() {
+        GUIItemFactory restartItemFactory = new GUIItemFactory(Material.MAGENTA_GLAZED_TERRACOTTA);
+        List<String> loreLines = getLoreLines();
+        loreLines.add(ChatColor.GRAY + "Use this item to retry the arena");
+        restartItemFactory.setName(ChatColor.BLUE + "Retry arena");
+        restartItemFactory.setLore(loreLines);
+        return restartItemFactory.build();
+    }
+
+    /**
      * Gets an item describing player visibility toggling
      *
      * @return <p>A player toggle item</p>
@@ -77,6 +92,35 @@ public abstract class ArenaGUI extends AbstractGUI {
         return togglePlayersItemFactory.build();
     }
 
+    /**
+     * Gets an item describing player visibility toggling
+     *
+     * @return <p>A player toggle item</p>
+     */
+    protected ItemStack getTogglePlayersItemEnabledBedrock() {
+        GUIItemFactory togglePlayersItemFactory = new GUIItemFactory(Material.SKELETON_SKULL);
+        List<String> loreLines = getLoreLines();
+        loreLines.add(ChatColor.GRAY + "Use this item to enable the visibility");
+        loreLines.add(ChatColor.GRAY + "of other players");
+        togglePlayersItemFactory.setName(ChatColor.BLUE + "Enable Players");
+        togglePlayersItemFactory.setLore(loreLines);
+        return togglePlayersItemFactory.build();
+    }
+
+    /**
+     * Gets an item describing a give up action
+     *
+     * @return <p>A give up item</p>
+     */
+    protected ItemStack getGiveUpItem() {
+        GUIItemFactory giveUpItemFactory = new GUIItemFactory(Material.RESPAWN_ANCHOR);
+        List<String> loreLines = getLoreLines();
+        loreLines.add(ChatColor.GRAY + "Use this item to give up");
+        loreLines.add(ChatColor.GRAY + "and go to the last checkpoint");
+        giveUpItemFactory.setName(ChatColor.RED + "Give up");
+        giveUpItemFactory.setLore(loreLines);
+        return giveUpItemFactory.build();
+    }
 
     /**
      * Gets an item describing a leave arena action
@@ -146,16 +190,31 @@ public abstract class ArenaGUI extends AbstractGUI {
      * Gets the action to run when triggering the toggle players action
      *
      * @param playerRegistry <p>The registry containing relevant players</p>
+     * @param inventorySlot  <p>The inventory slot to replace when toggling</p>
      * @return <p>The action for triggering player visibility</p>
      */
-    public GUIAction getTogglePlayersAction(ArenaPlayerRegistry<?> playerRegistry) {
+    public GUIAction getTogglePlayersAction(ArenaPlayerRegistry<?> playerRegistry, int inventorySlot) {
         return (player) -> {
             PlayerVisibilityManager visibilityManager = MiniGames.getInstance().getPlayerVisibilityManager();
             visibilityManager.toggleHidePlayers(playerRegistry, player);
             if (MiniGames.getInstance().getPlayerVisibilityManager().isHidingPlayers(player)) {
-                setItem(0, getTogglePlayersItemEnabled());
+                setItem(inventorySlot, getTogglePlayersItemEnabled());
             } else {
-                setItem(0, getTogglePlayersItemDisabled());
+                setItem(inventorySlot, getTogglePlayersItemDisabled());
+            }
+        };
+    }
+
+    /**
+     * Gets the action to run when triggering the give up item
+     *
+     * @return <p>The give up action</p>
+     */
+    public static GUIAction getGiveUpAction() {
+        return (player) -> {
+            ArenaSession session = MiniGames.getInstance().getSession(player.getUniqueId());
+            if (session instanceof ParkourArenaSession) {
+                session.triggerLoss();
             }
         };
     }

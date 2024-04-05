@@ -165,6 +165,11 @@ public enum MiniGameMessage implements TranslatableMessage {
      */
     ERROR_REWARD_CONDITION_INVALID,
 
+    /**
+     * The message displayed when a geyser player tries to join a dropper arena
+     */
+    ERROR_GEYSER_DROPPER,
+
     /* **************** *
      * Success messages *
      * **************** */
