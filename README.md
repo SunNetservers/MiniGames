@@ -283,7 +283,7 @@ Player records can be displayed on a leaderboard by using PlaceholderAPI. If you
 leaderboard, you can use the [Placeholder Signs](https://git.knarcraft.net/EpicKnarvik97/PlaceholderSigns) plugin. The
 format for the built-in placeholders is as follows:
 
-`%gameMode_record_recordType_gameModeType_identifierType_identifier_recordPlacing_infoType%`
+`%gameMode_record_recordType_gameModeType_identifierType_identifier_recordPosition_infoType%`
 
 | Variable       | Values                      | Description                                                                                                                        |
 |----------------|-----------------------------|------------------------------------------------------------------------------------------------------------------------------------|
@@ -293,7 +293,7 @@ format for the built-in placeholders is as follows:
 | gameModeType   | default / inverted / random | Selects the game-mode to get the record for.                                                                                       |
 | identifierType | arena / group               | The type of thing the following identifier points to (an arena or an arena group).                                                 |
 | identifier     | ?                           | An identifier (the name or UUID) for an arena or a group (whichever was chosen as identifierType).                                 |
-| recordPlacing  | 1 / 2 / 3 / ...             | The position of the record to get (1 = first place, 2 = second place, etc.).                                                       |
+| recordPosition | 1 / 2 / 3 / ...             | The position of the record to get (1 = first place, 2 = second place, etc.).                                                       |
 | infoType       | player / value / combined   | The type of info to get. Player gets the player name, Value gets the value of the achieved record. Combined gets "Player: Record". |
 
 ## Notes about material tags

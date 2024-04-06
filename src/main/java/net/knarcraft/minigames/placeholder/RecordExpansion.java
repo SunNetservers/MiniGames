@@ -120,7 +120,7 @@ public abstract class RecordExpansion extends PlaceholderExpansion {
      * @param identifier   <p>The identifier (name/uuid) selecting the group</p>
      * @param gameMode     <p>The game-mode to get a record for</p>
      * @param recordType   <p>The type of record to get</p>
-     * @param recordNumber <p>The placing of the record to get (1st place, 2nd place, etc.)</p>
+     * @param recordNumber <p>The position of the record to get (1st place, 2nd place, etc.)</p>
      * @param infoType     <p>The type of info (player, value, combined) to get</p>
      * @return <p>The selected information about the record, or null if not found</p>
      */
@@ -158,7 +158,7 @@ public abstract class RecordExpansion extends PlaceholderExpansion {
      *
      * @param group        <p>The group to get the record from</p>
      * @param gameMode     <p>The game-mode to get the record from</p>
-     * @param recordNumber <p>The placing of the record to get (1st place, 2nd place, etc.)</p>
+     * @param recordNumber <p>The position of the record to get (1st place, 2nd place, etc.)</p>
      * @param arenaHandler <p>The handler to get arenas from</p>
      * @return <p>The record, or null if not found</p>
      */
@@ -174,7 +174,7 @@ public abstract class RecordExpansion extends PlaceholderExpansion {
      *
      * @param group        <p>The group to get the record from</p>
      * @param gameMode     <p>The game-mode to get the record from</p>
-     * @param recordNumber <p>The placing of the record to get (1st place, 2nd place, etc.)</p>
+     * @param recordNumber <p>The position of the record to get (1st place, 2nd place, etc.)</p>
      * @param arenaHandler <p>The handler to get arenas from</p>
      * @return <p>The record, or null if not found</p>
      */
@@ -191,7 +191,7 @@ public abstract class RecordExpansion extends PlaceholderExpansion {
      * @param group          <p>The group to get the record for</p>
      * @param gameMode       <p>The game-mode to get the record for</p>
      * @param recordType     <p>The type of record to get</p>
-     * @param recordNumber   <p>The placing of the record to get (1st place, 2nd place, etc.)</p>
+     * @param recordNumber   <p>The position of the record to get (1st place, 2nd place, etc.)</p>
      * @param caches         <p>The caches to use for looking for and saving the record</p>
      * @param recordProvider <p>The provider of records if the cache cannot provide the record</p>
      * @param <K>            <p>The type of the provided records</p>
@@ -240,7 +240,7 @@ public abstract class RecordExpansion extends PlaceholderExpansion {
      * @param identifier   <p>The identifier (name/uuid) selecting the arena</p>
      * @param gameMode     <p>The game-mode to get a record for</p>
      * @param recordType   <p>The type of record to get</p>
-     * @param recordNumber <p>The placing of the record to get (1st place, 2nd place, etc.)</p>
+     * @param recordNumber <p>The position of the record to get (1st place, 2nd place, etc.)</p>
      * @param infoType     <p>The type of info (player, value, combined) to get</p>
      * @return <p>The selected information about the record, or null if not found</p>
      */
@@ -275,7 +275,7 @@ public abstract class RecordExpansion extends PlaceholderExpansion {
      *
      * @param recordsRegistry <p>The records registry to get the record from</p>
      * @param recordType      <p>The type of record to get</p>
-     * @param recordNumber    <p>The placing of the record to get (1st place, 2nd place, etc.)</p>
+     * @param recordNumber    <p>The position of the record to get (1st place, 2nd place, etc.)</p>
      * @return <p>The record, or null if not found</p>
      */
     private @Nullable ArenaRecord<?> getRecord(@NotNull ArenaRecordsRegistry recordsRegistry,
