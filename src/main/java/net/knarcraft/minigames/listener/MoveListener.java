@@ -29,6 +29,7 @@ import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
 
 /**
  * A listener for players moving inside a dropper arena
@@ -101,7 +102,8 @@ public class MoveListener implements Listener {
      * @param targetBlock  <p>The block the player is moving to</p>
      * @param player       <p>The player moving</p>
      */
-    private void updateCheckpoint(ParkourArenaSession arenaSession, Block targetBlock, Player player) {
+    private void updateCheckpoint(@NotNull ParkourArenaSession arenaSession, @NotNull Block targetBlock,
+                                  @NotNull Player player) {
         ParkourArena arena = arenaSession.getArena();
         List<Location> checkpoints = arena.getCheckpoints();
         for (Location checkpoint : checkpoints) {
@@ -202,8 +204,49 @@ public class MoveListener implements Listener {
         double liquidDepth = sharedConfiguration.getLiquidHitBoxDepth();
         Arena arena = arenaSession.getArena();
 
-        // For water, only trigger when the player enters the water, but trigger earlier for everything else
+
+        if (arena instanceof DropperArena) {
+            return checkDropperWin(arenaSession, toLocation, solidDepth, liquidDepth) ||
+                    checkDropperDeathBlocks((DropperArenaSession) arenaSession, toLocation, solidDepth, liquidDepth);
+        } else if (arena instanceof ParkourArena) {
+            return checkParkourWin(arenaSession, toLocation.getBlock()) ||
+                    checkParkourDeathBlock((ParkourArenaSession) arenaSession, toLocation);
+        } else {
+            MiniGames.log(Level.SEVERE, "Unknown arena type encountered!");
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks if the player has triggered a parkour win block
+     *
+     * @param arenaSession <p>The player's current arena session</p>
+     * @param targetBlock  <p>The block the player moved to</p>
+     * @return <p>True if the player triggered a parkour win block</p>
+     */
+    private boolean checkParkourWin(@NotNull ArenaSession arenaSession, @NotNull Block targetBlock) {
+        boolean winBlock = arenaSession.getArena().willCauseWin(targetBlock);
+        if (winBlock) {
+            arenaSession.triggerWin();
+        }
+        return winBlock;
+    }
+
+    /**
+     * Checks if the player has triggered a dropper win block
+     *
+     * @param arenaSession <p>The player's arena session</p>
+     * @param toLocation   <p>The location the player moved to</p>
+     * @param solidDepth   <p>The distance away from solid blocks that will trigger a hit</p>
+     * @param liquidDepth  <p>The depth players need to be inside a liquid to trigger a hit</p>
+     * @return <p>True if the player triggered a dropper win block</p>
+     */
+    private boolean checkDropperWin(@NotNull ArenaSession arenaSession, @NotNull Location toLocation, double solidDepth,
+                                    double liquidDepth) {
+        Arena arena = arenaSession.getArena();
         Set<Block> potentialWinTriggerBlocks;
+        // For water, only trigger when the player enters the water, but trigger earlier for everything else
         if (arena.winLocationIsSolid()) {
             potentialWinTriggerBlocks = getBlocksBeneathLocation(toLocation, solidDepth);
         } else {
@@ -215,25 +258,36 @@ public class MoveListener implements Listener {
                 return true;
             }
         }
+        return false;
+    }
 
-        if (arena instanceof DropperArena) {
-            // Check if the player is about to hit a non-air and non-liquid block
-            for (Block block : getBlocksBeneathLocation(toLocation, solidDepth)) {
-                if (!block.getType().isAir() && !block.isLiquid() && arena.willCauseLoss(block)) {
-                    arenaSession.triggerLoss();
-                    return true;
-                }
-            }
+    /**
+     * Checks if a player is moving onto a block part of the dropper arena death plane
+     *
+     * @param arenaSession <p>The player's arena session</p>
+     * @param toLocation   <p>The location the player is moving to</p>
+     * @param solidDepth   <p>The distance away from solid blocks that will trigger a hit</p>
+     * @param liquidDepth  <p>The depth players need to be inside a liquid to trigger a hit</p>
+     * @return <p>True if the player triggered a dropper death block</p>
+     */
+    private boolean checkDropperDeathBlocks(@NotNull DropperArenaSession arenaSession,
+                                            @NotNull Location toLocation, double solidDepth, double liquidDepth) {
+        Arena arena = arenaSession.getArena();
 
-            // Check if the player has entered a liquid that causes a loss
-            for (Block block : getBlocksBeneathLocation(toLocation, liquidDepth)) {
-                if (block.isLiquid() && arena.willCauseLoss(block)) {
-                    arenaSession.triggerLoss();
-                    return true;
-                }
+        // Check if the player is about to hit a non-air and non-liquid block
+        for (Block block : getBlocksBeneathLocation(toLocation, solidDepth)) {
+            if (!block.getType().isAir() && !block.isLiquid() && arena.willCauseLoss(block)) {
+                arenaSession.triggerLoss();
+                return true;
             }
-        } else if (arena instanceof ParkourArena) {
-            return checkParkourDeathBlock((ParkourArenaSession) arenaSession, toLocation);
+        }
+
+        // Check if the player has entered a liquid that causes a loss
+        for (Block block : getBlocksBeneathLocation(toLocation, liquidDepth)) {
+            if (block.isLiquid() && arena.willCauseLoss(block)) {
+                arenaSession.triggerLoss();
+                return true;
+            }
         }
 
         return false;

@@ -12,6 +12,7 @@ import net.knarcraft.minigames.util.StringSanitizer;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -326,9 +327,16 @@ public class ParkourArena implements Arena {
     }
 
     @Override
-    public boolean willCauseWin(Block block) {
-        return (this.winLocation != null && this.winLocation.getBlock().equals(block)) ||
-                (this.winLocation == null && this.winBlockType == block.getType());
+    public boolean willCauseWin(@NotNull Block block) {
+        if (this.winLocation != null) {
+            return this.winLocation.getBlock().equals(block);
+        } else {
+            if (this.winBlockType.isSolid()) {
+                return this.winBlockType == block.getRelative(BlockFace.DOWN).getType();
+            } else {
+                return this.winBlockType == block.getType();
+            }
+        }
     }
 
     @Override
