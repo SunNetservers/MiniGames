@@ -43,6 +43,7 @@ en:
   SUCCESS_DROPPER_ARENAS_LIST: "Dropper arenas:&r"
   SUCCESS_PARKOUR_ARENAS_LIST: "Parkour arenas:&r"
   SUCCESS_CHECKPOINT_REACHED: "Checkpoint reached!"
+  SUCCESS_GROUPS: "Arena groups:&r"
   SUCCESS_GROUP_STAGES: "{group}'s stages:&r"
   SUCCESS_RECORD_ACHIEVED: "You just set a {recordInfo} on the {gameMode} game-mode!"
   RECORD_ACHIEVED_GLOBAL: "new {recordType} record"

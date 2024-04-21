@@ -298,6 +298,11 @@ public enum MiniGameMessage implements TranslatableMessage {
      * The message displayed when arena rewards have been cleared
      */
     SUCCESS_REWARDS_CLEARED,
+
+    /**
+     * The message displayed when listing arena groups
+     */
+    SUCCESS_GROUPS,
     ;
 
     @Override
