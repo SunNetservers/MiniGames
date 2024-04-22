@@ -22,7 +22,7 @@ public class PlayerVisibilityManager {
      *
      * @param player <p>The the player to update</p>
      */
-    public void toggleHidePlayers(@NotNull ArenaPlayerRegistry<?> playerRegistry, @NotNull Player player) {
+    public void toggleHidePlayers(@Nullable ArenaPlayerRegistry<?> playerRegistry, @NotNull Player player) {
         if (displayingEnabledFor.contains(player.getUniqueId())) {
             displayingEnabledFor.remove(player.getUniqueId());
             // Make all other players hidden

@@ -20,28 +20,32 @@ public interface Arena {
      *
      * @return <p>The name of this arena</p>
      */
-    @NotNull String getArenaName();
+    @NotNull
+    String getArenaName();
 
     /**
      * Gets the data stored for this arena
      *
      * @return <p>The stored data</p>
      */
-    @NotNull ArenaData getData();
+    @NotNull
+    ArenaData getData();
 
     /**
      * Gets the id of this arena
      *
      * @return <p>This arena's identifier</p>
      */
-    @NotNull UUID getArenaId();
+    @NotNull
+    UUID getArenaId();
 
     /**
      * Gets this arena's sanitized name
      *
      * @return <p>This arena's sanitized name</p>
      */
-    @NotNull String getArenaNameSanitized();
+    @NotNull
+    String getArenaNameSanitized();
 
     /**
      * Removes the data file belonging to this arena
@@ -63,7 +67,7 @@ public interface Arena {
      * @param block <p>The block to check</p>
      * @return <p>True if standing on the block will cause a win</p>
      */
-    boolean willCauseWin(Block block);
+    boolean willCauseWin(@NotNull Block block);
 
     /**
      * Gets whether standing on the given block should cause a loss
@@ -71,7 +75,7 @@ public interface Arena {
      * @param block <p>The block to check</p>
      * @return <p>True if standing on the block will cause a loss</p>
      */
-    boolean willCauseLoss(Block block);
+    boolean willCauseLoss(@NotNull Block block);
 
     /**
      * Gets whether the win location is a solid block
@@ -85,14 +89,16 @@ public interface Arena {
      *
      * @return <p>This arena's spawn location</p>
      */
-    @NotNull Location getSpawnLocation();
+    @NotNull
+    Location getSpawnLocation();
 
     /**
      * Gets this arena's exit location
      *
      * @return <p>This arena's exit location, or null if no such location is set.</p>
      */
-    @Nullable Location getExitLocation();
+    @Nullable
+    Location getExitLocation();
 
     /**
      * Adds a reward to this arena
@@ -115,6 +121,7 @@ public interface Arena {
      * @param rewardCondition <p>The condition to get the rewards for</p>
      * @return <p>All rewards</p>
      */
-    @NotNull Set<Reward> getRewards(RewardCondition rewardCondition);
+    @NotNull
+    Set<Reward> getRewards(RewardCondition rewardCondition);
 
 }

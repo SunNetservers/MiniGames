@@ -18,7 +18,17 @@ public interface ArenaPlayerRegistry<K extends Arena> {
      *
      * @return <p>The ids of the playing players</p>
      */
-    @NotNull Set<UUID> getPlayingPlayers();
+    @NotNull
+    Set<UUID> getPlayingPlayers();
+
+    /**
+     * Gets all players currently playing in the given arena
+     *
+     * @param arena <p>The arena to check</p>
+     * @return <p>All players currently in the arena</p>
+     */
+    @NotNull
+    Set<UUID> getPlayingPlayers(@NotNull K arena);
 
     /**
      * Gets the current entry state for the given player
@@ -26,7 +36,8 @@ public interface ArenaPlayerRegistry<K extends Arena> {
      * @param playerId <p>The id of the player to get an entry state for</p>
      * @return <p>The entry state of the player, or null if not found</p>
      */
-    @Nullable PlayerEntryState getEntryState(@NotNull UUID playerId);
+    @Nullable
+    PlayerEntryState getEntryState(@NotNull UUID playerId);
 
     /**
      * Registers that the given player has started playing the given dropper arena session
@@ -50,7 +61,8 @@ public interface ArenaPlayerRegistry<K extends Arena> {
      * @param playerId <p>The id of the player to get arena for</p>
      * @return <p>The player's active arena session, or null if not currently playing</p>
      */
-    @Nullable ArenaSession getArenaSession(@NotNull UUID playerId);
+    @Nullable
+    ArenaSession getArenaSession(@NotNull UUID playerId);
 
     /**
      * Removes all active sessions for the given arena
@@ -58,6 +70,6 @@ public interface ArenaPlayerRegistry<K extends Arena> {
      * @param arena       <p>The arena to remove sessions for</p>
      * @param immediately <p>Whether to immediately teleport the player</p>
      */
-    void removeForArena(K arena, boolean immediately);
+    void removeForArena(@NotNull K arena, boolean immediately);
 
 }

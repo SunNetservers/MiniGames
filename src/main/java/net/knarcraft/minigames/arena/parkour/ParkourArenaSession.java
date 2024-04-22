@@ -3,6 +3,7 @@ package net.knarcraft.minigames.arena.parkour;
 import net.knarcraft.knarlib.formatting.StringFormatter;
 import net.knarcraft.minigames.MiniGames;
 import net.knarcraft.minigames.arena.AbstractArenaSession;
+import net.knarcraft.minigames.arena.Arena;
 import net.knarcraft.minigames.arena.PlayerEntryState;
 import net.knarcraft.minigames.arena.reward.RewardCondition;
 import net.knarcraft.minigames.config.MiniGameMessage;
@@ -13,10 +14,17 @@ import net.knarcraft.minigames.util.GeyserHelper;
 import net.knarcraft.minigames.util.PlayerTeleporter;
 import net.knarcraft.minigames.util.RewardHelper;
 import org.bukkit.Location;
+import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Powerable;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 
 /**
@@ -24,10 +32,11 @@ import java.util.logging.Level;
  */
 public class ParkourArenaSession extends AbstractArenaSession {
 
+    private static final @NotNull Map<Arena, Set<Block>> changedLevers = new HashMap<>();
     private final @NotNull ParkourArena arena;
     private final @NotNull Player player;
     private final @NotNull ParkourArenaGameMode gameMode;
-    private Location reachedCheckpoint = null;
+    private @Nullable Location reachedCheckpoint = null;
 
     /**
      * Instantiates a new parkour arena session
@@ -63,6 +72,16 @@ public class ParkourArenaSession extends AbstractArenaSession {
      */
     public void registerCheckpoint(@NotNull Location location) {
         this.reachedCheckpoint = location;
+    }
+
+    /**
+     * Registers a lever change
+     *
+     * @param block <p>The block of the lever</p>
+     */
+    public void registerChangedLever(@NotNull Block block) {
+        changedLevers.putIfAbsent(this.arena, new HashSet<>());
+        changedLevers.get(this.arena).add(block);
     }
 
     /**
@@ -132,6 +151,9 @@ public class ParkourArenaSession extends AbstractArenaSession {
     @Override
     public void reset() {
         this.reachedCheckpoint = null;
+        if (MiniGames.getInstance().getParkourArenaPlayerRegistry().getPlayingPlayers(this.arena).size() == 1) {
+            resetLevers();
+        }
         super.reset();
     }
 
@@ -152,6 +174,35 @@ public class ParkourArenaSession extends AbstractArenaSession {
             case DEFAULT -> "default";
             case HARDCORE -> "hardcore";
         };
+    }
+
+    @Override
+    public void triggerQuit(boolean immediately, boolean removeSession) {
+        super.triggerQuit(immediately, removeSession);
+
+        if (MiniGames.getInstance().getParkourArenaPlayerRegistry().getPlayingPlayers(this.arena).isEmpty()) {
+            resetLevers();
+        }
+    }
+
+    /**
+     * Resets all levers if the arena is empty
+     */
+    private void resetLevers() {
+        // Make a copy in case new player join while the levers are resetting
+        Set<Block> changed = changedLevers.remove(this.arena);
+        if (changed == null || changed.isEmpty()) {
+            return;
+        }
+
+        // Reset all levers toggled by players in the arena
+        for (Block block : changed) {
+            BlockData blockData = block.getBlockData();
+            if (blockData instanceof Powerable powerable) {
+                powerable.setPowered(false);
+                block.setBlockData(blockData);
+            }
+        }
     }
 
 }

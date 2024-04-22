@@ -17,6 +17,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +33,7 @@ public abstract class ArenaGUI extends AbstractGUI {
      * @param inventorySize <p>The size of the GUI's inventory</p>
      * @param inventoryName <p>The name of the inventory</p>
      */
-    public ArenaGUI(int inventorySize, String inventoryName) {
+    public ArenaGUI(int inventorySize, @NotNull String inventoryName) {
         super(inventorySize, inventoryName, null);
     }
 
@@ -79,6 +80,7 @@ public abstract class ArenaGUI extends AbstractGUI {
      *
      * @return <p>A player toggle item</p>
      */
+    @NotNull
     protected ItemStack getTogglePlayersItemDisabled() {
         GUIItemFactory togglePlayersItemFactory = new SimpleGUIItemFactory(Material.PLAYER_HEAD);
         List<String> loreLines = getLoreLines();
@@ -95,7 +97,8 @@ public abstract class ArenaGUI extends AbstractGUI {
      * @param player <p>The player to get the item for</p>
      * @return <p>A player toggle item</p>
      */
-    protected ItemStack getTogglePlayersItemEnabled(Player player) {
+    @NotNull
+    protected ItemStack getTogglePlayersItemEnabled(@NotNull Player player) {
         if (GeyserHelper.isGeyserPlayer(player)) {
             return getTogglePlayersItemEnabledBedrock();
         } else {
@@ -108,6 +111,7 @@ public abstract class ArenaGUI extends AbstractGUI {
      *
      * @return <p>A player toggle item</p>
      */
+    @NotNull
     protected ItemStack getTogglePlayersItemEnabledJava() {
         PlayerHeadGUIItemFactory togglePlayersItemFactory = new PlayerHeadGUIItemFactory();
         togglePlayersItemFactory.useSkin("c10591e6909e6a281b371836e462d67a2c78fa0952e910f32b41a26c48c1757c");
@@ -119,6 +123,7 @@ public abstract class ArenaGUI extends AbstractGUI {
      *
      * @return <p>A player toggle item</p>
      */
+    @NotNull
     protected ItemStack getTogglePlayersItemEnabledBedrock() {
         return setTogglePlayersItemData(new SimpleGUIItemFactory(Material.SKELETON_SKULL));
     }
@@ -129,6 +134,7 @@ public abstract class ArenaGUI extends AbstractGUI {
      * @param itemFactory <p>The factory to apply the data to</p>
      * @return <p>The finished item, with the data applied</p>
      */
+    @NotNull
     protected ItemStack setTogglePlayersItemData(@NotNull GUIItemFactory itemFactory) {
         List<String> loreLines = getLoreLines();
         loreLines.add(ChatColor.GRAY + "Use this item to enable the visibility");
@@ -143,6 +149,7 @@ public abstract class ArenaGUI extends AbstractGUI {
      *
      * @return <p>A give up item</p>
      */
+    @NotNull
     protected ItemStack getGiveUpItem() {
         GUIItemFactory giveUpItemFactory = new SimpleGUIItemFactory(Material.RESPAWN_ANCHOR);
         List<String> loreLines = getLoreLines();
@@ -158,6 +165,7 @@ public abstract class ArenaGUI extends AbstractGUI {
      *
      * @return <p>A leave item</p>
      */
+    @NotNull
     protected ItemStack getLeaveItem() {
         GUIItemFactory leaveItemFactory = new SimpleGUIItemFactory(Material.BARRIER);
         List<String> loreLines = getLoreLines();
@@ -172,6 +180,7 @@ public abstract class ArenaGUI extends AbstractGUI {
      *
      * @return <p>An arraylist with one blank line</p>
      */
+    @NotNull
     protected List<String> getLoreLines() {
         List<String> loreLines = new ArrayList<>();
         loreLines.add("");
@@ -184,7 +193,7 @@ public abstract class ArenaGUI extends AbstractGUI {
      * @param inventorySlot <p>The inventory slot the action should be added to</p>
      * @param action        <p>The action to register</p>
      */
-    protected void setAnyClickAction(int inventorySlot, GUIAction action) {
+    protected void setAnyClickAction(int inventorySlot, @NotNull GUIAction action) {
         setClickAction(inventorySlot, ClickType.LEFT, action);
         setClickAction(inventorySlot, ClickType.RIGHT, action);
     }
@@ -194,6 +203,7 @@ public abstract class ArenaGUI extends AbstractGUI {
      *
      * @return <p>The leave action</p>
      */
+    @NotNull
     public static GUIAction getLeaveAction() {
         return (player) -> {
             ArenaSession session = MiniGames.getInstance().getSession(player.getUniqueId());
@@ -208,6 +218,7 @@ public abstract class ArenaGUI extends AbstractGUI {
      *
      * @return <p>The action for triggering a session restart</p>
      */
+    @NotNull
     public static GUIAction getRestartAction() {
         return (player -> {
             ArenaSession session = MiniGames.getInstance().getSession(player.getUniqueId());
@@ -224,7 +235,8 @@ public abstract class ArenaGUI extends AbstractGUI {
      * @param inventorySlot  <p>The inventory slot to replace when toggling</p>
      * @return <p>The action for triggering player visibility</p>
      */
-    public GUIAction getTogglePlayersAction(ArenaPlayerRegistry<?> playerRegistry, int inventorySlot) {
+    @NotNull
+    public GUIAction getTogglePlayersAction(@Nullable ArenaPlayerRegistry<?> playerRegistry, int inventorySlot) {
         return (player) -> {
             PlayerVisibilityManager visibilityManager = MiniGames.getInstance().getPlayerVisibilityManager();
             visibilityManager.toggleHidePlayers(playerRegistry, player);
@@ -241,6 +253,7 @@ public abstract class ArenaGUI extends AbstractGUI {
      *
      * @return <p>The give up action</p>
      */
+    @NotNull
     public static GUIAction getGiveUpAction() {
         return (player) -> {
             ArenaSession session = MiniGames.getInstance().getSession(player.getUniqueId());

@@ -243,12 +243,12 @@ public class DropperArena implements Arena {
     }
 
     @Override
-    public boolean willCauseWin(Block block) {
+    public boolean willCauseWin(@NotNull Block block) {
         return block.getType() == winBlockType;
     }
 
     @Override
-    public boolean willCauseLoss(Block block) {
+    public boolean willCauseLoss(@NotNull Block block) {
         return !dropperConfiguration.getBlockWhitelist().contains(block.getType());
     }
 

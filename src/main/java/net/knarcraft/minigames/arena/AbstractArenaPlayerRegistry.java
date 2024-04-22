@@ -19,7 +19,8 @@ import java.util.logging.Level;
  */
 public abstract class AbstractArenaPlayerRegistry<K extends Arena> implements ArenaPlayerRegistry<K> {
 
-    private final Map<UUID, ArenaSession> arenaPlayers = new HashMap<>();
+    private final Map<Arena, Set<UUID>> arenaPlayers = new HashMap<>();
+    private final Map<UUID, ArenaSession> arenaSessions = new HashMap<>();
     private final Map<UUID, PlayerEntryState> entryStates = new HashMap<>();
 
     /**
@@ -30,19 +31,25 @@ public abstract class AbstractArenaPlayerRegistry<K extends Arena> implements Ar
     }
 
     @Override
-    public @NotNull Set<UUID> getPlayingPlayers() {
-        return arenaPlayers.keySet();
+    @NotNull
+    public Set<UUID> getPlayingPlayers() {
+        return arenaSessions.keySet();
     }
 
     @Override
-    public @Nullable PlayerEntryState getEntryState(@NotNull UUID playerId) {
+    @Nullable
+    public PlayerEntryState getEntryState(@NotNull UUID playerId) {
         return this.entryStates.get(playerId);
     }
 
     @Override
     public void registerPlayer(@NotNull UUID playerId, @NotNull ArenaSession arenaSession) {
-        this.arenaPlayers.put(playerId, arenaSession);
+        this.arenaSessions.put(playerId, arenaSession);
         this.entryStates.put(playerId, arenaSession.getEntryState());
+
+        this.arenaPlayers.putIfAbsent(arenaSession.getArena(), new HashSet<>());
+        this.arenaPlayers.get(arenaSession.getArena()).add(playerId);
+
         this.saveEntryStates();
     }
 
@@ -60,25 +67,38 @@ public abstract class AbstractArenaPlayerRegistry<K extends Arena> implements Ar
             this.saveEntryStates();
         }
 
-        return this.arenaPlayers.remove(playerId) != null;
+        if (this.arenaSessions.containsKey(playerId)) {
+            this.arenaPlayers.get(this.arenaSessions.get(playerId).getArena()).remove(playerId);
+        }
+        return this.arenaSessions.remove(playerId) != null;
     }
 
     @Override
     public @Nullable ArenaSession getArenaSession(@NotNull UUID playerId) {
-        return this.arenaPlayers.getOrDefault(playerId, null);
+        return this.arenaSessions.getOrDefault(playerId, null);
     }
 
     @Override
-    public void removeForArena(K arena, boolean immediately) {
+    public void removeForArena(@NotNull K arena, boolean immediately) {
         Set<UUID> removed = new HashSet<>();
-        for (Map.Entry<UUID, ArenaSession> entry : this.arenaPlayers.entrySet()) {
+        for (Map.Entry<UUID, ArenaSession> entry : this.arenaSessions.entrySet()) {
             if (entry.getValue().getArena() == arena) {
                 // Kick the player gracefully
                 entry.getValue().triggerQuit(immediately, false);
                 removed.add(entry.getKey());
             }
         }
-        removed.forEach(this.arenaPlayers::remove);
+        removed.forEach(this.arenaSessions::remove);
+    }
+
+    @Override
+    @NotNull
+    public Set<UUID> getPlayingPlayers(@NotNull K arena) {
+        if (arenaPlayers.containsKey(arena)) {
+            return arenaPlayers.get(arena);
+        } else {
+            return new HashSet<>();
+        }
     }
 
     /**

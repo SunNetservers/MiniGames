@@ -340,7 +340,7 @@ public class ParkourArena implements Arena {
     }
 
     @Override
-    public boolean willCauseLoss(Block block) {
+    public boolean willCauseLoss(@NotNull Block block) {
         return this.getKillPlaneBlocks().contains(block.getType()) || this.getObstacleBlocks().contains(block.getType());
     }
 
