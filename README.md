@@ -13,6 +13,11 @@ playing, simply use `/parkourjoin <name>`, where \<name> is the same as you spec
 To modify the arena, use `/parkouredit <name> <property> <value>`. Use `/parkouredit checkpointAdd here` to add a
 checkpoint at your current location.
 
+Special Parkour behavior: If a lever is toggled while in a parkour arena, that lever is saved, and automatically turned
+off once the last arena player leaves, or the last arena player restarts. This allows parkour arenas where lever toggles
+are required for progression. It is however possible to cheat by having one player go first, toggling required levers,
+and then going through much faster.
+
 ## Permissions
 
 The only permission normal players will need is `minigames.join` which is set to true by default.
