@@ -5,6 +5,7 @@ import net.knarcraft.minigames.MiniGames;
 import net.knarcraft.minigames.arena.parkour.ParkourArena;
 import net.knarcraft.minigames.arena.parkour.ParkourArenaEditableProperty;
 import net.knarcraft.minigames.config.MiniGameMessage;
+import net.knarcraft.minigames.util.InputValidationHelper;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -12,6 +13,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.List;
@@ -109,7 +111,7 @@ public class EditParkourArenaCommand implements CommandExecutor {
      * @param locationString <p>The location string to parse</p>
      * @return <p>The parsed location, or the player's location if not parse-able</p>
      */
-    private @NotNull Location parseLocation(Player player, String locationString) {
+    private @Nullable Location parseLocation(Player player, String locationString) {
         if ((locationString.trim() + ",").matches("([0-9]+.?[0-9]*,){3}")) {
             String[] parts = locationString.split(",");
             Location newLocation = player.getLocation().clone();
@@ -117,6 +119,8 @@ public class EditParkourArenaCommand implements CommandExecutor {
             newLocation.setY(Double.parseDouble(parts[1].trim()));
             newLocation.setZ(Double.parseDouble(parts[2].trim()));
             return newLocation;
+        } else if (InputValidationHelper.isEmptyValue(locationString)) {
+            return null;
         } else {
             return player.getLocation().clone();
         }

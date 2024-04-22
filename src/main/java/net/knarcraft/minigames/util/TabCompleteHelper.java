@@ -36,7 +36,8 @@ public final class TabCompleteHelper {
      *
      * @return <p>All arena names</p>
      */
-    public static @NotNull List<String> getDropperArenas() {
+    @NotNull
+    public static List<String> getDropperArenas() {
         return getArenas(MiniGames.getInstance().getDropperArenaHandler());
     }
 
@@ -45,7 +46,8 @@ public final class TabCompleteHelper {
      *
      * @return <p>All arena names</p>
      */
-    public static @NotNull List<String> getParkourArenas() {
+    @NotNull
+    public static List<String> getParkourArenas() {
         return getArenas(MiniGames.getInstance().getParkourArenaHandler());
     }
 
@@ -54,7 +56,8 @@ public final class TabCompleteHelper {
      *
      * @return <p>All arena names</p>
      */
-    private static @NotNull List<String> getArenas(ArenaHandler<?, ?> arenaHandler) {
+    @NotNull
+    private static List<String> getArenas(@NotNull ArenaHandler<?, ?> arenaHandler) {
         List<String> arenaNames = new ArrayList<>();
         for (Arena arena : arenaHandler.getArenas().values()) {
             arenaNames.add(arena.getArenaName());
@@ -67,7 +70,8 @@ public final class TabCompleteHelper {
      *
      * @return <p>All arena properties</p>
      */
-    public static @NotNull List<String> getDropperArenaProperties() {
+    @NotNull
+    public static List<String> getDropperArenaProperties() {
         List<String> arenaProperties = new ArrayList<>();
         for (DropperArenaEditableProperty property : DropperArenaEditableProperty.values()) {
             arenaProperties.add(property.getArgumentString());
@@ -80,7 +84,8 @@ public final class TabCompleteHelper {
      *
      * @return <p>All arena properties</p>
      */
-    public static @NotNull List<String> getParkourArenaProperties() {
+    @NotNull
+    public static List<String> getParkourArenaProperties() {
         List<String> arenaProperties = new ArrayList<>();
         for (ParkourArenaEditableProperty property : ParkourArenaEditableProperty.values()) {
             arenaProperties.add(property.getArgumentString());
@@ -94,7 +99,8 @@ public final class TabCompleteHelper {
      * @param propertyType <p>The property type to get suggestions for</p>
      * @return <p>The suggestions produced</p>
      */
-    public static List<String> getTabCompleteSuggestions(EditablePropertyType propertyType) {
+    @NotNull
+    public static List<String> getTabCompleteSuggestions(@NotNull EditablePropertyType propertyType) {
         if (tabCompleteSuggestions == null) {
             tabCompleteSuggestions = new HashMap<>();
             tabCompleteSuggestions.put(EditablePropertyType.LOCATION, getLocationSuggestions());
@@ -115,6 +121,7 @@ public final class TabCompleteHelper {
      *
      * @return <p>A list of suggestions</p>
      */
+    @NotNull
     private static List<String> getDoubleSuggestions() {
         List<String> suggestions = new ArrayList<>();
         suggestions.add("0");
@@ -133,6 +140,7 @@ public final class TabCompleteHelper {
      *
      * @return <p>A list of suggestions</p>
      */
+    @NotNull
     private static List<String> getMaterialListSuggestions() {
         List<String> suggestions = new ArrayList<>();
         suggestions.add("LAVA,MAGMA_BLOCK");
@@ -146,6 +154,7 @@ public final class TabCompleteHelper {
      *
      * @return <p>A list of suggestions</p>
      */
+    @NotNull
     private static List<String> getCheckpointClearSuggestions() {
         List<String> suggestions = new ArrayList<>();
         suggestions.add("true");
@@ -157,6 +166,7 @@ public final class TabCompleteHelper {
      *
      * @return <p>A list of suggestions</p>
      */
+    @NotNull
     private static List<String> getBlockTypeSuggestions() {
         List<String> materials = new ArrayList<>();
         for (Material material : Material.values()) {
@@ -172,6 +182,7 @@ public final class TabCompleteHelper {
      *
      * @return <p>A list of suggestions</p>
      */
+    @NotNull
     private static List<String> getVerticalVelocitySuggestions() {
         List<String> velocities = new ArrayList<>();
         velocities.add("0.01");
@@ -189,6 +200,7 @@ public final class TabCompleteHelper {
      *
      * @return <p>A list of suggestions</p>
      */
+    @NotNull
     private static List<String> getHorizontalVelocitySuggestions() {
         List<String> velocities = new ArrayList<>();
         velocities.add("0.01");
@@ -203,6 +215,7 @@ public final class TabCompleteHelper {
      *
      * @return <p>A list of suggestions</p>
      */
+    @NotNull
     private static List<String> getNameSuggestions() {
         List<String> locations = new ArrayList<>();
         locations.add("DropperArena1");
@@ -217,10 +230,12 @@ public final class TabCompleteHelper {
      *
      * @return <p>A list of suggestions</p>
      */
+    @NotNull
     private static List<String> getLocationSuggestions() {
         List<String> locations = new ArrayList<>();
         locations.add("here");
         locations.add("x,y,z");
+        locations.add("null");
         return locations;
     }
 
@@ -230,7 +245,8 @@ public final class TabCompleteHelper {
      * @param typedNode <p>The full permission node typed by the player</p>
      * @return <p>All known valid auto-complete options</p>
      */
-    public static List<String> tabCompletePermission(String typedNode) {
+    @NotNull
+    public static List<String> tabCompletePermission(@NotNull String typedNode) {
         if (plugins == null) {
             loadAvailablePermissions();
         }
@@ -268,7 +284,7 @@ public final class TabCompleteHelper {
      *
      * @param permissionName <p>The permission to load</p>
      */
-    private static void loadPermission(String permissionName) {
+    private static void loadPermission(@NotNull String permissionName) {
         String[] permissionParts = permissionName.split("\\.");
         if (permissionParts.length == 1 && !plugins.contains(permissionParts[0])) {
             plugins.add(permissionParts[0]);

@@ -263,7 +263,7 @@ public class DropperArena implements Arena {
      * @param newLocation <p>The new spawn location</p>
      * @return <p>True if successfully updated</p>
      */
-    public boolean setSpawnLocation(@NotNull Location newLocation) {
+    public boolean setSpawnLocation(@Nullable Location newLocation) {
         if (isInvalid(newLocation)) {
             return false;
         } else {
@@ -279,7 +279,7 @@ public class DropperArena implements Arena {
      * @param newLocation <p>The new exit location</p>
      * @return <p>True if successfully updated</p>
      */
-    public boolean setExitLocation(@NotNull Location newLocation) {
+    public boolean setExitLocation(@Nullable Location newLocation) {
         if (isInvalid(newLocation)) {
             return false;
         } else {

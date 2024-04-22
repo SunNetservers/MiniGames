@@ -356,7 +356,7 @@ public class ParkourArena implements Arena {
      * @param newLocation <p>The new spawn location</p>
      * @return <p>True if successfully updated</p>
      */
-    public boolean setSpawnLocation(@NotNull Location newLocation) {
+    public boolean setSpawnLocation(@Nullable Location newLocation) {
         if (isInvalid(newLocation)) {
             return false;
         } else {
@@ -372,7 +372,7 @@ public class ParkourArena implements Arena {
      * @param newLocation <p>The new exit location</p>
      * @return <p>True if successfully updated</p>
      */
-    public boolean setExitLocation(@NotNull Location newLocation) {
+    public boolean setExitLocation(@Nullable Location newLocation) {
         if (isInvalid(newLocation)) {
             return false;
         } else {
@@ -425,13 +425,18 @@ public class ParkourArena implements Arena {
      * @param newLocation <p>The location players have to reach</p>
      * @return <p>True if successfully changed</p>
      */
-    public boolean setWinLocation(@NotNull Location newLocation) {
-        if (isInvalid(newLocation)) {
-            return false;
-        } else {
+    public boolean setWinLocation(@Nullable Location newLocation) {
+        if (newLocation == null) {
+            // Un-set the win location, and fall back to the win block type
+            this.winLocation = null;
+            this.saveArena();
+            return true;
+        } else if (!isInvalid(newLocation)) {
             this.winLocation = newLocation.clone();
             this.saveArena();
             return true;
+        } else {
+            return false;
         }
     }
 
@@ -485,7 +490,7 @@ public class ParkourArena implements Arena {
      * @param checkpoint <p>The checkpoint to add</p>
      * @return <p>True if successfully added</p>
      */
-    public boolean addCheckpoint(@NotNull Location checkpoint) {
+    public boolean addCheckpoint(@Nullable Location checkpoint) {
         if (isInvalid(checkpoint)) {
             return false;
         }
