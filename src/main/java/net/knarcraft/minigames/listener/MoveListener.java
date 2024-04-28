@@ -343,6 +343,13 @@ public class MoveListener implements Listener {
                     arenaSession.triggerLoss();
                     return true;
                 }
+
+                // Make the hit-box stricter for liquids beside the player to make lava labyrinths feasible
+                if (block.isLiquid() && player != null && block.getY() > player.getLocation().getBlockY() &&
+                        playerBox.overlaps(fullBlockBox.clone().shift(block.getLocation()))) {
+                    arenaSession.triggerLoss();
+                    return true;
+                }
             }
 
             // Check whether the player's actual hit-box is intersecting with a block
