@@ -70,8 +70,8 @@ import net.knarcraft.minigames.listener.MoveListener;
 import net.knarcraft.minigames.listener.PlayerStateChangeListener;
 import net.knarcraft.minigames.manager.EconomyManager;
 import net.knarcraft.minigames.manager.PermissionManager;
-import net.knarcraft.minigames.placeholder.DropperRecordExpansion;
-import net.knarcraft.minigames.placeholder.ParkourRecordExpansion;
+import net.knarcraft.minigames.placeholder.DropperExpansion;
+import net.knarcraft.minigames.placeholder.ParkourExpansion;
 import net.md_5.bungee.api.ChatColor;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
@@ -102,8 +102,8 @@ public final class MiniGames extends JavaPlugin {
     private ParkourConfiguration parkourConfiguration;
     private DropperArenaHandler dropperArenaHandler;
     private ArenaPlayerRegistry<DropperArena> dropperArenaPlayerRegistry;
-    private DropperRecordExpansion dropperRecordExpansion;
-    private ParkourRecordExpansion parkourRecordExpansion;
+    private DropperExpansion dropperExpansion;
+    private ParkourExpansion parkourExpansion;
     private ParkourArenaHandler parkourArenaHandler;
     private ArenaPlayerRegistry<ParkourArena> parkourArenaPlayerRegistry;
     private PlayerVisibilityManager playerVisibilityManager;
@@ -253,8 +253,8 @@ public final class MiniGames extends JavaPlugin {
         this.parkourConfiguration.load(this.getConfig());
 
         // Clear record caches
-        this.dropperRecordExpansion.clearCaches();
-        this.parkourRecordExpansion.clearCaches();
+        this.dropperExpansion.clearCaches();
+        this.parkourExpansion.clearCaches();
     }
 
     @Override
@@ -316,12 +316,12 @@ public final class MiniGames extends JavaPlugin {
      */
     private void doPluginIntegration() {
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
-            this.dropperRecordExpansion = new DropperRecordExpansion(this);
-            if (!this.dropperRecordExpansion.register()) {
+            this.dropperExpansion = new DropperExpansion(this);
+            if (!this.dropperExpansion.register()) {
                 log(Level.WARNING, "Unable to register PlaceholderAPI dropper expansion!");
             }
-            this.parkourRecordExpansion = new ParkourRecordExpansion(this);
-            if (!this.parkourRecordExpansion.register()) {
+            this.parkourExpansion = new ParkourExpansion(this);
+            if (!this.parkourExpansion.register()) {
                 log(Level.WARNING, "Unable to register PlaceholderAPI parkour expansion!");
             }
         }

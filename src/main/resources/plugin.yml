@@ -7,6 +7,8 @@ description: A plugin that adds various mini-games
 softdepend:
   - PlaceholderAPI
   - Vault
+  - Geyser-Spigot
+  - floodgate
 
 # Note to self: Aliases must be lowercase!
 commands:

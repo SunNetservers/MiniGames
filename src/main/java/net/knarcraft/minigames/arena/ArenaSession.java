@@ -52,4 +52,11 @@ public interface ArenaSession {
      */
     void reset();
 
+    /**
+     * Gets the game-mode the player is playing
+     *
+     * @return <p>The game-mode the player is playing</p>
+     */
+    @NotNull ArenaGameMode getGameMode();
+
 }

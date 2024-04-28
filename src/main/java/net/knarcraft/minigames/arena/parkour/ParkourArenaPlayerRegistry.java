@@ -11,5 +11,5 @@ public class ParkourArenaPlayerRegistry extends AbstractArenaPlayerRegistry<Park
     protected String getEntryStateStorageKey() {
         return "parkour";
     }
-    
+
 }

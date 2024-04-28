@@ -282,7 +282,9 @@ These are all the options that can be changed for an arena.
 - LIGHTNING_ROD
 - CHAIN
 
-## Record placeholders
+## Placeholders
+
+### Record Placeholders
 
 Player records can be displayed on a leaderboard by using PlaceholderAPI. If you want to display a sign-based
 leaderboard, you can use the [Placeholder Signs](https://git.knarcraft.net/EpicKnarvik97/PlaceholderSigns) plugin. The
@@ -290,16 +292,34 @@ format for the built-in placeholders is as follows:
 
 `%gameMode_record_recordType_gameModeType_identifierType_identifier_recordPosition_infoType%`
 
-| Variable       | Values                      | Description                                                                                                                        |
-|----------------|-----------------------------|------------------------------------------------------------------------------------------------------------------------------------|
-| gameMode       | dropper / parkour           | A selection of which game-mode you are getting a record for                                                                        |
-| record         |                             | This must be as-is. It's a selector in case placeholders are added for more than records.                                          |
-| recordType     | deaths / time               | Selects the type of record to get (deaths or time).                                                                                |
-| gameModeType   | default / inverted / random | Selects the game-mode to get the record for.                                                                                       |
-| identifierType | arena / group               | The type of thing the following identifier points to (an arena or an arena group).                                                 |
-| identifier     | ?                           | An identifier (the name or UUID) for an arena or a group (whichever was chosen as identifierType).                                 |
-| recordPosition | 1 / 2 / 3 / ...             | The position of the record to get (1 = first place, 2 = second place, etc.).                                                       |
-| infoType       | player / value / combined   | The type of info to get. Player gets the player name, Value gets the value of the achieved record. Combined gets "Player: Record". |
+| Variable       | Values                                 | Description                                                                                                                        |
+|----------------|----------------------------------------|------------------------------------------------------------------------------------------------------------------------------------|
+| gameMode       | dropper / parkour                      | A selection of which game-mode you are getting a record for                                                                        |
+| record         |                                        | This must be as-is. It's a selector for the type of placeholder to get.                                                            |
+| recordType     | deaths / time                          | Selects the type of record to get (deaths or time).                                                                                |
+| gameModeType   | default / inverted / random / hardcore | Selects the game-mode to get the record for.                                                                                       |
+| identifierType | arena / group                          | The type of thing the following identifier points to (an arena or an arena group).                                                 |
+| identifier     | ?                                      | An identifier (the name or UUID) for an arena or a group (whichever was chosen as identifierType).                                 |
+| recordPosition | 1 / 2 / 3 / ...                        | The position of the record to get (1 = first place, 2 = second place, etc.).                                                       |
+| infoType       | player / value / combined              | The type of info to get. Player gets the player name, Value gets the value of the achieved record. Combined gets "Player: Record". |
+
+### Player Placeholders
+
+The number of currently playing players can be displayed using PlaceholderAPI. If you want to display a sign-based
+leaderboard, you can use the [Placeholder Signs](https://git.knarcraft.net/EpicKnarvik97/PlaceholderSigns) plugin. The
+format for the built-in placeholders is as follows:
+
+`%gameMode_players_playing_gameModeType_identifierType_identifier_infoType_additionalSpecifier%`
+
+| Variable        | Values                                       | Description                                                                                                                                   |
+|-----------------|----------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------|
+| gameMode        | dropper / parkour                            | A selection of which game-mode you are getting a record for                                                                                   |
+| players_playing |                                              | This must be as-is. It's a selector in case placeholders are added for more than playing players.                                             |
+| gameModeType    | default / inverted / random / hardcore / all | Selects the game-mode to get the players for. Note that "all" combines players for all game-modes.                                            |
+| identifierType  | arena / group                                | The type of thing the following identifier points to (an arena or an arena group).                                                            |
+| identifier      | ?                                            | An identifier (the name or UUID) for an arena or a group (whichever was chosen as identifierType).                                            |
+| playerInfoType  | player / count                               | The type of info to get. Player gets the player name, and count gets the total number of players.                                             |
+| playerNumber    | 1 / 2 / 3 / ...                              | The player number to get the name of. Players are numbered after their sorted names. This argument is not used when getting the player count. |
 
 ## Notes about material tags
 

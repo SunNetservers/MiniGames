@@ -123,6 +123,10 @@ public class ParkourArenaSession extends AbstractArenaSession {
 
         // Teleport the player out of the arena
         teleportToExit(false);
+
+        if (MiniGames.getInstance().getParkourArenaPlayerRegistry().getPlayingPlayers(this.arena).isEmpty()) {
+            resetLevers();
+        }
     }
 
     @Override
