@@ -4,16 +4,12 @@ import net.knarcraft.knarlib.formatting.StringFormatter;
 import net.knarcraft.minigames.MiniGames;
 import net.knarcraft.minigames.arena.parkour.ParkourArena;
 import net.knarcraft.minigames.arena.parkour.ParkourArenaEditableProperty;
+import net.knarcraft.minigames.command.EditArenaCommand;
 import net.knarcraft.minigames.config.MiniGameMessage;
-import net.knarcraft.minigames.util.InputValidationHelper;
-import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.List;
@@ -21,12 +17,13 @@ import java.util.List;
 /**
  * The command for editing an existing dropper arena
  */
-public class EditParkourArenaCommand implements CommandExecutor {
+public class EditParkourArenaCommand extends EditArenaCommand {
 
     /**
      * Instantiates a new edit arena command
      */
     public EditParkourArenaCommand() {
+        super(null);
     }
 
     @Override
@@ -101,43 +98,8 @@ public class EditParkourArenaCommand implements CommandExecutor {
             case CHECKPOINT_CLEAR -> arena.clearCheckpoints();
             case KILL_PLANE_BLOCKS -> arena.setKillPlaneBlocks(new HashSet<>(List.of(value.split(","))));
             case OBSTACLE_BLOCKS -> arena.setObstacleBlocks(new HashSet<>(List.of(value.split(","))));
+            case MAX_PLAYERS -> arena.setMaxPlayers(parseMaxPlayers(value));
         };
-    }
-
-    /**
-     * Parses the given location string
-     *
-     * @param player         <p>The player changing a location</p>
-     * @param locationString <p>The location string to parse</p>
-     * @return <p>The parsed location, or the player's location if not parse-able</p>
-     */
-    private @Nullable Location parseLocation(Player player, String locationString) {
-        if ((locationString.trim() + ",").matches("([0-9]+.?[0-9]*,){3}")) {
-            String[] parts = locationString.split(",");
-            Location newLocation = player.getLocation().clone();
-            newLocation.setX(Double.parseDouble(parts[0].trim()));
-            newLocation.setY(Double.parseDouble(parts[1].trim()));
-            newLocation.setZ(Double.parseDouble(parts[2].trim()));
-            return newLocation;
-        } else if (InputValidationHelper.isEmptyValue(locationString)) {
-            return null;
-        } else {
-            return player.getLocation().clone();
-        }
-    }
-
-    /**
-     * Parses the given material name
-     *
-     * @param materialName <p>The material name to parse</p>
-     * @return <p>The parsed material, or AIR if not valid</p>
-     */
-    private @NotNull Material parseMaterial(String materialName) {
-        Material material = Material.matchMaterial(materialName);
-        if (material == null) {
-            material = Material.AIR;
-        }
-        return material;
     }
 
 }

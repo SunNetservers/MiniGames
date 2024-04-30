@@ -61,6 +61,11 @@ public enum ParkourArenaStorageKey {
      * The key for this arena's rewards
      */
     REWARDS("rewards"),
+
+    /**
+     * The key for this arena's maximum players
+     */
+    MAX_PLAYERS("maxPlayers"),
     ;
 
     private final @NotNull String key;

@@ -45,6 +45,12 @@ public enum DropperArenaEditableProperty {
      */
     WIN_BLOCK_TYPE("winBlockType", (arena) -> arena.getWinBlockType().toString(),
             EditablePropertyType.BLOCK_TYPE),
+
+    /**
+     * The arena's max players
+     */
+    MAX_PLAYERS("maxPlayers", (arena) -> String.valueOf(arena.getMaxPlayers()),
+            EditablePropertyType.INTEGER),
     ;
 
     private final @NotNull String argumentString;

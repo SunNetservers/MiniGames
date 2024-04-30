@@ -111,9 +111,23 @@ public final class TabCompleteHelper {
             tabCompleteSuggestions.put(EditablePropertyType.CHECKPOINT_CLEAR, getCheckpointClearSuggestions());
             tabCompleteSuggestions.put(EditablePropertyType.MATERIAL_LIST, getMaterialListSuggestions());
             tabCompleteSuggestions.put(EditablePropertyType.DOUBLE, getDoubleSuggestions());
+            tabCompleteSuggestions.put(EditablePropertyType.INTEGER, getIntegerSuggestions());
         }
 
         return tabCompleteSuggestions.get(propertyType);
+    }
+
+    private static List<String> getIntegerSuggestions() {
+        List<String> suggestions = new ArrayList<>();
+        suggestions.add("-1");
+        suggestions.add("1");
+        suggestions.add("2");
+        suggestions.add("3");
+        suggestions.add("4");
+        suggestions.add("5");
+        suggestions.add("6");
+        suggestions.add("7");
+        return suggestions;
     }
 
     /**

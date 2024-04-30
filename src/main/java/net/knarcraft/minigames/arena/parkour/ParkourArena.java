@@ -85,6 +85,11 @@ public class ParkourArena implements Arena {
     private @Nullable Set<Material> obstacleBlocks;
 
     /**
+     * The maximum amount of players able to join this arena at any time
+     */
+    private int maxPlayers;
+
+    /**
      * The checkpoints for this arena. Entering a checkpoint overrides the player's spawn location.
      */
     private final @NotNull List<Location> checkpoints;
@@ -110,6 +115,7 @@ public class ParkourArena implements Arena {
      * @param killPlaneBlockNames <p>The names of the types of blocks that trigger a loss when stepped on</p>
      * @param obstacleBlockNames  <p>The names of the types of blocks that trigger a loss when touched</p>
      * @param checkpoints         <p>The checkpoints set for this arena</p>
+     * @param maxPlayers          <p>The maximum amount of players able to join this arena at once</p>
      * @param rewards             <p>The rewards given by this arena</p>
      * @param parkourArenaData    <p>The arena data keeping track of which players have done what in this arena</p>
      * @param arenaHandler        <p>The arena handler used for saving any changes</p>
@@ -117,7 +123,7 @@ public class ParkourArena implements Arena {
     public ParkourArena(@NotNull UUID arenaId, @NotNull String arenaName, @NotNull Location spawnLocation,
                         @Nullable Location exitLocation, @NotNull Material winBlockType, @Nullable Location winLocation,
                         @Nullable Set<String> killPlaneBlockNames, @Nullable Set<String> obstacleBlockNames,
-                        @NotNull List<Location> checkpoints,
+                        @NotNull List<Location> checkpoints, int maxPlayers,
                         @NotNull Map<RewardCondition, Set<Reward>> rewards,
                         @NotNull ParkourArenaData parkourArenaData, @NotNull ParkourArenaHandler arenaHandler) {
         this.arenaId = arenaId;
@@ -136,6 +142,7 @@ public class ParkourArena implements Arena {
         this.parkourArenaData = parkourArenaData;
         this.parkourArenaHandler = arenaHandler;
         this.rewards = rewards;
+        this.maxPlayers = maxPlayers;
     }
 
     /**
@@ -167,6 +174,7 @@ public class ParkourArena implements Arena {
         this.obstacleBlocks = null;
         this.checkpoints = new ArrayList<>();
         this.parkourArenaHandler = arenaHandler;
+        this.maxPlayers = -1;
     }
 
     @Override
@@ -216,12 +224,25 @@ public class ParkourArena implements Arena {
         }
     }
 
-    /**
-     * Gets the type of block a player has to hit to win this arena
-     *
-     * @return <p>The kind of block players must hit</p>
-     */
-    public @NotNull Material getWinBlockType() {
+    @Override
+    public int getMaxPlayers() {
+        return this.maxPlayers;
+    }
+
+    @Override
+    public boolean setMaxPlayers(int newValue) {
+        if (newValue < -1) {
+            return false;
+        }
+
+        this.maxPlayers = newValue;
+        this.saveArena();
+        return true;
+    }
+
+    @Override
+    @NotNull
+    public Material getWinBlockType() {
         return this.winBlockType;
     }
 
@@ -302,12 +323,9 @@ public class ParkourArena implements Arena {
         return this.checkpoints.isEmpty();
     }
 
-    /**
-     * Gets this arena's sanitized name
-     *
-     * @return <p>This arena's sanitized name</p>
-     */
-    public @NotNull String getArenaNameSanitized() {
+    @Override
+    @NotNull
+    public String getArenaNameSanitized() {
         return StringSanitizer.sanitizeArenaName(this.getArenaName());
     }
 
@@ -350,12 +368,7 @@ public class ParkourArena implements Arena {
                 this.winBlockType.isSolid();
     }
 
-    /**
-     * Sets the spawn location for this arena
-     *
-     * @param newLocation <p>The new spawn location</p>
-     * @return <p>True if successfully updated</p>
-     */
+    @Override
     public boolean setSpawnLocation(@Nullable Location newLocation) {
         if (isInvalid(newLocation)) {
             return false;
@@ -366,12 +379,7 @@ public class ParkourArena implements Arena {
         }
     }
 
-    /**
-     * Sets the exit location for this arena
-     *
-     * @param newLocation <p>The new exit location</p>
-     * @return <p>True if successfully updated</p>
-     */
+    @Override
     public boolean setExitLocation(@Nullable Location newLocation) {
         if (isInvalid(newLocation)) {
             return false;
@@ -382,12 +390,7 @@ public class ParkourArena implements Arena {
         }
     }
 
-    /**
-     * Sets the name of this arena
-     *
-     * @param arenaName <p>The new name</p>
-     * @return <p>True if successfully updated</p>
-     */
+    @Override
     public boolean setName(@NotNull String arenaName) {
         if (!arenaName.isBlank()) {
             String oldName = this.getArenaNameSanitized();
@@ -401,14 +404,7 @@ public class ParkourArena implements Arena {
         }
     }
 
-    /**
-     * Sets the material of the win block type
-     *
-     * <p>The win block type is the type of block a player must hit to win in this arena</p>
-     *
-     * @param material <p>The material to set for the win block type</p>
-     * @return <p>True if successfully updated</p>
-     */
+    @Override
     public boolean setWinBlockType(@NotNull Material material) {
         if (material.isAir() || !material.isBlock()) {
             return false;

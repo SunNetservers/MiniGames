@@ -60,6 +60,13 @@ public class JoinDropperArenaCommand implements CommandExecutor {
             return true;
         }
 
+        // Deny joining full arenas
+        int playingNow = MiniGames.getInstance().getDropperArenaPlayerRegistry().getPlayingPlayers(specifiedArena).size();
+        if (specifiedArena.getMaxPlayers() > 0 && playingNow >= specifiedArena.getMaxPlayers()) {
+            stringFormatter.displayErrorMessage(commandSender, MiniGameMessage.ERROR_JOIN_ARENA_FULL);
+            return true;
+        }
+
         joinArena(specifiedArena, player, arguments);
         return true;
     }

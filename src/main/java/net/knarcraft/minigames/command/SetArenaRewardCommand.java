@@ -5,6 +5,7 @@ import net.knarcraft.minigames.arena.Arena;
 import net.knarcraft.minigames.arena.reward.Reward;
 import net.knarcraft.minigames.arena.reward.RewardCondition;
 import net.knarcraft.minigames.config.MiniGameMessage;
+import net.knarcraft.minigames.util.InputValidationHelper;
 import net.knarcraft.minigames.util.RewardHelper;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -60,7 +61,7 @@ public class SetArenaRewardCommand implements CommandExecutor {
             return false;
         }
 
-        if (arguments[0].equalsIgnoreCase("clear")) {
+        if (InputValidationHelper.isEmptyValue(arguments[0])) {
             arena.clearRewards(condition);
             MiniGames.getInstance().getStringFormatter().displaySuccessMessage(player,
                     MiniGameMessage.SUCCESS_REWARDS_CLEARED);

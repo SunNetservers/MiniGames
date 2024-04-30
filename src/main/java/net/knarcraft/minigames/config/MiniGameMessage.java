@@ -170,6 +170,11 @@ public enum MiniGameMessage implements TranslatableMessage {
      */
     ERROR_GEYSER_DROPPER,
 
+    /**
+     * The message displayed when a player attempts to join a full arena
+     */
+    ERROR_JOIN_ARENA_FULL,
+
     /* **************** *
      * Success messages *
      * **************** */

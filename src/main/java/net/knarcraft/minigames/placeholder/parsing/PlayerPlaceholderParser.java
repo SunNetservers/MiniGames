@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
@@ -49,16 +48,49 @@ public class PlayerPlaceholderParser<K extends Arena> {
     /**
      * The method to run when parsing a record placeholder request
      *
-     * @param parameters <p>The parameters specified</p>
+     * @param parts <p>The split parameters, without irrelevant info</p>
      * @return <p>The resulting string</p>
      */
-    @NotNull
-    public String onRequest(@NotNull String parameters, @NotNull String[] parts) {
-        if (parts.length < 6) {
-            return parameters;
+    @Nullable
+    public String onRequest(@NotNull String[] parts) {
+        if (parts.length < 2) {
+            return null;
         }
 
-        // String selector = parts[1]; // The selector for which aspect of players to get. Playing is the only one available yet.
+        String selector = parts[1];
+        if (parts.length >= 6 && selector.equalsIgnoreCase("playing")) {
+            return getPlayingPlayersInfo(parts);
+        } else if (parts.length >= 3 && selector.equalsIgnoreCase("maximum")) {
+            return getMaxPlayersInfo(parts);
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Gets placeholder info about max players
+     *
+     * @param parts <p>The split parameters, without irrelevant info</p>
+     * @return <p>The resulting string</p>
+     */
+    @Nullable
+    private String getMaxPlayersInfo(@NotNull String[] parts) {
+        String info = null;
+        K arena = arenaHandler.getArena(parts[2]);
+        if (arena != null) {
+            info = String.valueOf(arena.getMaxPlayers());
+        }
+        return info;
+    }
+
+    /**
+     * Gets placeholder info about playing players
+     *
+     * @param parts <p>The split parameters, without irrelevant info</p>
+     * @return <p>The resulting string</p>
+     */
+    @Nullable
+    private String getPlayingPlayersInfo(@NotNull String[] parts) {
         String gameModeName = parts[2];
         ArenaGameMode gameMode = gameModeParser.apply(gameModeName);
         if (gameModeName.equalsIgnoreCase("combined") || gameModeName.equalsIgnoreCase("all")) {
@@ -71,7 +103,7 @@ public class PlayerPlaceholderParser<K extends Arena> {
         // The type of info to get. Either count (number of players) or player_position (a named player).
         PlayerInfoType infoType = PlayerInfoType.getFromString(parts[5]);
         if (infoType == null) {
-            return parameters;
+            return null;
         }
 
         String info = null;
@@ -84,7 +116,7 @@ public class PlayerPlaceholderParser<K extends Arena> {
             info = getArenaInfo(identifier, gameMode, infoType, parts);
         }
 
-        return Objects.requireNonNullElse(info, parameters);
+        return info;
     }
 
     /**

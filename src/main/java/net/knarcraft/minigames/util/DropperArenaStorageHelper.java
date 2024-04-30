@@ -137,6 +137,7 @@ public final class DropperArenaStorageHelper {
         configSection.set(DropperArenaStorageKey.PLAYER_VERTICAL_VELOCITY.getKey(), arena.getPlayerVerticalVelocity());
         configSection.set(DropperArenaStorageKey.PLAYER_HORIZONTAL_VELOCITY.getKey(), arena.getPlayerHorizontalVelocity());
         configSection.set(DropperArenaStorageKey.WIN_BLOCK_TYPE.getKey(), new SerializableMaterial(arena.getWinBlockType()));
+        configSection.set(DropperArenaStorageKey.MAX_PLAYERS.getKey(), arena.getMaxPlayers());
         RewardStorageHelper.saveRewards(arena, configSection, DropperArenaStorageKey.REWARDS.getKey());
         saveDropperArenaData(arena.getData());
     }
@@ -187,6 +188,7 @@ public final class DropperArenaStorageHelper {
         double verticalVelocity = configurationSection.getDouble(DropperArenaStorageKey.PLAYER_VERTICAL_VELOCITY.getKey());
         float horizontalVelocity = sanitizeHorizontalVelocity((float) configurationSection.getDouble(
                 DropperArenaStorageKey.PLAYER_HORIZONTAL_VELOCITY.getKey()));
+        int maxPlayers = configurationSection.getInt(DropperArenaStorageKey.MAX_PLAYERS.getKey(), -1);
         SerializableMaterial winBlockType = (SerializableMaterial) configurationSection.get(
                 DropperArenaStorageKey.WIN_BLOCK_TYPE.getKey());
 
@@ -212,7 +214,7 @@ public final class DropperArenaStorageHelper {
         }
 
         return new DropperArena(arenaId, arenaName, spawnLocation, exitLocation, verticalVelocity, horizontalVelocity,
-                winBlockType.getRawValue(), rewards, arenaData, MiniGames.getInstance().getDropperArenaHandler());
+                winBlockType.getRawValue(), maxPlayers, rewards, arenaData, MiniGames.getInstance().getDropperArenaHandler());
     }
 
     /**

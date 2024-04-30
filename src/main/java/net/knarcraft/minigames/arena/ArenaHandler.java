@@ -151,7 +151,11 @@ public abstract class ArenaHandler<K extends Arena, S extends ArenaGroup<K, S>> 
      * @return <p>The arena with the given name, or null if not found</p>
      */
     public @Nullable K getArena(@NotNull String arenaName) {
-        return this.arenas.get(this.arenaNameLookup.get(StringSanitizer.sanitizeArenaName(arenaName)));
+        try {
+            return this.arenas.get(UUID.fromString(arenaName));
+        } catch (IllegalArgumentException exception) {
+            return this.arenas.get(this.arenaNameLookup.get(StringSanitizer.sanitizeArenaName(arenaName)));
+        }
     }
 
     /**

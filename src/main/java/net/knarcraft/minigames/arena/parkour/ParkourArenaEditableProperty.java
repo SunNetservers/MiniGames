@@ -69,6 +69,11 @@ public enum ParkourArenaEditableProperty {
     OBSTACLE_BLOCKS("obstacleBlocks", (arena) -> String.valueOf(arena.getObstacleBlockNames()),
             EditablePropertyType.MATERIAL_LIST),
 
+    /**
+     * The arena's max players
+     */
+    MAX_PLAYERS("maxPlayers", (arena) -> String.valueOf(arena.getMaxPlayers()),
+            EditablePropertyType.INTEGER),
     ;
 
     private final @NotNull String argumentString;

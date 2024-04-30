@@ -9,6 +9,7 @@ import net.knarcraft.minigames.placeholder.parsing.PlayerPlaceholderParser;
 import net.knarcraft.minigames.placeholder.parsing.RecordPlaceholderParser;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * A placeholderAPI expansion for Dropper-related placeholders
@@ -58,13 +59,14 @@ public class DropperExpansion extends PlaceholderExpansion {
     }
 
     @Override
+    @Nullable
     public String onRequest(OfflinePlayer player, String parameters) {
         String[] parts = parameters.split("_");
         // Record is used as the prefix for all record placeholders in case more placeholder types are added
         if (parts[0].equalsIgnoreCase("record") && parts.length >= 7) {
-            return recordPlaceholderParser.onRequest(parameters, parts);
+            return recordPlaceholderParser.onRequest(parts);
         } else if (parts[0].equalsIgnoreCase("players")) {
-            return this.playerPlaceholderParser.onRequest(parameters, parts);
+            return this.playerPlaceholderParser.onRequest(parts);
         } else {
             return parameters;
         }

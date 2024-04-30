@@ -140,6 +140,7 @@ public final class ParkourArenaStorageHelper {
         configSection.set(ParkourArenaStorageKey.KILL_PLANE_BLOCKS.getKey(), getKillPlaneBlocks(arena));
         configSection.set(ParkourArenaStorageKey.OBSTACLE_BLOCKS.getKey(), getObstacleBlocks(arena));
         configSection.set(ParkourArenaStorageKey.CHECKPOINTS.getKey(), arena.getCheckpoints());
+        configSection.set(ParkourArenaStorageKey.MAX_PLAYERS.getKey(), arena.getMaxPlayers());
         RewardStorageHelper.saveRewards(arena, configSection, ParkourArenaStorageKey.REWARDS.getKey());
         saveParkourArenaData(arena.getData());
     }
@@ -217,6 +218,7 @@ public final class ParkourArenaStorageHelper {
         Location spawnLocation = (Location) configurationSection.get(ParkourArenaStorageKey.SPAWN_LOCATION.getKey());
         Location exitLocation = (Location) configurationSection.get(ParkourArenaStorageKey.EXIT_LOCATION.getKey());
         Location winLocation = (Location) configurationSection.get(ParkourArenaStorageKey.WIN_LOCATION.getKey());
+        int maxPlayers = configurationSection.getInt(ParkourArenaStorageKey.MAX_PLAYERS.getKey(), -1);
         SerializableMaterial winBlockType = (SerializableMaterial) configurationSection.get(
                 ParkourArenaStorageKey.WIN_BLOCK_TYPE.getKey());
         List<?> killPlaneBlockNamesList = configurationSection.getList(ParkourArenaStorageKey.KILL_PLANE_BLOCKS.getKey());
@@ -264,7 +266,7 @@ public final class ParkourArenaStorageHelper {
         }
 
         return new ParkourArena(arenaId, arenaName, spawnLocation, exitLocation, winBlockType.getRawValue(), winLocation,
-                killPlaneBlockNames, obstacleBlockNames, checkpoints, rewards, arenaData,
+                killPlaneBlockNames, obstacleBlockNames, checkpoints, maxPlayers, rewards, arenaData,
                 MiniGames.getInstance().getParkourArenaHandler());
     }
 

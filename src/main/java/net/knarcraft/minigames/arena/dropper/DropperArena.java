@@ -64,6 +64,11 @@ public class DropperArena implements Arena {
     private float playerHorizontalVelocity;
 
     /**
+     * The maximum amount of players able to join this arena at any time
+     */
+    private int maxPlayers = -1;
+
+    /**
      * The material of the block players have to hit to win this dropper arena
      */
     private @NotNull Material winBlockType;
@@ -89,14 +94,16 @@ public class DropperArena implements Arena {
      * @param playerVerticalVelocity   <p>The velocity to use for players' vertical velocity</p>
      * @param playerHorizontalVelocity <p>The velocity to use for players' horizontal velocity (-1 to 1)</p>
      * @param winBlockType             <p>The material of the block players have to hit to win this dropper arena</p>
+     * @param maxPlayers               <p>The maximum amount of players able to join this arena at once</p>
      * @param rewards                  <p>The rewards given by this arena</p>
      * @param dropperArenaData         <p>The arena data keeping track of which players have done what in this arena</p>
      * @param arenaHandler             <p>The arena handler used for saving any changes</p>
      */
     public DropperArena(@NotNull UUID arenaId, @NotNull String arenaName, @NotNull Location spawnLocation,
                         @Nullable Location exitLocation, double playerVerticalVelocity, float playerHorizontalVelocity,
-                        @NotNull Material winBlockType, @NotNull Map<RewardCondition, Set<Reward>> rewards,
-                        @NotNull DropperArenaData dropperArenaData, @NotNull DropperArenaHandler arenaHandler) {
+                        @NotNull Material winBlockType, int maxPlayers,
+                        @NotNull Map<RewardCondition, Set<Reward>> rewards, @NotNull DropperArenaData dropperArenaData,
+                        @NotNull DropperArenaHandler arenaHandler) {
         this.arenaId = arenaId;
         this.arenaName = arenaName;
         this.spawnLocation = spawnLocation;
@@ -107,6 +114,7 @@ public class DropperArena implements Arena {
         this.dropperArenaData = dropperArenaData;
         this.dropperArenaHandler = arenaHandler;
         this.rewards = rewards;
+        this.maxPlayers = maxPlayers;
     }
 
     /**
@@ -186,44 +194,27 @@ public class DropperArena implements Arena {
         }
     }
 
-    /**
-     * Gets the vertical velocity for players in this arena
-     *
-     * <p>This velocity will be set on the negative y-axis, for all players in this arena.</p>
-     *
-     * @return <p>Players' velocity in this arena</p>
-     */
-    public double getPlayerVerticalVelocity() {
-        return this.playerVerticalVelocity;
+    @Override
+    public int getMaxPlayers() {
+        return this.maxPlayers;
     }
 
-
-    /**
-     * Gets the horizontal for players in this arena
-     *
-     * <p>This will be used for players' fly-speed in this arena</p>
-     *
-     * @return <p>Players' velocity in this arena</p>
-     */
-    public float getPlayerHorizontalVelocity() {
-        return this.playerHorizontalVelocity;
+    @Override
+    public boolean setMaxPlayers(int newValue) {
+        this.maxPlayers = newValue;
+        this.saveArena();
+        return true;
     }
 
-    /**
-     * Gets the type of block a player has to hit to win this arena
-     *
-     * @return <p>The kind of block players must hit</p>
-     */
-    public @NotNull Material getWinBlockType() {
+    @Override
+    @NotNull
+    public Material getWinBlockType() {
         return this.winBlockType;
     }
 
-    /**
-     * Gets this arena's sanitized name
-     *
-     * @return <p>This arena's sanitized name</p>
-     */
-    public @NotNull String getArenaNameSanitized() {
+    @Override
+    @NotNull
+    public String getArenaNameSanitized() {
         return StringSanitizer.sanitizeArenaName(this.getArenaName());
     }
 
@@ -257,12 +248,7 @@ public class DropperArena implements Arena {
         return winBlockType.isSolid();
     }
 
-    /**
-     * Sets the spawn location for this arena
-     *
-     * @param newLocation <p>The new spawn location</p>
-     * @return <p>True if successfully updated</p>
-     */
+    @Override
     public boolean setSpawnLocation(@Nullable Location newLocation) {
         if (isInvalid(newLocation)) {
             return false;
@@ -273,12 +259,7 @@ public class DropperArena implements Arena {
         }
     }
 
-    /**
-     * Sets the exit location for this arena
-     *
-     * @param newLocation <p>The new exit location</p>
-     * @return <p>True if successfully updated</p>
-     */
+    @Override
     public boolean setExitLocation(@Nullable Location newLocation) {
         if (isInvalid(newLocation)) {
             return false;
@@ -289,12 +270,7 @@ public class DropperArena implements Arena {
         }
     }
 
-    /**
-     * Sets the name of this arena
-     *
-     * @param arenaName <p>The new name</p>
-     * @return <p>True if successfully updated</p>
-     */
+    @Override
     public boolean setName(@NotNull String arenaName) {
         if (!arenaName.isBlank()) {
             String oldName = this.getArenaNameSanitized();
@@ -309,13 +285,29 @@ public class DropperArena implements Arena {
     }
 
     /**
-     * Sets the material of the win block type
+     * Gets the vertical velocity for players in this arena
      *
-     * <p>The win block type is the type of block a player must hit to win in this arena</p>
+     * <p>This velocity will be set on the negative y-axis, for all players in this arena.</p>
      *
-     * @param material <p>The material to set for the win block type</p>
-     * @return <p>True if successfully updated</p>
+     * @return <p>Players' velocity in this arena</p>
      */
+    public double getPlayerVerticalVelocity() {
+        return this.playerVerticalVelocity;
+    }
+
+
+    /**
+     * Gets the horizontal for players in this arena
+     *
+     * <p>This will be used for players' fly-speed in this arena</p>
+     *
+     * @return <p>Players' velocity in this arena</p>
+     */
+    public float getPlayerHorizontalVelocity() {
+        return this.playerHorizontalVelocity;
+    }
+
+    @Override
     public boolean setWinBlockType(@NotNull Material material) {
         if (material.isAir() || !material.isBlock()) {
             return false;

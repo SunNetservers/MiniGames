@@ -6,6 +6,7 @@ import net.knarcraft.minigames.MiniGames;
 import net.knarcraft.minigames.arena.Arena;
 import net.knarcraft.minigames.arena.reward.RewardCondition;
 import net.knarcraft.minigames.arena.reward.RewardType;
+import net.knarcraft.minigames.util.InputValidationHelper;
 import net.knarcraft.minigames.util.TabCompleteHelper;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -40,7 +41,7 @@ public class SetArenaRewardTabCompleter implements TabCompleter {
         }
         if (arguments.length >= 2) {
             // If the first argument is invalid, stop further tab completion
-            if (!arguments[0].equalsIgnoreCase("add") && !arguments[0].equalsIgnoreCase("clear")) {
+            if (!arguments[0].equalsIgnoreCase("add") && !InputValidationHelper.isEmptyValue(arguments[0])) {
                 return new ArrayList<>();
             }
         }
@@ -73,8 +74,7 @@ public class SetArenaRewardTabCompleter implements TabCompleter {
         }
         if (arguments.length >= 5) {
             // If the condition is invalid, or it's the clear action, stop tab-completion
-            if (RewardCondition.getFromString(arguments[3]) == null ||
-                    arguments[0].equalsIgnoreCase("clear")) {
+            if (RewardCondition.getFromString(arguments[3]) == null || InputValidationHelper.isEmptyValue(arguments[0])) {
                 return new ArrayList<>();
             }
         }

@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
@@ -51,13 +50,13 @@ public class RecordPlaceholderParser {
     /**
      * The method to run when parsing a record placeholder request
      *
-     * @param parameters <p>The parameters specified</p>
+     * @param parts <p>All parts of the placeholder</p>
      * @return <p>The resulting string</p>
      */
-    @NotNull
-    public String onRequest(@NotNull String parameters, @NotNull String[] parts) {
+    @Nullable
+    public String onRequest(@NotNull String[] parts) {
         if (parts.length < 7) {
-            return parameters;
+            return null;
         }
 
         RecordType recordType = RecordType.getFromString(parts[1]);
@@ -70,12 +69,12 @@ public class RecordPlaceholderParser {
         } catch (NumberFormatException exception) {
             MiniGames.log(Level.WARNING, "Invalid placeholder given. " + parts[5] +
                     " supplied instead of record position.");
-            return parameters;
+            return null;
         }
         InfoType infoType = InfoType.getFromString(parts[6]);
 
         if (recordType == null || infoType == null) {
-            return parameters;
+            return null;
         }
 
         String info = null;
@@ -85,7 +84,7 @@ public class RecordPlaceholderParser {
             info = getArenaRecord(arenaHandler, identifier, gameMode, recordType, recordNumber, infoType);
         }
 
-        return Objects.requireNonNullElse(info, parameters);
+        return info;
     }
 
     /**

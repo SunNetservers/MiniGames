@@ -54,6 +54,13 @@ public class JoinParkourArenaCommand implements CommandExecutor {
             return true;
         }
 
+        // Deny joining full arenas
+        int playingNow = MiniGames.getInstance().getParkourArenaPlayerRegistry().getPlayingPlayers(specifiedArena).size();
+        if (specifiedArena.getMaxPlayers() > 0 && playingNow >= specifiedArena.getMaxPlayers()) {
+            stringFormatter.displayErrorMessage(commandSender, MiniGameMessage.ERROR_JOIN_ARENA_FULL);
+            return true;
+        }
+
         joinArena(specifiedArena, player, arguments);
         return true;
     }
@@ -69,7 +76,7 @@ public class JoinParkourArenaCommand implements CommandExecutor {
         // Find the specified game-mode
         ParkourArenaGameMode gameMode;
         if (arguments.length > 1) {
-            gameMode = ParkourArenaGameMode.matchGamemode(arguments[1]);
+            gameMode = ParkourArenaGameMode.matchGameMode(arguments[1]);
         } else {
             gameMode = ParkourArenaGameMode.DEFAULT;
         }

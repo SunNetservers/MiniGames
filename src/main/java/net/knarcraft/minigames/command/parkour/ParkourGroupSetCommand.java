@@ -6,6 +6,7 @@ import net.knarcraft.minigames.arena.parkour.ParkourArena;
 import net.knarcraft.minigames.arena.parkour.ParkourArenaGroup;
 import net.knarcraft.minigames.arena.parkour.ParkourArenaHandler;
 import net.knarcraft.minigames.config.MiniGameMessage;
+import net.knarcraft.minigames.util.InputValidationHelper;
 import net.knarcraft.minigames.util.StringSanitizer;
 import net.knarcraft.minigames.util.TabCompleteHelper;
 import org.bukkit.command.Command;
@@ -47,7 +48,7 @@ public class ParkourGroupSetCommand implements TabExecutor {
         }
 
         ParkourArenaGroup arenaGroup;
-        if (groupName.equalsIgnoreCase("null") || groupName.equalsIgnoreCase("none")) {
+        if (InputValidationHelper.isEmptyValue(groupName)) {
             arenaGroup = null;
         } else {
             arenaGroup = arenaHandler.getGroup(groupName);

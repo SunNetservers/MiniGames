@@ -22,7 +22,7 @@ import java.util.Collection;
 import java.util.UUID;
 
 /**
- * A helopr class for getting the reward specified in user input
+ * A helper class for getting the reward specified in user input
  */
 public final class RewardHelper {
 

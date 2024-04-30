@@ -35,8 +35,8 @@ public final class InputValidationHelper {
      * @return <p>True if the value can be considered as empty</p>
      */
     public static boolean isEmptyValue(@NotNull String value) {
-        return value.equalsIgnoreCase("null") || value.equalsIgnoreCase("0") ||
-                value.equalsIgnoreCase("clear") || value.equalsIgnoreCase("none");
+        return value.equalsIgnoreCase("null") || value.equalsIgnoreCase("clear") ||
+                value.equalsIgnoreCase("none");
     }
 
 }

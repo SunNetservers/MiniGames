@@ -314,12 +314,22 @@ format for the built-in placeholders is as follows:
 | Variable        | Values                                       | Description                                                                                                                                   |
 |-----------------|----------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------|
 | gameMode        | dropper / parkour                            | A selection of which game-mode you are getting a record for                                                                                   |
-| players_playing |                                              | This must be as-is. It's a selector in case placeholders are added for more than playing players.                                             |
+| players_playing |                                              | This must be as-is.                                                                                                                           |
 | gameModeType    | default / inverted / random / hardcore / all | Selects the game-mode to get the players for. Note that "all" combines players for all game-modes.                                            |
 | identifierType  | arena / group                                | The type of thing the following identifier points to (an arena or an arena group).                                                            |
 | identifier      | ?                                            | An identifier (the name or UUID) for an arena or a group (whichever was chosen as identifierType).                                            |
 | playerInfoType  | player / count                               | The type of info to get. Player gets the player name, and count gets the total number of players.                                             |
 | playerNumber    | 1 / 2 / 3 / ...                              | The player number to get the name of. Players are numbered after their sorted names. This argument is not used when getting the player count. |
+
+### Max Players Placeholder
+
+`%gameMode_players_max_arenaName%`
+
+| Variable        | Values            | Description                                                 |
+|-----------------|-------------------|-------------------------------------------------------------|
+| gameMode        | dropper / parkour | A selection of which game-mode you are getting a record for |
+| players_maximum |                   | This must be as-is.                                         |
+| arenaName       | ?                 | An identifier (the name or UUID) for an arena.              |
 
 ## Notes about material tags
 

@@ -45,4 +45,9 @@ public enum EditablePropertyType {
      */
     DOUBLE,
 
+    /**
+     * The property is an integer with no particular restrictions
+     */
+    INTEGER,
+
 }

@@ -5,6 +5,7 @@ import net.knarcraft.minigames.arena.dropper.DropperArena;
 import net.knarcraft.minigames.arena.dropper.DropperArenaGroup;
 import net.knarcraft.minigames.arena.dropper.DropperArenaHandler;
 import net.knarcraft.minigames.config.MiniGameMessage;
+import net.knarcraft.minigames.util.InputValidationHelper;
 import net.knarcraft.minigames.util.StringSanitizer;
 import net.knarcraft.minigames.util.TabCompleteHelper;
 import org.bukkit.command.Command;
@@ -46,7 +47,7 @@ public class DropperGroupSetCommand implements TabExecutor {
         }
 
         DropperArenaGroup arenaGroup;
-        if (groupName.equalsIgnoreCase("null") || groupName.equalsIgnoreCase("none")) {
+        if (InputValidationHelper.isEmptyValue(groupName)) {
             arenaGroup = null;
         } else {
             arenaGroup = arenaHandler.getGroup(groupName);
