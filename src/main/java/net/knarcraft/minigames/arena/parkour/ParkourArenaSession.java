@@ -184,7 +184,8 @@ public class ParkourArenaSession extends AbstractArenaSession {
     public void triggerQuit(boolean immediately, boolean removeSession) {
         super.triggerQuit(immediately, removeSession);
 
-        if (MiniGames.getInstance().getParkourArenaPlayerRegistry().getPlayingPlayers(this.arena).isEmpty()) {
+        // Note: As immediately is only used when stopping the server, levers should be reset regardless of current players
+        if (MiniGames.getInstance().getParkourArenaPlayerRegistry().getPlayingPlayers(this.arena).isEmpty() || immediately) {
             resetLevers();
         }
     }
