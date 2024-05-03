@@ -31,7 +31,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.2.4</version>
+                <version>3.3.0</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -40,6 +40,20 @@
                         </goals>
                         <configuration>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <relocations>
+                                <relocation>
+                                    <pattern>net.knarcraft.knarlib</pattern>
+                                    <shadedPattern>net.knarcraft.minigames.lib.knarlib</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>net.knarcraft.knargui</pattern>
+                                    <shadedPattern>net.knarcraft.minigames.lib.knargui</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.jetbrains.annotations</pattern>
+                                    <shadedPattern>net.knarcraft.minigames.lib.annotations</shadedPattern>
+                                </relocation>
+                            </relocations>
                             <filters>
                                 <filter>
                                     <artifact>net.knarcraft:knarlib</artifact>
@@ -51,6 +65,12 @@
                                     <artifact>net.knarcraft:knargui</artifact>
                                     <includes>
                                         <include>net/knarcraft/knargui/**</include>
+                                    </includes>
+                                </filter>
+                                <filter>
+                                    <artifact>org.jetbrains:annotations</artifact>
+                                    <includes>
+                                        <include>org/jetbrains/annotations/**</include>
                                     </includes>
                                 </filter>
                                 <filter>
@@ -107,7 +127,7 @@
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
             <version>24.0.1</version>
-            <scope>provided</scope>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>me.clip</groupId>
