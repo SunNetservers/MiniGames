@@ -1,11 +1,13 @@
 package net.knarcraft.minigames.command;
 
 import net.knarcraft.minigames.config.DropperConfiguration;
+import net.knarcraft.minigames.util.InputValidationHelper;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.List;
@@ -120,9 +122,13 @@ public abstract class EditArenaCommand implements CommandExecutor {
      * @param input <p>The input string to get as a set</p>
      * @return <p>The resulting string set</p>
      */
-    @NotNull
+    @Nullable
     protected Set<String> asSet(@NotNull String input) {
-        return new HashSet<>(List.of(input.split(",")));
+        if (InputValidationHelper.isEmptyValue(input)) {
+            return null;
+        } else {
+            return new HashSet<>(List.of(input.split(",")));
+        }
     }
 
 }

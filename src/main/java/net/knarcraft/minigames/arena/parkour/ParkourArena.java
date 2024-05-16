@@ -485,8 +485,8 @@ public class ParkourArena implements Arena {
      *
      * @param killPlaneBlockNames <p>The names of the blocks that will cause players to lose</p>
      */
-    public boolean setKillPlaneBlocks(@NotNull Set<String> killPlaneBlockNames) {
-        if (killPlaneBlockNames.isEmpty()) {
+    public boolean setKillPlaneBlocks(@Nullable Set<String> killPlaneBlockNames) {
+        if (killPlaneBlockNames == null || killPlaneBlockNames.isEmpty()) {
             this.killPlaneBlockNames = null;
             this.killPlaneBlocks = null;
         } else {
@@ -507,8 +507,8 @@ public class ParkourArena implements Arena {
      *
      * @param obstacleBlockNames <p>The names of the obstacle blocks</p>
      */
-    public boolean setObstacleBlocks(@NotNull Set<String> obstacleBlockNames) {
-        if (obstacleBlockNames.isEmpty()) {
+    public boolean setObstacleBlocks(@Nullable Set<String> obstacleBlockNames) {
+        if (obstacleBlockNames == null || obstacleBlockNames.isEmpty()) {
             this.obstacleBlockNames = null;
             this.obstacleBlocks = null;
         } else {
