@@ -67,7 +67,7 @@ dropper:
     - REDSTONE_WALL_TORCH
     - +BANNERS
     - +BUTTONS
-    - +CORALS
+    - +CORAL_PLANTS
     - +WALL_CORALS
     - LIGHT
 shared:

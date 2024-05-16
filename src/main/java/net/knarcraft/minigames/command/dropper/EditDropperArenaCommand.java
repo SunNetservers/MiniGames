@@ -7,6 +7,7 @@ import net.knarcraft.minigames.arena.dropper.DropperArenaEditableProperty;
 import net.knarcraft.minigames.command.EditArenaCommand;
 import net.knarcraft.minigames.config.DropperConfiguration;
 import net.knarcraft.minigames.config.MiniGameMessage;
+import net.knarcraft.minigames.util.InputValidationHelper;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -90,6 +91,10 @@ public class EditDropperArenaCommand extends EditArenaCommand {
             case NAME -> arena.setName(value);
             case EXIT_LOCATION -> arena.setExitLocation(parseLocation(player, value));
             case MAX_PLAYERS -> arena.setMaxPlayers(parseMaxPlayers(value));
+            case ALLOWED_DAMAGE_CAUSES ->
+                    arena.setAllowedDamageCauses(InputValidationHelper.parseDamageCauses(asSet(value)));
+            case LOSS_TRIGGER_DAMAGE_CAUSES ->
+                    arena.setLossTriggerDamageCauses(InputValidationHelper.parseDamageCauses(asSet(value)));
         };
     }
 

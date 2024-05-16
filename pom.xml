@@ -73,12 +73,6 @@
                                         <include>org/jetbrains/annotations/**</include>
                                     </includes>
                                 </filter>
-                                <filter>
-                                    <excludes>
-                                        <exclude>*.MF</exclude>
-                                        <exclude>*.yml</exclude>
-                                    </excludes>
-                                </filter>
                             </filters>
                         </configuration>
                     </execution>
@@ -120,7 +114,7 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.20-R0.1-SNAPSHOT</version>
+            <version>1.20.6-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -144,7 +138,7 @@
         <dependency>
             <groupId>net.knarcraft</groupId>
             <artifactId>knarlib</artifactId>
-            <version>1.2.5</version>
+            <version>1.2.7</version>
             <scope>compile</scope>
         </dependency>
         <dependency>

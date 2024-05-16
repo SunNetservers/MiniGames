@@ -19,7 +19,18 @@ import java.util.UUID;
 
 import static net.knarcraft.knarlib.util.TabCompletionHelper.filterMatchingContains;
 
-public abstract class GroupListCommand<K extends ArenaHandler<L, M>, L extends Arena, M extends ArenaGroup<L, M>> implements TabExecutor {
+/**
+ * A command for listing the arenas in a group
+ *
+ * @param <K> <p>The type of arena handler to get arenas from</p>
+ * @param <L> <p>The type of arena to list</p>
+ * @param <M> <p>The type of arena group to list</p>
+ */
+public abstract class GroupListCommand<
+        K extends ArenaHandler<L, M>,
+        L extends Arena,
+        M extends ArenaGroup<L, M>
+        > implements TabExecutor {
 
     /**
      * Displays all currently existing dropper arena groups
@@ -29,7 +40,7 @@ public abstract class GroupListCommand<K extends ArenaHandler<L, M>, L extends A
      */
     protected void displayExistingGroups(@NotNull K arenaHandler, @NotNull CommandSender sender) {
         StringFormatter stringFormatter = MiniGames.getInstance().getStringFormatter();
-        StringBuilder builder = new StringBuilder(stringFormatter.getUnformattedMessage(
+        StringBuilder builder = new StringBuilder(stringFormatter.getUnFormattedMessage(
                 MiniGameMessage.SUCCESS_GROUPS)).append("\n");
         arenaHandler.getAllGroups().stream().sorted().forEachOrdered((group) ->
                 builder.append("- ").append(group.getGroupName()).append("\n"));

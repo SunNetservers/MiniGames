@@ -1,11 +1,12 @@
 package net.knarcraft.minigames.arena.parkour;
 
+import net.knarcraft.minigames.arena.StorageKey;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * A representation of each key used for storing arena data
  */
-public enum ParkourArenaStorageKey {
+public enum ParkourArenaStorageKey implements StorageKey {
 
     /**
      * The key for an arena's id
@@ -66,6 +67,16 @@ public enum ParkourArenaStorageKey {
      * The key for this arena's maximum players
      */
     MAX_PLAYERS("maxPlayers"),
+
+    /**
+     * The key for this arena's allowed damage causes
+     */
+    ALLOWED_DAMAGE_CAUSES("allowedDamageCauses"),
+
+    /**
+     * The key for this arena's loss trigger damage causes
+     */
+    LOSS_TRIGGER_DAMAGE_CAUSES("lossTriggerDamageCauses"),
     ;
 
     private final @NotNull String key;
@@ -79,11 +90,7 @@ public enum ParkourArenaStorageKey {
         this.key = key;
     }
 
-    /**
-     * Gets the configuration key this enum represents
-     *
-     * @return <p>The string key representation.</p>
-     */
+    @Override
     public @NotNull String getKey() {
         return this.key;
     }

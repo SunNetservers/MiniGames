@@ -50,4 +50,9 @@ public enum EditablePropertyType {
      */
     INTEGER,
 
+    /**
+     * The property is a comma-separated list of damage causes
+     */
+    DAMAGE_CAUSE_LIST,
+
 }

@@ -1,6 +1,7 @@
 package net.knarcraft.minigames.arena.dropper;
 
 import net.knarcraft.minigames.arena.EditablePropertyType;
+import net.knarcraft.minigames.util.ArenaStorageHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -51,6 +52,20 @@ public enum DropperArenaEditableProperty {
      */
     MAX_PLAYERS("maxPlayers", (arena) -> String.valueOf(arena.getMaxPlayers()),
             EditablePropertyType.INTEGER),
+
+    /**
+     * The arena's allowed damage causes
+     */
+    ALLOWED_DAMAGE_CAUSES("allowedDamageCauses", (arena) -> String.valueOf(
+            ArenaStorageHelper.getDamageCauseNames(arena.getAllowedDamageCauses())),
+            EditablePropertyType.DAMAGE_CAUSE_LIST),
+
+    /**
+     * The arena's loss trigger damage causes
+     */
+    LOSS_TRIGGER_DAMAGE_CAUSES("lossTriggerDamageCauses", (arena) -> String.valueOf(
+            ArenaStorageHelper.getDamageCauseNames(arena.getLossTriggerDamageCauses())),
+            EditablePropertyType.DAMAGE_CAUSE_LIST),
     ;
 
     private final @NotNull String argumentString;

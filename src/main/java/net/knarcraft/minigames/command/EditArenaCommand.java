@@ -7,6 +7,10 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 /**
  * An abstract arena edit command, implementing input validation
  */
@@ -108,6 +112,17 @@ public abstract class EditArenaCommand implements CommandExecutor {
             material = Material.AIR;
         }
         return material;
+    }
+
+    /**
+     * Splits the given string on comma, and returns a set of its parts
+     *
+     * @param input <p>The input string to get as a set</p>
+     * @return <p>The resulting string set</p>
+     */
+    @NotNull
+    protected Set<String> asSet(@NotNull String input) {
+        return new HashSet<>(List.of(input.split(",")));
     }
 
 }

@@ -3,6 +3,8 @@ package net.knarcraft.minigames.listener;
 import net.knarcraft.minigames.MiniGames;
 import net.knarcraft.minigames.arena.ArenaSession;
 import net.knarcraft.minigames.arena.dropper.DropperArenaSession;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -32,8 +34,28 @@ public class DamageListener implements Listener {
 
         event.setCancelled(true);
 
-        // Only trigger a loss when a player suffers fall damage in a dropper arena
+        // Only trigger a loss when a player suffers fall damage in a dropper arena (This cannot be cancelled!)
         if (arenaSession instanceof DropperArenaSession && event.getCause() == EntityDamageEvent.DamageCause.FALL) {
+            arenaSession.triggerLoss();
+            return;
+        }
+
+        // If set as allowed damage, do nothing, except if the damage is fatal
+        if (arenaSession.getArena().getAllowedDamageCauses().contains(event.getCause())) {
+            if (event.getFinalDamage() >= player.getHealth()) {
+                AttributeInstance health = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
+                if (health != null) {
+                    player.setHealth(health.getValue());
+                }
+                arenaSession.triggerLoss();
+            } else {
+                event.setCancelled(false);
+            }
+            return;
+        }
+
+        // If set as trigger loss, trigger a loss
+        if (arenaSession.getArena().getLossTriggerDamageCauses().contains(event.getCause())) {
             arenaSession.triggerLoss();
         }
     }

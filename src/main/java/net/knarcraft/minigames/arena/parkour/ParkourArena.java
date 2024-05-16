@@ -7,12 +7,14 @@ import net.knarcraft.minigames.arena.ArenaGameMode;
 import net.knarcraft.minigames.arena.ArenaRecordsRegistry;
 import net.knarcraft.minigames.arena.reward.Reward;
 import net.knarcraft.minigames.arena.reward.RewardCondition;
+import net.knarcraft.minigames.util.InputValidationHelper;
 import net.knarcraft.minigames.util.ParkourArenaStorageHelper;
 import net.knarcraft.minigames.util.StringSanitizer;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -90,6 +92,16 @@ public class ParkourArena implements Arena {
     private int maxPlayers;
 
     /**
+     * Types of damage that won't be blocked in this arena
+     */
+    private Set<EntityDamageEvent.DamageCause> allowedDamageCauses;
+
+    /**
+     * Types of damage that will trigger a loss in this arena
+     */
+    private Set<EntityDamageEvent.DamageCause> lossTriggerDamageCauses;
+
+    /**
      * The checkpoints for this arena. Entering a checkpoint overrides the player's spawn location.
      */
     private final @NotNull List<Location> checkpoints;
@@ -106,26 +118,30 @@ public class ParkourArena implements Arena {
     /**
      * Instantiates a new parkour arena
      *
-     * @param arenaId             <p>The id of the arena</p>
-     * @param arenaName           <p>The name of the arena</p>
-     * @param spawnLocation       <p>The location players spawn in when entering the arena</p>
-     * @param exitLocation        <p>The location the players are teleported to when exiting the arena, or null</p>
-     * @param winBlockType        <p>The material of the block players have to hit to win this parkour arena</p>
-     * @param winLocation         <p>The location a player has to reach to win this arena</p>
-     * @param killPlaneBlockNames <p>The names of the types of blocks that trigger a loss when stepped on</p>
-     * @param obstacleBlockNames  <p>The names of the types of blocks that trigger a loss when touched</p>
-     * @param checkpoints         <p>The checkpoints set for this arena</p>
-     * @param maxPlayers          <p>The maximum amount of players able to join this arena at once</p>
-     * @param rewards             <p>The rewards given by this arena</p>
-     * @param parkourArenaData    <p>The arena data keeping track of which players have done what in this arena</p>
-     * @param arenaHandler        <p>The arena handler used for saving any changes</p>
+     * @param arenaId                 <p>The id of the arena</p>
+     * @param arenaName               <p>The name of the arena</p>
+     * @param spawnLocation           <p>The location players spawn in when entering the arena</p>
+     * @param exitLocation            <p>The location the players are teleported to when exiting the arena, or null</p>
+     * @param winBlockType            <p>The material of the block players have to hit to win this parkour arena</p>
+     * @param winLocation             <p>The location a player has to reach to win this arena</p>
+     * @param killPlaneBlockNames     <p>The names of the types of blocks that trigger a loss when stepped on</p>
+     * @param obstacleBlockNames      <p>The names of the types of blocks that trigger a loss when touched</p>
+     * @param checkpoints             <p>The checkpoints set for this arena</p>
+     * @param maxPlayers              <p>The maximum amount of players able to join this arena at once</p>
+     * @param rewards                 <p>The rewards given by this arena</p>
+     * @param parkourArenaData        <p>The arena data keeping track of which players have done what in this arena</p>
+     * @param arenaHandler            <p>The arena handler used for saving any changes</p>
+     * @param allowedDamageCauses     <p>The damage causes to not cancel. If the player received fatal damage, a loss is triggered.</p>
+     * @param lossTriggerDamageCauses <p>The damage causes that will trigger a loss (for arrow traps and similar)</p>
      */
     public ParkourArena(@NotNull UUID arenaId, @NotNull String arenaName, @NotNull Location spawnLocation,
                         @Nullable Location exitLocation, @NotNull Material winBlockType, @Nullable Location winLocation,
                         @Nullable Set<String> killPlaneBlockNames, @Nullable Set<String> obstacleBlockNames,
                         @NotNull List<Location> checkpoints, int maxPlayers,
                         @NotNull Map<RewardCondition, Set<Reward>> rewards,
-                        @NotNull ParkourArenaData parkourArenaData, @NotNull ParkourArenaHandler arenaHandler) {
+                        @NotNull ParkourArenaData parkourArenaData, @NotNull ParkourArenaHandler arenaHandler,
+                        @Nullable Set<String> allowedDamageCauses,
+                        @Nullable Set<String> lossTriggerDamageCauses) {
         this.arenaId = arenaId;
         this.arenaName = arenaName;
         this.spawnLocation = spawnLocation;
@@ -143,6 +159,8 @@ public class ParkourArena implements Arena {
         this.parkourArenaHandler = arenaHandler;
         this.rewards = rewards;
         this.maxPlayers = maxPlayers;
+        this.allowedDamageCauses = InputValidationHelper.parseDamageCauses(allowedDamageCauses);
+        this.lossTriggerDamageCauses = InputValidationHelper.parseDamageCauses(lossTriggerDamageCauses);
     }
 
     /**
@@ -175,6 +193,8 @@ public class ParkourArena implements Arena {
         this.checkpoints = new ArrayList<>();
         this.parkourArenaHandler = arenaHandler;
         this.maxPlayers = -1;
+        this.allowedDamageCauses = new HashSet<>();
+        this.lossTriggerDamageCauses = new HashSet<>();
     }
 
     @Override
@@ -237,6 +257,28 @@ public class ParkourArena implements Arena {
 
         this.maxPlayers = newValue;
         this.saveArena();
+        return true;
+    }
+
+    @Override
+    public @NotNull Set<EntityDamageEvent.DamageCause> getAllowedDamageCauses() {
+        return this.allowedDamageCauses;
+    }
+
+    @Override
+    public @NotNull Set<EntityDamageEvent.DamageCause> getLossTriggerDamageCauses() {
+        return this.lossTriggerDamageCauses;
+    }
+
+    @Override
+    public boolean setAllowedDamageCauses(@NotNull Set<EntityDamageEvent.DamageCause> causes) {
+        this.allowedDamageCauses = causes;
+        return true;
+    }
+
+    @Override
+    public boolean setLossTriggerDamageCauses(@NotNull Set<EntityDamageEvent.DamageCause> causes) {
+        this.lossTriggerDamageCauses = causes;
         return true;
     }
 

@@ -8,10 +8,12 @@ import net.knarcraft.minigames.arena.reward.Reward;
 import net.knarcraft.minigames.arena.reward.RewardCondition;
 import net.knarcraft.minigames.config.DropperConfiguration;
 import net.knarcraft.minigames.util.DropperArenaStorageHelper;
+import net.knarcraft.minigames.util.InputValidationHelper;
 import net.knarcraft.minigames.util.StringSanitizer;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -69,6 +71,16 @@ public class DropperArena implements Arena {
     private int maxPlayers = -1;
 
     /**
+     * Types of damage that won't be blocked in this arena
+     */
+    private Set<EntityDamageEvent.DamageCause> allowedDamageCauses;
+
+    /**
+     * Types of damage that will trigger a loss in this arena
+     */
+    private Set<EntityDamageEvent.DamageCause> lossTriggerDamageCauses;
+
+    /**
      * The material of the block players have to hit to win this dropper arena
      */
     private @NotNull Material winBlockType;
@@ -98,12 +110,16 @@ public class DropperArena implements Arena {
      * @param rewards                  <p>The rewards given by this arena</p>
      * @param dropperArenaData         <p>The arena data keeping track of which players have done what in this arena</p>
      * @param arenaHandler             <p>The arena handler used for saving any changes</p>
+     * @param allowedDamageCauses      <p>The damage causes to not cancel. If the player received fatal damage, a loss is triggered.</p>
+     * @param lossTriggerDamageCauses  <p>The damage causes that will trigger a loss (for arrow traps and similar)</p>
      */
     public DropperArena(@NotNull UUID arenaId, @NotNull String arenaName, @NotNull Location spawnLocation,
                         @Nullable Location exitLocation, double playerVerticalVelocity, float playerHorizontalVelocity,
                         @NotNull Material winBlockType, int maxPlayers,
                         @NotNull Map<RewardCondition, Set<Reward>> rewards, @NotNull DropperArenaData dropperArenaData,
-                        @NotNull DropperArenaHandler arenaHandler) {
+                        @NotNull DropperArenaHandler arenaHandler,
+                        @Nullable Set<String> allowedDamageCauses,
+                        @Nullable Set<String> lossTriggerDamageCauses) {
         this.arenaId = arenaId;
         this.arenaName = arenaName;
         this.spawnLocation = spawnLocation;
@@ -115,6 +131,8 @@ public class DropperArena implements Arena {
         this.dropperArenaHandler = arenaHandler;
         this.rewards = rewards;
         this.maxPlayers = maxPlayers;
+        this.allowedDamageCauses = InputValidationHelper.parseDamageCauses(allowedDamageCauses);
+        this.lossTriggerDamageCauses = InputValidationHelper.parseDamageCauses(lossTriggerDamageCauses);
     }
 
     /**
@@ -145,6 +163,8 @@ public class DropperArena implements Arena {
         this.dropperArenaData = new DropperArenaData(this.arenaId, recordRegistries, new HashMap<>());
         this.winBlockType = Material.WATER;
         this.dropperArenaHandler = arenaHandler;
+        this.allowedDamageCauses = new HashSet<>();
+        this.lossTriggerDamageCauses = new HashSet<>();
     }
 
     @Override
@@ -201,8 +221,34 @@ public class DropperArena implements Arena {
 
     @Override
     public boolean setMaxPlayers(int newValue) {
+        if (newValue < -1) {
+            return false;
+        }
+
         this.maxPlayers = newValue;
         this.saveArena();
+        return true;
+    }
+
+    @Override
+    public @NotNull Set<EntityDamageEvent.DamageCause> getAllowedDamageCauses() {
+        return this.allowedDamageCauses;
+    }
+
+    @Override
+    public @NotNull Set<EntityDamageEvent.DamageCause> getLossTriggerDamageCauses() {
+        return this.lossTriggerDamageCauses;
+    }
+
+    @Override
+    public boolean setAllowedDamageCauses(@NotNull Set<EntityDamageEvent.DamageCause> causes) {
+        this.allowedDamageCauses = causes;
+        return true;
+    }
+
+    @Override
+    public boolean setLossTriggerDamageCauses(@NotNull Set<EntityDamageEvent.DamageCause> causes) {
+        this.lossTriggerDamageCauses = causes;
         return true;
     }
 

@@ -2,8 +2,12 @@ package net.knarcraft.minigames.util;
 
 import net.knarcraft.minigames.MiniGames;
 import net.knarcraft.minigames.arena.PlayerEntryState;
+import net.knarcraft.minigames.arena.StorageKey;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -76,6 +80,42 @@ public final class ArenaStorageHelper {
             MiniGames.log(Level.SEVERE, "Unable to create the arena data directories");
         }
         return arenaDataFile;
+    }
+
+    /**
+     * Loads a set of strings from the given configuration section
+     *
+     * @param configurationSection <p>The configuration section to load from</p>
+     * @param storageKey           <p>The key to the info to load</p>
+     * @return <p>The loaded items, or null if not set</p>
+     */
+    @Nullable
+    @SuppressWarnings("unchecked")
+    public static Set<String> loadStrings(@NotNull ConfigurationSection configurationSection,
+                                          @NotNull StorageKey storageKey) {
+        List<?> rawList = configurationSection.getList(storageKey.getKey());
+        Set<String> output;
+        if (rawList == null) {
+            output = null;
+        } else {
+            output = new HashSet<>((List<String>) rawList);
+        }
+        return output;
+    }
+
+    /**
+     * Gets the names of the given damage causes
+     *
+     * @param causes <p>The damage causes to get names of</p>
+     * @return <p>The names of the damage causes</p>
+     */
+    @NotNull
+    public static List<String> getDamageCauseNames(@NotNull Set<EntityDamageEvent.DamageCause> causes) {
+        List<String> output = new ArrayList<>(causes.size());
+        for (EntityDamageEvent.DamageCause cause : causes) {
+            output.add(cause.name());
+        }
+        return output;
     }
 
 }

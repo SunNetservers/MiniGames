@@ -33,6 +33,7 @@ import java.util.UUID;
 import java.util.logging.Level;
 
 import static net.knarcraft.minigames.util.ArenaStorageHelper.getArenaDataFile;
+import static net.knarcraft.minigames.util.ArenaStorageHelper.loadStrings;
 
 /**
  * A helper class for saving and loading parkour arenas
@@ -141,6 +142,10 @@ public final class ParkourArenaStorageHelper {
         configSection.set(ParkourArenaStorageKey.OBSTACLE_BLOCKS.getKey(), getObstacleBlocks(arena));
         configSection.set(ParkourArenaStorageKey.CHECKPOINTS.getKey(), arena.getCheckpoints());
         configSection.set(ParkourArenaStorageKey.MAX_PLAYERS.getKey(), arena.getMaxPlayers());
+        configSection.set(ParkourArenaStorageKey.ALLOWED_DAMAGE_CAUSES.getKey(),
+                ArenaStorageHelper.getDamageCauseNames(arena.getAllowedDamageCauses()));
+        configSection.set(ParkourArenaStorageKey.LOSS_TRIGGER_DAMAGE_CAUSES.getKey(),
+                ArenaStorageHelper.getDamageCauseNames(arena.getLossTriggerDamageCauses()));
         RewardStorageHelper.saveRewards(arena, configSection, ParkourArenaStorageKey.REWARDS.getKey());
         saveParkourArenaData(arena.getData());
     }
@@ -151,7 +156,8 @@ public final class ParkourArenaStorageHelper {
      * @param arena <p>The arena to get kill plane blocks for</p>
      * @return <p>The kill plane blocks</p>
      */
-    private static List<String> getKillPlaneBlocks(ParkourArena arena) {
+    @NotNull
+    private static List<String> getKillPlaneBlocks(@NotNull ParkourArena arena) {
         if (arena.getKillPlaneBlockNames() == null) {
             return new ArrayList<>();
         } else {
@@ -165,7 +171,8 @@ public final class ParkourArenaStorageHelper {
      * @param arena <p>The arena to get obstacle blocks for</p>
      * @return <p>The obstacle blocks</p>
      */
-    private static List<String> getObstacleBlocks(ParkourArena arena) {
+    @NotNull
+    private static List<String> getObstacleBlocks(@NotNull ParkourArena arena) {
         if (arena.getObstacleBlockNames() == null) {
             return new ArrayList<>();
         } else {
@@ -178,7 +185,8 @@ public final class ParkourArenaStorageHelper {
      *
      * @return <p>The loaded arenas, or null if the arenas configuration section is missing.</p>
      */
-    public static @NotNull Map<UUID, ParkourArena> loadParkourArenas() {
+    @NotNull
+    public static Map<UUID, ParkourArena> loadParkourArenas() {
         YamlConfiguration configuration = YamlConfiguration.loadConfiguration(parkourArenaFile);
         ConfigurationSection arenaSection = configuration.getConfigurationSection(parkourArenasConfigurationSection);
         //If no such section exists, it must be the case that there is no data to load
@@ -211,7 +219,8 @@ public final class ParkourArenaStorageHelper {
      * @return <p>The loaded arena, or null if invalid</p>
      */
     @SuppressWarnings("unchecked")
-    private static @Nullable ParkourArena loadParkourArena(@NotNull ConfigurationSection configurationSection) {
+    @Nullable
+    private static ParkourArena loadParkourArena(@NotNull ConfigurationSection configurationSection) {
         UUID arenaId = ((SerializableUUID) configurationSection.get(ParkourArenaStorageKey.ID.getKey(),
                 new SerializableUUID(UUID.randomUUID()))).getRawValue();
         String arenaName = configurationSection.getString(ParkourArenaStorageKey.NAME.getKey());
@@ -219,22 +228,9 @@ public final class ParkourArenaStorageHelper {
         Location exitLocation = (Location) configurationSection.get(ParkourArenaStorageKey.EXIT_LOCATION.getKey());
         Location winLocation = (Location) configurationSection.get(ParkourArenaStorageKey.WIN_LOCATION.getKey());
         int maxPlayers = configurationSection.getInt(ParkourArenaStorageKey.MAX_PLAYERS.getKey(), -1);
-        SerializableMaterial winBlockType = (SerializableMaterial) configurationSection.get(
-                ParkourArenaStorageKey.WIN_BLOCK_TYPE.getKey());
-        List<?> killPlaneBlockNamesList = configurationSection.getList(ParkourArenaStorageKey.KILL_PLANE_BLOCKS.getKey());
-        Set<String> killPlaneBlockNames;
-        if (killPlaneBlockNamesList == null) {
-            killPlaneBlockNames = null;
-        } else {
-            killPlaneBlockNames = new HashSet<>((List<String>) killPlaneBlockNamesList);
-        }
-        List<?> obstacleBlockNamesList = configurationSection.getList(ParkourArenaStorageKey.OBSTACLE_BLOCKS.getKey());
-        Set<String> obstacleBlockNames;
-        if (obstacleBlockNamesList == null) {
-            obstacleBlockNames = null;
-        } else {
-            obstacleBlockNames = new HashSet<>((List<String>) obstacleBlockNamesList);
-        }
+        SerializableMaterial winBlockType = (SerializableMaterial) configurationSection.get(ParkourArenaStorageKey.WIN_BLOCK_TYPE.getKey());
+        Set<String> killPlaneBlockNames = loadStrings(configurationSection, ParkourArenaStorageKey.KILL_PLANE_BLOCKS);
+        Set<String> obstacleBlockNames = loadStrings(configurationSection, ParkourArenaStorageKey.OBSTACLE_BLOCKS);
         List<Location> checkpoints = (List<Location>) configurationSection.get(ParkourArenaStorageKey.CHECKPOINTS.getKey());
 
         Map<RewardCondition, Set<Reward>> rewards = RewardStorageHelper.loadRewards(configurationSection,
@@ -265,9 +261,12 @@ public final class ParkourArenaStorageHelper {
             checkpoints = new ArrayList<>();
         }
 
+        Set<String> allowedDamageCauseNames = loadStrings(configurationSection, ParkourArenaStorageKey.ALLOWED_DAMAGE_CAUSES);
+        Set<String> lossTriggerDamageCauseNames = loadStrings(configurationSection, ParkourArenaStorageKey.LOSS_TRIGGER_DAMAGE_CAUSES);
+
         return new ParkourArena(arenaId, arenaName, spawnLocation, exitLocation, winBlockType.getRawValue(), winLocation,
                 killPlaneBlockNames, obstacleBlockNames, checkpoints, maxPlayers, rewards, arenaData,
-                MiniGames.getInstance().getParkourArenaHandler());
+                MiniGames.getInstance().getParkourArenaHandler(), allowedDamageCauseNames, lossTriggerDamageCauseNames);
     }
 
     /**
@@ -276,7 +275,8 @@ public final class ParkourArenaStorageHelper {
      * @param arenaId <p>The id to get parkour data for</p>
      * @return <p>Empty parkour data</p>
      */
-    private static @NotNull ParkourArenaData getEmptyParkourData(@NotNull UUID arenaId) {
+    @NotNull
+    private static ParkourArenaData getEmptyParkourData(@NotNull UUID arenaId) {
         Map<ArenaGameMode, ArenaRecordsRegistry> recordRegistries = new HashMap<>();
         Map<ArenaGameMode, Set<UUID>> playersCompleted = new HashMap<>();
         for (ArenaGameMode arenaGameMode : ParkourArenaGameMode.values()) {
@@ -304,7 +304,8 @@ public final class ParkourArenaStorageHelper {
      * @param arenaId <p>The id of the arena to get data for</p>
      * @return <p>The loaded arena data</p>
      */
-    private static @Nullable ParkourArenaData loadParkourArenaData(@NotNull UUID arenaId) {
+    @Nullable
+    private static ParkourArenaData loadParkourArenaData(@NotNull UUID arenaId) {
         File arenaDataFile = getParkourArenaDataFile(arenaId);
         YamlConfiguration configuration = YamlConfiguration.loadConfiguration(arenaDataFile);
         return (ParkourArenaData) configuration.get(ParkourArenaStorageKey.DATA.getKey());
@@ -326,7 +327,8 @@ public final class ParkourArenaStorageHelper {
      * @param arenaId <p>The id of the arena to get a data file for</p>
      * @return <p>The file the arena's data is/should be stored in</p>
      */
-    private static @NotNull File getParkourArenaDataFile(@NotNull UUID arenaId) {
+    @NotNull
+    private static File getParkourArenaDataFile(@NotNull UUID arenaId) {
         return getArenaDataFile(parkourArenaDataFolder, arenaId);
     }
 

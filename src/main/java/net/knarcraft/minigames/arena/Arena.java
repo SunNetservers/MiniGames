@@ -5,6 +5,7 @@ import net.knarcraft.minigames.arena.reward.RewardCondition;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -181,5 +182,41 @@ public interface Arena {
      * @param newValue <p>The new maximum amount of players</p>
      */
     boolean setMaxPlayers(int newValue);
+
+    /**
+     * Gets the damage causes that won't be blocked for this arena
+     *
+     * <p>Receiving any damage of this type will be allowed, but if the damage is fatal, a loss will be triggered.</p>
+     *
+     * @return <p>The damage causes that won't be blocked</p>
+     */
+    @NotNull
+    Set<EntityDamageEvent.DamageCause> getAllowedDamageCauses();
+
+    /**
+     * Sets the damage causes that will trigger a loss for this arena
+     *
+     * <p>Receiving any damage of this type will immediately cause a loss to the player.</p>
+     *
+     * @return <p>The damage causes that will trigger a loss</p>
+     */
+    @NotNull
+    Set<EntityDamageEvent.DamageCause> getLossTriggerDamageCauses();
+
+    /**
+     * Sets the damage causes that are allowed for this arena
+     *
+     * @param causes <p>The allowed damage causes</p>
+     */
+    @SuppressWarnings("SameReturnValue")
+    boolean setAllowedDamageCauses(@NotNull Set<EntityDamageEvent.DamageCause> causes);
+
+    /**
+     * Sets the damage causes that will trigger a loss for this arena
+     *
+     * @param causes <p>The causes that cause a loss</p>
+     */
+    @SuppressWarnings("SameReturnValue")
+    boolean setLossTriggerDamageCauses(@NotNull Set<EntityDamageEvent.DamageCause> causes);
 
 }

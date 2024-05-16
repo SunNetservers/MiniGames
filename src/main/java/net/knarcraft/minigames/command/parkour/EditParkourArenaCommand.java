@@ -6,13 +6,11 @@ import net.knarcraft.minigames.arena.parkour.ParkourArena;
 import net.knarcraft.minigames.arena.parkour.ParkourArenaEditableProperty;
 import net.knarcraft.minigames.command.EditArenaCommand;
 import net.knarcraft.minigames.config.MiniGameMessage;
+import net.knarcraft.minigames.util.InputValidationHelper;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.HashSet;
-import java.util.List;
 
 /**
  * The command for editing an existing dropper arena
@@ -96,9 +94,13 @@ public class EditParkourArenaCommand extends EditArenaCommand {
             case WIN_LOCATION -> arena.setWinLocation(parseLocation(player, value));
             case CHECKPOINT_ADD -> arena.addCheckpoint(parseLocation(player, value));
             case CHECKPOINT_CLEAR -> arena.clearCheckpoints();
-            case KILL_PLANE_BLOCKS -> arena.setKillPlaneBlocks(new HashSet<>(List.of(value.split(","))));
-            case OBSTACLE_BLOCKS -> arena.setObstacleBlocks(new HashSet<>(List.of(value.split(","))));
+            case KILL_PLANE_BLOCKS -> arena.setKillPlaneBlocks(asSet(value));
+            case OBSTACLE_BLOCKS -> arena.setObstacleBlocks(asSet(value));
             case MAX_PLAYERS -> arena.setMaxPlayers(parseMaxPlayers(value));
+            case ALLOWED_DAMAGE_CAUSES ->
+                    arena.setAllowedDamageCauses(InputValidationHelper.parseDamageCauses(asSet(value)));
+            case LOSS_TRIGGER_DAMAGE_CAUSES ->
+                    arena.setLossTriggerDamageCauses(InputValidationHelper.parseDamageCauses(asSet(value)));
         };
     }
 

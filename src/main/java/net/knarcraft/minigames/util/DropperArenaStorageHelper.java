@@ -32,6 +32,7 @@ import java.util.UUID;
 import java.util.logging.Level;
 
 import static net.knarcraft.minigames.util.ArenaStorageHelper.getArenaDataFile;
+import static net.knarcraft.minigames.util.ArenaStorageHelper.loadStrings;
 
 /**
  * A helper class for saving and loading arenas
@@ -138,6 +139,10 @@ public final class DropperArenaStorageHelper {
         configSection.set(DropperArenaStorageKey.PLAYER_HORIZONTAL_VELOCITY.getKey(), arena.getPlayerHorizontalVelocity());
         configSection.set(DropperArenaStorageKey.WIN_BLOCK_TYPE.getKey(), new SerializableMaterial(arena.getWinBlockType()));
         configSection.set(DropperArenaStorageKey.MAX_PLAYERS.getKey(), arena.getMaxPlayers());
+        configSection.set(DropperArenaStorageKey.ALLOWED_DAMAGE_CAUSES.getKey(),
+                ArenaStorageHelper.getDamageCauseNames(arena.getAllowedDamageCauses()));
+        configSection.set(DropperArenaStorageKey.LOSS_TRIGGER_DAMAGE_CAUSES.getKey(),
+                ArenaStorageHelper.getDamageCauseNames(arena.getLossTriggerDamageCauses()));
         RewardStorageHelper.saveRewards(arena, configSection, DropperArenaStorageKey.REWARDS.getKey());
         saveDropperArenaData(arena.getData());
     }
@@ -213,8 +218,12 @@ public final class DropperArenaStorageHelper {
             arenaData = getEmptyDropperData(arenaId);
         }
 
+        Set<String> allowedDamageCauseNames = loadStrings(configurationSection, DropperArenaStorageKey.ALLOWED_DAMAGE_CAUSES);
+        Set<String> lossTriggerDamageCauseNames = loadStrings(configurationSection, DropperArenaStorageKey.LOSS_TRIGGER_DAMAGE_CAUSES);
+
         return new DropperArena(arenaId, arenaName, spawnLocation, exitLocation, verticalVelocity, horizontalVelocity,
-                winBlockType.getRawValue(), maxPlayers, rewards, arenaData, MiniGames.getInstance().getDropperArenaHandler());
+                winBlockType.getRawValue(), maxPlayers, rewards, arenaData,
+                MiniGames.getInstance().getDropperArenaHandler(), allowedDamageCauseNames, lossTriggerDamageCauseNames);
     }
 
     /**

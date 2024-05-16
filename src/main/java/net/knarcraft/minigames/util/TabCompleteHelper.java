@@ -9,6 +9,8 @@ import net.knarcraft.minigames.arena.dropper.DropperArenaEditableProperty;
 import net.knarcraft.minigames.arena.parkour.ParkourArenaEditableProperty;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Tag;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.permissions.Permission;
 import org.jetbrains.annotations.NotNull;
 
@@ -16,6 +18,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.StringJoiner;
 
 /**
@@ -112,11 +115,53 @@ public final class TabCompleteHelper {
             tabCompleteSuggestions.put(EditablePropertyType.MATERIAL_LIST, getMaterialListSuggestions());
             tabCompleteSuggestions.put(EditablePropertyType.DOUBLE, getDoubleSuggestions());
             tabCompleteSuggestions.put(EditablePropertyType.INTEGER, getIntegerSuggestions());
+            tabCompleteSuggestions.put(EditablePropertyType.DAMAGE_CAUSE_LIST, getDamageCauseSuggestions());
         }
 
         return tabCompleteSuggestions.get(propertyType);
     }
 
+    /**
+     * Gets tab-complete suggestions for list properties
+     *
+     * @param propertyType <p>Gets the type of property to show tab-completions for</p>
+     * @param input        <p>The input string to use for filtering</p>
+     * @return <p>The tab-completions to suggest</p>
+     */
+    @NotNull
+    public static List<String> getListCompleteSuggestions(@NotNull EditablePropertyType propertyType,
+                                                          @NotNull String input) {
+        List<String> allValues;
+        if (propertyType == EditablePropertyType.DAMAGE_CAUSE_LIST) {
+            allValues = getTabCompleteSuggestions((EditablePropertyType.DAMAGE_CAUSE_LIST));
+        } else if (propertyType == EditablePropertyType.MATERIAL_LIST) {
+            allValues = getTabCompleteSuggestions((EditablePropertyType.MATERIAL_LIST));
+        } else {
+            throw new IllegalArgumentException("Invalid property type given!");
+        }
+        return TabCompletionHelper.getStringList(allValues, input, TabCompletionHelper::filterMatchingContains);
+    }
+
+    /**
+     * Gets tab-complete suggestions for a list of damage causes
+     *
+     * @return <p>Damage cause suggestions</p>
+     */
+    @NotNull
+    private static List<String> getDamageCauseSuggestions() {
+        List<String> suggestions = new ArrayList<>();
+        for (EntityDamageEvent.DamageCause damageCause : EntityDamageEvent.DamageCause.values()) {
+            suggestions.add(damageCause.name());
+        }
+        return suggestions;
+    }
+
+    /**
+     * Gets tab-complete suggestions for an integer value
+     *
+     * @return <p>Integer suggestions</p>
+     */
+    @NotNull
     private static List<String> getIntegerSuggestions() {
         List<String> suggestions = new ArrayList<>();
         suggestions.add("-1");
@@ -157,9 +202,14 @@ public final class TabCompleteHelper {
     @NotNull
     private static List<String> getMaterialListSuggestions() {
         List<String> suggestions = new ArrayList<>();
-        suggestions.add("LAVA,MAGMA_BLOCK");
-        suggestions.add("WATER,MAGMA_BLOCK,LAVA,+BUTTONS,+CORALS");
-        suggestions.add("CHAIN,END_ROD,LIGHTNING_ROD");
+        for (Material material : Material.values()) {
+            if (material.isBlock()) {
+                suggestions.add(material.getKey().getKey());
+            }
+        }
+        for (Tag<Material> tag : getTags()) {
+            suggestions.add("+" + tag.getKey().getKey());
+        }
         return suggestions;
     }
 
@@ -313,6 +363,30 @@ public final class TabCompleteHelper {
 
             loadPermission(path);
         }
+    }
+
+    /**
+     * Gets all useful tags for physical blocks
+     *
+     * @return <p>All block tags</p>
+     */
+    @NotNull
+    private static Set<Tag<Material>> getTags() {
+        // TODO: Find a way to get the tags programmatically
+        return Set.of(Tag.ACACIA_LOGS, Tag.ALL_HANGING_SIGNS, Tag.ALL_SIGNS, Tag.ANVIL, Tag.WALLS,
+                Tag.BAMBOO_BLOCKS, Tag.BANNERS, Tag.BEDS, Tag.BEEHIVES, Tag.BIRCH_LOGS,
+                Tag.BUTTONS, Tag.CAMPFIRES, Tag.CANDLE_CAKES, Tag.CANDLES, Tag.CAULDRONS, Tag.CAVE_VINES,
+                Tag.CEILING_HANGING_SIGNS, Tag.CHERRY_LOGS, Tag.CLIMBABLE, Tag.COAL_ORES, Tag.CONCRETE_POWDER,
+                Tag.COPPER_ORES, Tag.CORAL_BLOCKS, Tag.CORAL_PLANTS, Tag.CORALS, Tag.CRIMSON_STEMS, Tag.CROPS,
+                Tag.DARK_OAK_LOGS, Tag.DIAMOND_ORES, Tag.DIRT, Tag.DOORS, Tag.EMERALD_ORES, Tag.FENCE_GATES, Tag.FENCES,
+                Tag.FIRE, Tag.FLOWER_POTS, Tag.FLOWERS, Tag.GOLD_ORES, Tag.ICE, Tag.IRON_ORES, Tag.JUNGLE_LOGS,
+                Tag.LAPIS_ORES, Tag.LEAVES, Tag.LOGS, Tag.MANGROVE_LOGS, Tag.NYLIUM, Tag.OAK_LOGS, Tag.PLANKS,
+                Tag.PORTALS, Tag.PRESSURE_PLATES, Tag.RAILS, Tag.REDSTONE_ORES, Tag.SAND, Tag.SAPLINGS, Tag.WART_BLOCKS,
+                Tag.SHULKER_BOXES, Tag.SIGNS, Tag.SLABS, Tag.SMALL_FLOWERS, Tag.SNOW, Tag.SPRUCE_LOGS, Tag.STAIRS,
+                Tag.STANDING_SIGNS, Tag.STONE_BRICKS, Tag.STONE_BUTTONS, Tag.TALL_FLOWERS, Tag.TERRACOTTA, Tag.WOOL,
+                Tag.TRAPDOORS, Tag.WALL_CORALS, Tag.WALL_HANGING_SIGNS, Tag.WALL_SIGNS, Tag.WARPED_STEMS,
+                Tag.WOODEN_BUTTONS, Tag.WOODEN_DOORS, Tag.WOODEN_FENCES, Tag.WOODEN_PRESSURE_PLATES, Tag.WOODEN_STAIRS,
+                Tag.WOODEN_TRAPDOORS);
     }
 
 }
