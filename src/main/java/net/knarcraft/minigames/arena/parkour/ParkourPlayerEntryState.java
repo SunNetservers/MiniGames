@@ -39,13 +39,15 @@ public class ParkourPlayerEntryState extends AbstractPlayerEntryState {
      * @param originalIsSwimming    <p>Whether the player was swimming before entering the arena</p>
      * @param originalCollideAble   <p>Whether the player was collide-able before entering the arena</p>
      * @param originalPotionEffects <p>The potion effects applied to the player when joining</p>
+     * @param originalHealth        <p>The health of the player when joining the arena</p>
      */
     public ParkourPlayerEntryState(@NotNull UUID playerId, Location entryLocation,
                                    boolean originalIsFlying, GameMode originalGameMode, boolean originalAllowFlight,
                                    boolean originalInvulnerable, boolean originalIsSwimming,
-                                   boolean originalCollideAble, Collection<PotionEffect> originalPotionEffects) {
+                                   boolean originalCollideAble, Collection<PotionEffect> originalPotionEffects,
+                                   double originalHealth) {
         super(playerId, entryLocation, originalIsFlying, originalGameMode, originalAllowFlight,
-                originalInvulnerable, originalIsSwimming, originalCollideAble, originalPotionEffects);
+                originalInvulnerable, originalIsSwimming, originalCollideAble, originalPotionEffects, originalHealth);
     }
 
     @Override
@@ -77,9 +79,11 @@ public class ParkourPlayerEntryState extends AbstractPlayerEntryState {
         boolean originalCollideAble = getBoolean(data, "originalCollideAble");
         Collection<PotionEffect> originalPotionEffect =
                 (Collection<PotionEffect>) data.getOrDefault("originalPotionEffects", new ArrayList<>());
+        double originalHealth = ((Number) data.get("originalHealth")).doubleValue();
 
         return new ParkourPlayerEntryState(playerId, entryLocation, originalIsFlying, originalGameMode,
-                originalAllowFlight, originalInvulnerable, originalIsSwimming, originalCollideAble, originalPotionEffect);
+                originalAllowFlight, originalInvulnerable, originalIsSwimming, originalCollideAble,
+                originalPotionEffect, originalHealth);
     }
 
 }

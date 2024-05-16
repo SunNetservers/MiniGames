@@ -36,6 +36,7 @@ public abstract class AbstractPlayerEntryState implements PlayerEntryState {
     private final boolean originalInvulnerable;
     private final boolean originalIsSwimming;
     private final boolean originalCollideAble;
+    private final double originalHealth;
     private final Collection<PotionEffect> originalPotionEffects;
 
     /**
@@ -52,6 +53,7 @@ public abstract class AbstractPlayerEntryState implements PlayerEntryState {
         this.originalInvulnerable = player.isInvulnerable();
         this.originalIsSwimming = player.isSwimming();
         this.originalCollideAble = player.isCollidable();
+        this.originalHealth = player.getHealth();
 
         // Store and clear potion effects
         this.originalPotionEffects = getPlayer().getActivePotionEffects();
@@ -72,11 +74,13 @@ public abstract class AbstractPlayerEntryState implements PlayerEntryState {
      * @param originalIsSwimming    <p>Whether the player was swimming before entering the arena</p>
      * @param originalCollideAble   <p>Whether the player was collide-able before entering the arena</p>
      * @param originalPotionEffects <p>The potion effects applied to the player when joining</p>
+     * @param originalHealth        <p>The health of the player when joining the arena</p>
      */
-    public AbstractPlayerEntryState(@NotNull UUID playerId, Location entryLocation,
+    public AbstractPlayerEntryState(@NotNull UUID playerId, @NotNull Location entryLocation,
                                     boolean originalIsFlying, GameMode originalGameMode, boolean originalAllowFlight,
                                     boolean originalInvulnerable, boolean originalIsSwimming,
-                                    boolean originalCollideAble, Collection<PotionEffect> originalPotionEffects) {
+                                    boolean originalCollideAble, @NotNull Collection<PotionEffect> originalPotionEffects,
+                                    double originalHealth) {
         this.playerId = playerId;
         this.entryLocation = entryLocation;
         this.originalIsFlying = originalIsFlying;
@@ -86,6 +90,7 @@ public abstract class AbstractPlayerEntryState implements PlayerEntryState {
         this.originalIsSwimming = originalIsSwimming;
         this.originalCollideAble = originalCollideAble;
         this.originalPotionEffects = originalPotionEffects;
+        this.originalHealth = originalHealth;
     }
 
     @Override
@@ -115,6 +120,7 @@ public abstract class AbstractPlayerEntryState implements PlayerEntryState {
             player.addPotionEffect(potionEffect);
         }
         removeMenuItem(player);
+        player.setHealth(originalHealth);
     }
 
     @Override
@@ -149,6 +155,7 @@ public abstract class AbstractPlayerEntryState implements PlayerEntryState {
         data.put("originalIsSwimming", this.originalIsSwimming);
         data.put("originalCollideAble", this.originalCollideAble);
         data.put("originalPotionEffects", this.originalPotionEffects);
+        data.put("originalHealth", this.originalHealth);
         return data;
     }
 

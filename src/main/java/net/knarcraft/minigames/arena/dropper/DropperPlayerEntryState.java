@@ -49,15 +49,16 @@ public class DropperPlayerEntryState extends AbstractPlayerEntryState {
      * @param horizontalVelocity    <p>The horizontal velocity of the player before entering the arena</p>
      * @param originalCollideAble   <p>Whether the player was collide-able before entering the arena</p>
      * @param originalPotionEffects <p>The potion effects applied to the player when joining</p>
+     * @param originalHealth        <p>The health of the player when joining the arena</p>
      */
-    public DropperPlayerEntryState(@NotNull UUID playerId, Location entryLocation,
+    public DropperPlayerEntryState(@NotNull UUID playerId, @NotNull Location entryLocation,
                                    boolean originalIsFlying, GameMode originalGameMode, boolean originalAllowFlight,
                                    boolean originalInvulnerable, boolean originalIsSwimming,
                                    float originalFlySpeed, float horizontalVelocity,
-                                   DropperArenaGameMode arenaGameMode, boolean originalCollideAble,
-                                   Collection<PotionEffect> originalPotionEffects) {
+                                   @NotNull DropperArenaGameMode arenaGameMode, boolean originalCollideAble,
+                                   @NotNull Collection<PotionEffect> originalPotionEffects, double originalHealth) {
         super(playerId, entryLocation, originalIsFlying, originalGameMode, originalAllowFlight,
-                originalInvulnerable, originalIsSwimming, originalCollideAble, originalPotionEffects);
+                originalInvulnerable, originalIsSwimming, originalCollideAble, originalPotionEffects, originalHealth);
         this.originalFlySpeed = originalFlySpeed;
         this.horizontalVelocity = horizontalVelocity;
         this.arenaGameMode = arenaGameMode;
@@ -128,10 +129,12 @@ public class DropperPlayerEntryState extends AbstractPlayerEntryState {
         boolean originalCollideAble = getBoolean(data, "originalCollideAble");
         Collection<PotionEffect> originalPotionEffect =
                 (Collection<PotionEffect>) data.getOrDefault("originalPotionEffects", new ArrayList<>());
+        double originalHealth = ((Number) data.get("originalHealth")).doubleValue();
 
         return new DropperPlayerEntryState(playerId, entryLocation, originalIsFlying,
                 originalGameMode, originalAllowFlight, originalInvulnerable, originalIsSwimming,
-                originalFlySpeed, horizontalVelocity, arenaGameMode, originalCollideAble, originalPotionEffect);
+                originalFlySpeed, horizontalVelocity, arenaGameMode, originalCollideAble, originalPotionEffect,
+                originalHealth);
     }
 
 }
