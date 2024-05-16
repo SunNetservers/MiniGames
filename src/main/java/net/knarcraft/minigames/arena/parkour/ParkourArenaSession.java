@@ -14,6 +14,7 @@ import net.knarcraft.minigames.util.GeyserHelper;
 import net.knarcraft.minigames.util.PlayerTeleporter;
 import net.knarcraft.minigames.util.RewardHelper;
 import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Powerable;
@@ -135,6 +136,7 @@ public class ParkourArenaSession extends AbstractArenaSession {
         //Teleport the player back to the top
         Location spawnLocation = this.reachedCheckpoint != null ? this.reachedCheckpoint : this.arena.getSpawnLocation();
         PlayerTeleporter.teleportPlayer(this.player, spawnLocation, true, false);
+        this.player.playSound(this.player, Sound.ENTITY_CHICKEN_EGG, 5f, 0.5f);
         this.entryState.setArenaState();
     }
 

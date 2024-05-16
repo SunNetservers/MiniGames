@@ -12,6 +12,7 @@ import net.knarcraft.minigames.gui.DropperGUIBedrock;
 import net.knarcraft.minigames.util.GeyserHelper;
 import net.knarcraft.minigames.util.PlayerTeleporter;
 import net.knarcraft.minigames.util.RewardHelper;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -116,6 +117,7 @@ public class DropperArenaSession extends AbstractArenaSession {
         this.deaths++;
         //Teleport the player back to the top
         PlayerTeleporter.teleportPlayer(this.player, this.arena.getSpawnLocation(), true, false);
+        this.player.playSound(this.player, Sound.ENTITY_CHICKEN_EGG, 5f, 0.5f);
         this.entryState.setArenaState();
     }
 

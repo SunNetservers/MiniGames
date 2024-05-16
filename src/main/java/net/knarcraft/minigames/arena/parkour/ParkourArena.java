@@ -273,12 +273,14 @@ public class ParkourArena implements Arena {
     @Override
     public boolean setAllowedDamageCauses(@NotNull Set<EntityDamageEvent.DamageCause> causes) {
         this.allowedDamageCauses = causes;
+        this.saveArena();
         return true;
     }
 
     @Override
     public boolean setLossTriggerDamageCauses(@NotNull Set<EntityDamageEvent.DamageCause> causes) {
         this.lossTriggerDamageCauses = causes;
+        this.saveArena();
         return true;
     }
 
