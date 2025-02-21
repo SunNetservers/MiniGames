@@ -9,6 +9,7 @@ import net.knarcraft.minigames.arena.dropper.DropperArenaEditableProperty;
 import net.knarcraft.minigames.arena.parkour.ParkourArenaEditableProperty;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.Tag;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.permissions.Permission;
@@ -204,7 +205,10 @@ public final class TabCompleteHelper {
         List<String> suggestions = new ArrayList<>();
         for (Material material : Material.values()) {
             if (material.isBlock()) {
-                suggestions.add(material.getKey().getKey());
+                NamespacedKey key = material.getKeyOrNull();
+                if (key != null) {
+                    suggestions.add(key.getKey());
+                }
             }
         }
         for (Tag<Material> tag : getTags()) {
@@ -383,7 +387,7 @@ public final class TabCompleteHelper {
                 Tag.LAPIS_ORES, Tag.LEAVES, Tag.LOGS, Tag.MANGROVE_LOGS, Tag.NYLIUM, Tag.OAK_LOGS, Tag.PLANKS,
                 Tag.PORTALS, Tag.PRESSURE_PLATES, Tag.RAILS, Tag.REDSTONE_ORES, Tag.SAND, Tag.SAPLINGS, Tag.WART_BLOCKS,
                 Tag.SHULKER_BOXES, Tag.SIGNS, Tag.SLABS, Tag.SMALL_FLOWERS, Tag.SNOW, Tag.SPRUCE_LOGS, Tag.STAIRS,
-                Tag.STANDING_SIGNS, Tag.STONE_BRICKS, Tag.STONE_BUTTONS, Tag.TALL_FLOWERS, Tag.TERRACOTTA, Tag.WOOL,
+                Tag.STANDING_SIGNS, Tag.STONE_BRICKS, Tag.STONE_BUTTONS, Tag.TERRACOTTA, Tag.WOOL,
                 Tag.TRAPDOORS, Tag.WALL_CORALS, Tag.WALL_HANGING_SIGNS, Tag.WALL_SIGNS, Tag.WARPED_STEMS,
                 Tag.WOODEN_BUTTONS, Tag.WOODEN_DOORS, Tag.WOODEN_FENCES, Tag.WOODEN_PRESSURE_PLATES, Tag.WOODEN_STAIRS,
                 Tag.WOODEN_TRAPDOORS);

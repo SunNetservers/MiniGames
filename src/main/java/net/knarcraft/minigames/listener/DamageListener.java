@@ -62,10 +62,13 @@ public class DamageListener implements Listener {
      * @param arenaSession <p>The arena session to trigger a loss for, if the player reaches 0 damage</p>
      */
     private void applyFakeDamage(@NotNull Player player, double damage, @NotNull ArenaSession arenaSession) {
+        if (player.getNoDamageTicks() > 0) {
+            return;
+        }
         double newHealth = player.getHealth() - damage;
         player.sendHurtAnimation(180);
         if (newHealth <= 0) {
-            AttributeInstance health = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
+            AttributeInstance health = player.getAttribute(Attribute.MAX_HEALTH);
             if (health != null) {
                 player.setHealth(health.getValue());
             }

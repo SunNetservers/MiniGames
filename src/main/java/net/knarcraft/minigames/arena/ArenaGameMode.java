@@ -12,13 +12,15 @@ public interface ArenaGameMode {
      *
      * @return <p>The name of this game-mode</p>
      */
-    @NotNull String name();
+    @NotNull
+    String name();
 
     /**
      * Gets a set of all available arena game-modes in the type definition of this game-mode
      *
      * @return <p>All game-modes in this game-mode's class</p>
      */
-    @NotNull ArenaGameMode[] getValues();
+    @NotNull
+    ArenaGameMode[] getValues();
 
 }

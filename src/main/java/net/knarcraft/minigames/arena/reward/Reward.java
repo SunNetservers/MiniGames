@@ -22,6 +22,7 @@ public interface Reward extends ConfigurationSerializable {
      *
      * @return <p>The message to display when this reward is granted</p>
      */
-    @NotNull String getGrantMessage();
+    @NotNull
+    String getGrantMessage();
 
 }

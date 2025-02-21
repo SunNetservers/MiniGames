@@ -2,6 +2,7 @@ package net.knarcraft.minigames.arena.reward;
 
 import net.knarcraft.minigames.MiniGames;
 import net.knarcraft.minigames.config.MiniGameMessage;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -43,9 +44,10 @@ public class ItemReward implements Reward {
 
     @Override
     public @NotNull String getGrantMessage() {
+        NamespacedKey key = item.getType().getKeyOrNull();
+        String name = key == null ? "Unnamed item" : key.getKey().replace("_", " ");
         return MiniGames.getInstance().getStringFormatter().replacePlaceholders(MiniGameMessage.SUCCESS_ITEM_REWARDED,
-                new String[]{"{amount}", "{item}"}, new String[]{String.valueOf(item.getAmount()),
-                        item.getType().getKey().getKey().replace("_", " ")});
+                new String[]{"{amount}", "{item}"}, new String[]{String.valueOf(item.getAmount()), name});
     }
 
     @NotNull

@@ -13,7 +13,8 @@ public interface ArenaSession {
      *
      * @return <p>The player's entry state</p>
      */
-    @NotNull PlayerEntryState getEntryState();
+    @NotNull
+    PlayerEntryState getEntryState();
 
     /**
      * Triggers a win for the player playing in this session
@@ -38,14 +39,16 @@ public interface ArenaSession {
      *
      * @return <p>The session's arena</p>
      */
-    @NotNull Arena getArena();
+    @NotNull
+    Arena getArena();
 
     /**
      * Gets the GUI with this arena's options
      *
      * @return <p>This arena's GUI</p>
      */
-    @NotNull ArenaGUI getGUI();
+    @NotNull
+    ArenaGUI getGUI();
 
     /**
      * Resets the session to allow a player to try again
@@ -57,6 +60,7 @@ public interface ArenaSession {
      *
      * @return <p>The game-mode the player is playing</p>
      */
-    @NotNull ArenaGameMode getGameMode();
+    @NotNull
+    ArenaGameMode getGameMode();
 
 }

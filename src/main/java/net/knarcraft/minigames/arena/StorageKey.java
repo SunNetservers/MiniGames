@@ -12,6 +12,7 @@ public interface StorageKey {
      *
      * @return <p>The string key representation.</p>
      */
-    @NotNull String getKey();
+    @NotNull
+    String getKey();
 
 }

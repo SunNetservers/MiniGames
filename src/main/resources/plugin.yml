@@ -2,7 +2,7 @@ name: MiniGames
 prefix: MiniGames
 version: '${project.version}'
 main: net.knarcraft.minigames.MiniGames
-api-version: 1.19
+api-version: 1.21
 description: A plugin that adds various mini-games
 softdepend:
   - PlaceholderAPI
