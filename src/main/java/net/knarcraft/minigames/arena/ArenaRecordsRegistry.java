@@ -54,6 +54,7 @@ public abstract class ArenaRecordsRegistry implements ConfigurationSerializable 
      *
      * @return <p>Existing death records</p>
      */
+    @NotNull
     public Set<SummableArenaRecord<Integer>> getLeastDeathsRecords() {
         return new HashSet<>(this.leastDeaths);
     }
@@ -63,6 +64,7 @@ public abstract class ArenaRecordsRegistry implements ConfigurationSerializable 
      *
      * @return <p>Existing time records</p>
      */
+    @NotNull
     public Set<SummableArenaRecord<Long>> getShortestTimeMilliSecondsRecords() {
         return new HashSet<>(this.shortestTimeMilliSeconds);
     }
@@ -74,7 +76,8 @@ public abstract class ArenaRecordsRegistry implements ConfigurationSerializable 
      * @param deaths   <p>The number of deaths suffered before the player finished the arena</p>
      * @return <p>The result explaining what type of record was achieved</p>
      */
-    public @NotNull RecordResult registerDeathRecord(@NotNull UUID playerId, int deaths) {
+    @NotNull
+    public RecordResult registerDeathRecord(@NotNull UUID playerId, int deaths) {
         Consumer<Integer> consumer = (value) -> {
             leastDeaths.removeIf((item) -> item.getUserId().equals(playerId));
             leastDeaths.add(new IntegerRecord(playerId, value));
@@ -89,7 +92,8 @@ public abstract class ArenaRecordsRegistry implements ConfigurationSerializable 
      * @param milliseconds <p>The number of milliseconds it took the player to finish the dropper arena</p>
      * @return <p>The result explaining what type of record was achieved</p>
      */
-    public @NotNull RecordResult registerTimeRecord(@NotNull UUID playerId, long milliseconds) {
+    @NotNull
+    public RecordResult registerTimeRecord(@NotNull UUID playerId, long milliseconds) {
         Consumer<Long> consumer = (value) -> {
             shortestTimeMilliSeconds.removeIf((item) -> item.getUserId().equals(playerId));
             shortestTimeMilliSeconds.add(new LongRecord(playerId, value));
@@ -111,9 +115,10 @@ public abstract class ArenaRecordsRegistry implements ConfigurationSerializable 
      * @param amount          <p>The amount of whatever the player achieved</p>
      * @return <p>The result of the player's record attempt</p>
      */
-    private <T extends Comparable<T>> @NotNull RecordResult registerRecord(@NotNull Set<ArenaRecord<T>> existingRecords,
-                                                                           @NotNull Consumer<T> recordSetter,
-                                                                           @NotNull UUID playerId, T amount) {
+    @NotNull
+    private <RecordType extends Comparable<RecordType>> RecordResult registerRecord(@NotNull Set<ArenaRecord<RecordType>> existingRecords,
+                                                                                    @NotNull Consumer<RecordType> recordSetter,
+                                                                                    @NotNull UUID playerId, RecordType amount) {
         RecordResult result;
         if (existingRecords.stream().allMatch((entry) -> amount.compareTo(entry.getRecord()) < 0)) {
             // If the given value is less than all other values, that's a world record!
@@ -123,7 +128,7 @@ public abstract class ArenaRecordsRegistry implements ConfigurationSerializable 
             return result;
         }
 
-        ArenaRecord<T> playerRecord = getRecord(existingRecords, playerId);
+        ArenaRecord<RecordType> playerRecord = getRecord(existingRecords, playerId);
         if (playerRecord != null && amount.compareTo(playerRecord.getRecord()) < 0) {
             // If the given value is less than the player's previous value, that's a personal best!
             result = RecordResult.PERSONAL_BEST;
@@ -146,12 +151,13 @@ public abstract class ArenaRecordsRegistry implements ConfigurationSerializable 
      *
      * @param existingRecords <p>The existing records to look through</p>
      * @param playerId        <p>The id of the player to look for</p>
-     * @param <T>             <p>The type of the stored record</p>
+     * @param <RecordType>    <p>The type of the stored record</p>
      * @return <p>The record, or null if not found</p>
      */
-    private <T extends Comparable<T>> @Nullable ArenaRecord<T> getRecord(@NotNull Set<ArenaRecord<T>> existingRecords,
-                                                                         @NotNull UUID playerId) {
-        AtomicReference<ArenaRecord<T>> record = new AtomicReference<>();
+    @Nullable
+    private <RecordType extends Comparable<RecordType>> ArenaRecord<RecordType> getRecord(@NotNull Set<ArenaRecord<RecordType>> existingRecords,
+                                                                                          @NotNull UUID playerId) {
+        AtomicReference<ArenaRecord<RecordType>> record = new AtomicReference<>();
         existingRecords.forEach((item) -> {
             if (item.getUserId().equals(playerId)) {
                 record.set(item);

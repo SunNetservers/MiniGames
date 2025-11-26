@@ -50,7 +50,8 @@ public enum RewardCondition implements ConfigurationSerializable {
      * @param condition <p>The string specifying a reward condition</p>
      * @return <p>The matching reward condition, or null if not found</p>
      */
-    public static @Nullable RewardCondition getFromString(@NotNull String condition) {
+    @Nullable
+    public static RewardCondition getFromString(@NotNull String condition) {
         for (RewardCondition rewardCondition : RewardCondition.values()) {
             if (rewardCondition.name().equalsIgnoreCase(condition.replace("-", "_"))) {
                 return rewardCondition;
@@ -75,7 +76,8 @@ public enum RewardCondition implements ConfigurationSerializable {
      * @return <p>The deserialized reward condition</p>
      */
     @SuppressWarnings({"unused"})
-    public static @NotNull RewardCondition deserialize(@NotNull Map<String, Object> data) {
+    @NotNull
+    public static RewardCondition deserialize(@NotNull Map<String, Object> data) {
         RewardCondition rewardCondition = getFromString(String.valueOf(data.get("condition")));
         return Objects.requireNonNullElse(rewardCondition, RewardCondition.FIRST_WIN);
     }

@@ -51,7 +51,8 @@ public class ParkourArenaRecordsRegistry extends ArenaRecordsRegistry {
      * @return <p>The deserialized records registry</p>
      */
     @SuppressWarnings({"unused", "unchecked"})
-    public static ParkourArenaRecordsRegistry deserialize(Map<String, Object> data) {
+    @NotNull
+    public static ParkourArenaRecordsRegistry deserialize(@NotNull Map<String, Object> data) {
         UUID arenaId = ((SerializableUUID) data.get("arenaId")).getRawValue();
         Set<IntegerRecord> leastDeaths =
                 (Set<IntegerRecord>) data.getOrDefault("leastDeaths", new HashMap<>());

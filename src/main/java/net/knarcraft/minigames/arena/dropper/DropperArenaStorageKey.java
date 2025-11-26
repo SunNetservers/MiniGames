@@ -69,7 +69,8 @@ public enum DropperArenaStorageKey implements StorageKey {
     LOSS_TRIGGER_DAMAGE_CAUSES("lossTriggerDamageCauses"),
     ;
 
-    private final @NotNull String key;
+    @NotNull
+    private final String key;
 
     /**
      * Instantiates a new arena storage key
@@ -81,7 +82,8 @@ public enum DropperArenaStorageKey implements StorageKey {
     }
 
     @Override
-    public @NotNull String getKey() {
+    @NotNull
+    public String getKey() {
         return this.key;
     }
 

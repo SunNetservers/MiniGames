@@ -38,53 +38,63 @@ public class ParkourArena implements Arena {
     /**
      * An unique and persistent identifier for this arena
      */
-    private final @NotNull UUID arenaId;
+    @NotNull
+    private final UUID arenaId;
 
     /**
      * A name used when listing and storing this arena.
      */
-    private @NotNull String arenaName;
+    @NotNull
+    private String arenaName;
 
     /**
      * The location players are teleported to when joining this arena.
      */
-    private @NotNull Location spawnLocation;
+    @NotNull
+    private Location spawnLocation;
 
     /**
      * The location players will be sent to when they win or lose the arena. If not set, their entry location should be
      * used instead.
      */
-    private @Nullable Location exitLocation;
+    @Nullable
+    private Location exitLocation;
 
     /**
      * The material of the block players have to hit to win this parkour arena
      */
-    private @NotNull Material winBlockType;
+    @NotNull
+    private Material winBlockType;
 
     /**
      * The location the player has to reach to win. If not set, winBlockType is used instead
      */
-    private @Nullable Location winLocation;
+    @Nullable
+    private Location winLocation;
 
     /**
      * The names of the block types constituting this arena's kill plane
      */
-    private @Nullable Set<String> killPlaneBlockNames;
+    @Nullable
+    private Set<String> killPlaneBlockNames;
 
     /**
      * The block types constituting this arena's kill plane
      */
-    private @Nullable Set<Material> killPlaneBlocks;
+    @Nullable
+    private Set<Material> killPlaneBlocks;
 
     /**
      * The names of the block types serving as obstacles for this arena
      */
-    private @Nullable Set<String> obstacleBlockNames;
+    @Nullable
+    private Set<String> obstacleBlockNames;
 
     /**
      * The block types serving as obstacles for this arena
      */
-    private @Nullable Set<Material> obstacleBlocks;
+    @Nullable
+    private Set<Material> obstacleBlocks;
 
     /**
      * The maximum amount of players able to join this arena at any time
@@ -94,25 +104,31 @@ public class ParkourArena implements Arena {
     /**
      * Types of damage that won't be blocked in this arena
      */
+    @NotNull
     private Set<EntityDamageEvent.DamageCause> allowedDamageCauses;
 
     /**
      * Types of damage that will trigger a loss in this arena
      */
+    @NotNull
     private Set<EntityDamageEvent.DamageCause> lossTriggerDamageCauses;
 
     /**
      * The checkpoints for this arena. Entering a checkpoint overrides the player's spawn location.
      */
-    private final @NotNull List<Location> checkpoints;
+    @NotNull
+    private final List<Location> checkpoints;
 
     /**
      * The arena data for this arena
      */
-    private final @NotNull ParkourArenaData parkourArenaData;
+    @NotNull
+    private final ParkourArenaData parkourArenaData;
 
-    private final @NotNull ParkourArenaHandler parkourArenaHandler;
+    @NotNull
+    private final ParkourArenaHandler parkourArenaHandler;
 
+    @NotNull
     private Map<RewardCondition, Set<Reward>> rewards = new HashMap<>();
 
     /**
@@ -198,27 +214,32 @@ public class ParkourArena implements Arena {
     }
 
     @Override
-    public @NotNull ParkourArenaData getData() {
+    @NotNull
+    public ParkourArenaData getData() {
         return this.parkourArenaData;
     }
 
     @Override
-    public @NotNull UUID getArenaId() {
+    @NotNull
+    public UUID getArenaId() {
         return this.arenaId;
     }
 
     @Override
-    public @NotNull String getArenaName() {
+    @NotNull
+    public String getArenaName() {
         return this.arenaName;
     }
 
     @Override
-    public @NotNull Location getSpawnLocation() {
+    @NotNull
+    public Location getSpawnLocation() {
         return this.spawnLocation;
     }
 
     @Override
-    public @Nullable Location getExitLocation() {
+    @Nullable
+    public Location getExitLocation() {
         return this.exitLocation;
     }
 
@@ -236,7 +257,8 @@ public class ParkourArena implements Arena {
     }
 
     @Override
-    public @NotNull Set<Reward> getRewards(RewardCondition rewardCondition) {
+    @NotNull
+    public Set<Reward> getRewards(@NotNull RewardCondition rewardCondition) {
         if (this.rewards.containsKey(rewardCondition)) {
             return this.rewards.get(rewardCondition);
         } else {
@@ -261,12 +283,14 @@ public class ParkourArena implements Arena {
     }
 
     @Override
-    public @NotNull Set<EntityDamageEvent.DamageCause> getAllowedDamageCauses() {
+    @NotNull
+    public Set<EntityDamageEvent.DamageCause> getAllowedDamageCauses() {
         return this.allowedDamageCauses;
     }
 
     @Override
-    public @NotNull Set<EntityDamageEvent.DamageCause> getLossTriggerDamageCauses() {
+    @NotNull
+    public Set<EntityDamageEvent.DamageCause> getLossTriggerDamageCauses() {
         return this.lossTriggerDamageCauses;
     }
 
@@ -297,7 +321,8 @@ public class ParkourArena implements Arena {
      *
      * @return <p>The win trigger's location</p>
      */
-    public @Nullable Location getWinLocation() {
+    @Nullable
+    public Location getWinLocation() {
         return this.winLocation != null ? this.winLocation.clone() : null;
     }
 
@@ -306,7 +331,8 @@ public class ParkourArena implements Arena {
      *
      * @return <p>The types of blocks that cause a loss</p>
      */
-    public @NotNull Set<Material> getKillPlaneBlocks() {
+    @NotNull
+    public Set<Material> getKillPlaneBlocks() {
         if (this.killPlaneBlocks != null) {
             return new HashSet<>(this.killPlaneBlocks);
         } else {
@@ -319,7 +345,8 @@ public class ParkourArena implements Arena {
      *
      * @return <p>The names of the types of blocks that cause a loss</p>
      */
-    public @Nullable Set<String> getKillPlaneBlockNames() {
+    @Nullable
+    public Set<String> getKillPlaneBlockNames() {
         return this.killPlaneBlockNames;
     }
 
@@ -328,7 +355,8 @@ public class ParkourArena implements Arena {
      *
      * @return <p>The types of blocks used as obstacles</p>
      */
-    public @NotNull Set<Material> getObstacleBlocks() {
+    @NotNull
+    public Set<Material> getObstacleBlocks() {
         if (this.obstacleBlocks != null) {
             return new HashSet<>(this.obstacleBlocks);
         } else {
@@ -341,7 +369,8 @@ public class ParkourArena implements Arena {
      *
      * @return <p>The names of the blocks used as this arena's obstacle blocks</p>
      */
-    public @Nullable Set<String> getObstacleBlockNames() {
+    @Nullable
+    public Set<String> getObstacleBlockNames() {
         return this.obstacleBlockNames;
     }
 
@@ -350,6 +379,7 @@ public class ParkourArena implements Arena {
      *
      * @return <p>All checkpoint locations for this arena</p>
      */
+    @NotNull
     public List<Location> getCheckpoints() {
         List<Location> copy = new ArrayList<>(this.checkpoints.size());
         for (Location location : this.checkpoints) {
@@ -569,11 +599,8 @@ public class ParkourArena implements Arena {
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (!(other instanceof ParkourArena otherArena)) {
-            return false;
-        }
-        return this.getArenaNameSanitized().equals(otherArena.getArenaNameSanitized());
+    public boolean equals(@Nullable Object other) {
+        return other instanceof ParkourArena otherArena && this.getArenaNameSanitized().equals(otherArena.getArenaNameSanitized());
     }
 
 }

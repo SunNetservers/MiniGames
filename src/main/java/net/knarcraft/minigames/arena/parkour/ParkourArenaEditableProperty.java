@@ -91,8 +91,11 @@ public enum ParkourArenaEditableProperty {
             EditablePropertyType.DAMAGE_CAUSE_LIST),
     ;
 
-    private final @NotNull String argumentString;
+    @NotNull
+    private final String argumentString;
+    @NotNull
     private final Function<ParkourArena, String> currentValueProvider;
+    @NotNull
     private final EditablePropertyType propertyType;
 
     /**
@@ -100,8 +103,8 @@ public enum ParkourArenaEditableProperty {
      *
      * @param argumentString <p>The argument string used to specify this property</p>
      */
-    ParkourArenaEditableProperty(@NotNull String argumentString, Function<ParkourArena, String> currentValueProvider,
-                                 EditablePropertyType propertyType) {
+    ParkourArenaEditableProperty(@NotNull String argumentString, @NotNull Function<ParkourArena, String> currentValueProvider,
+                                 @NotNull EditablePropertyType propertyType) {
         this.argumentString = argumentString;
         this.currentValueProvider = currentValueProvider;
         this.propertyType = propertyType;
@@ -112,6 +115,7 @@ public enum ParkourArenaEditableProperty {
      *
      * @return <p>The type of this property</p>
      */
+    @NotNull
     public EditablePropertyType getPropertyType() {
         return this.propertyType;
     }
@@ -122,7 +126,8 @@ public enum ParkourArenaEditableProperty {
      * @param arena <p>The arena to check the value for</p>
      * @return <p>The current value as a string</p>
      */
-    public String getCurrentValueAsString(ParkourArena arena) {
+    @NotNull
+    public String getCurrentValueAsString(@NotNull ParkourArena arena) {
         return this.currentValueProvider.apply(arena);
     }
 
@@ -141,7 +146,8 @@ public enum ParkourArenaEditableProperty {
      * @param argumentString <p>The argument string used to specify an editable property</p>
      * @return <p>The corresponding editable property, or null if not found</p>
      */
-    public static @Nullable ParkourArenaEditableProperty getFromArgumentString(String argumentString) {
+    @Nullable
+    public static ParkourArenaEditableProperty getFromArgumentString(@NotNull String argumentString) {
         for (ParkourArenaEditableProperty property : ParkourArenaEditableProperty.values()) {
             if (property.argumentString.equalsIgnoreCase(argumentString)) {
                 return property;

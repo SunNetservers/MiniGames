@@ -39,7 +39,8 @@ public class EconomyReward implements Reward {
     }
 
     @Override
-    public @NotNull FormatBuilder getGrantMessage() {
+    @NotNull
+    public FormatBuilder getGrantMessage() {
         return new FormatBuilder(MiniGameMessage.SUCCESS_ECONOMY_REWARDED).replace("{currency}",
                 EconomyManager.format(amount));
     }
@@ -59,7 +60,8 @@ public class EconomyReward implements Reward {
      * @return <p>The deserialized data</p>
      */
     @SuppressWarnings("unused")
-    public static EconomyReward deserialize(Map<String, Object> data) {
+    @NotNull
+    public static EconomyReward deserialize(@NotNull Map<String, Object> data) {
         return new EconomyReward((Double) data.get("amount"));
     }
 

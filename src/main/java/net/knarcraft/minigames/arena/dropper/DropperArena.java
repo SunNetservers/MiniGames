@@ -35,23 +35,27 @@ public class DropperArena implements Arena {
     /**
      * An unique and persistent identifier for this arena
      */
+    @NotNull
     private final UUID arenaId;
 
     /**
      * A name used when listing and storing this arena.
      */
-    private @NotNull String arenaName;
+    @NotNull
+    private String arenaName;
 
     /**
      * The location players are teleported to when joining this arena.
      */
-    private @NotNull Location spawnLocation;
+    @NotNull
+    private Location spawnLocation;
 
     /**
      * The location players will be sent to when they win or lose the arena. If not set, their entry location should be
      * used instead.
      */
-    private @Nullable Location exitLocation;
+    @Nullable
+    private Location exitLocation;
 
     /**
      * The velocity in the y-direction to apply to all players in this arena.
@@ -73,27 +77,34 @@ public class DropperArena implements Arena {
     /**
      * Types of damage that won't be blocked in this arena
      */
+    @NotNull
     private Set<EntityDamageEvent.DamageCause> allowedDamageCauses;
 
     /**
      * Types of damage that will trigger a loss in this arena
      */
+    @NotNull
     private Set<EntityDamageEvent.DamageCause> lossTriggerDamageCauses;
 
     /**
      * The material of the block players have to hit to win this dropper arena
      */
-    private @NotNull Material winBlockType;
+    @NotNull
+    private Material winBlockType;
 
     /**
      * The arena data for this arena
      */
+    @NotNull
     private final DropperArenaData dropperArenaData;
 
+    @NotNull
     private final DropperArenaHandler dropperArenaHandler;
 
+    @NotNull
     private Map<RewardCondition, Set<Reward>> rewards = new HashMap<>();
 
+    @NotNull
     private static final DropperConfiguration dropperConfiguration = MiniGames.getInstance().getDropperConfiguration();
 
     /**
@@ -168,27 +179,32 @@ public class DropperArena implements Arena {
     }
 
     @Override
-    public @NotNull DropperArenaData getData() {
+    @NotNull
+    public DropperArenaData getData() {
         return this.dropperArenaData;
     }
 
     @Override
-    public @NotNull UUID getArenaId() {
+    @NotNull
+    public UUID getArenaId() {
         return this.arenaId;
     }
 
     @Override
-    public @NotNull String getArenaName() {
+    @NotNull
+    public String getArenaName() {
         return this.arenaName;
     }
 
     @Override
-    public @NotNull Location getSpawnLocation() {
+    @NotNull
+    public Location getSpawnLocation() {
         return this.spawnLocation.clone();
     }
 
     @Override
-    public @Nullable Location getExitLocation() {
+    @Nullable
+    public Location getExitLocation() {
         return this.exitLocation != null ? this.exitLocation.clone() : null;
     }
 
@@ -206,7 +222,8 @@ public class DropperArena implements Arena {
     }
 
     @Override
-    public @NotNull Set<Reward> getRewards(RewardCondition rewardCondition) {
+    @NotNull
+    public Set<Reward> getRewards(@NotNull RewardCondition rewardCondition) {
         if (this.rewards.containsKey(rewardCondition) && this.rewards.get(rewardCondition) != null) {
             return this.rewards.get(rewardCondition);
         } else {
@@ -231,12 +248,14 @@ public class DropperArena implements Arena {
     }
 
     @Override
-    public @NotNull Set<EntityDamageEvent.DamageCause> getAllowedDamageCauses() {
+    @NotNull
+    public Set<EntityDamageEvent.DamageCause> getAllowedDamageCauses() {
         return this.allowedDamageCauses;
     }
 
     @Override
-    public @NotNull Set<EntityDamageEvent.DamageCause> getLossTriggerDamageCauses() {
+    @NotNull
+    public Set<EntityDamageEvent.DamageCause> getLossTriggerDamageCauses() {
         return this.lossTriggerDamageCauses;
     }
 
@@ -414,11 +433,8 @@ public class DropperArena implements Arena {
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (!(other instanceof DropperArena otherArena)) {
-            return false;
-        }
-        return this.getArenaNameSanitized().equals(otherArena.getArenaNameSanitized());
+    public boolean equals(@Nullable Object other) {
+        return other instanceof DropperArena otherArena && this.getArenaNameSanitized().equals(otherArena.getArenaNameSanitized());
     }
 
 }

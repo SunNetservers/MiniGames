@@ -77,8 +77,9 @@ public enum DropperArenaEditableProperty {
      *
      * @param argumentString <p>The argument string used to specify this property</p>
      */
-    DropperArenaEditableProperty(@NotNull String argumentString, Function<DropperArena, String> currentValueProvider,
-                                 EditablePropertyType propertyType) {
+    DropperArenaEditableProperty(@NotNull String argumentString,
+                                 @NotNull Function<DropperArena, String> currentValueProvider,
+                                 @NotNull EditablePropertyType propertyType) {
         this.argumentString = argumentString;
         this.currentValueProvider = currentValueProvider;
         this.propertyType = propertyType;
@@ -89,6 +90,7 @@ public enum DropperArenaEditableProperty {
      *
      * @return <p>The type of this property</p>
      */
+    @NotNull
     public EditablePropertyType getPropertyType() {
         return this.propertyType;
     }
@@ -99,7 +101,8 @@ public enum DropperArenaEditableProperty {
      * @param arena <p>The arena to check the value for</p>
      * @return <p>The current value as a string</p>
      */
-    public String getCurrentValueAsString(DropperArena arena) {
+    @NotNull
+    public String getCurrentValueAsString(@NotNull DropperArena arena) {
         return this.currentValueProvider.apply(arena);
     }
 
@@ -108,7 +111,8 @@ public enum DropperArenaEditableProperty {
      *
      * @return <p>The argument string</p>
      */
-    public @NotNull String getArgumentString() {
+    @NotNull
+    public String getArgumentString() {
         return this.argumentString;
     }
 
@@ -118,7 +122,8 @@ public enum DropperArenaEditableProperty {
      * @param argumentString <p>The argument string used to specify an editable property</p>
      * @return <p>The corresponding editable property, or null if not found</p>
      */
-    public static @Nullable DropperArenaEditableProperty getFromArgumentString(String argumentString) {
+    @Nullable
+    public static DropperArenaEditableProperty getFromArgumentString(@NotNull String argumentString) {
         for (DropperArenaEditableProperty property : DropperArenaEditableProperty.values()) {
             if (property.argumentString.equalsIgnoreCase(argumentString)) {
                 return property;

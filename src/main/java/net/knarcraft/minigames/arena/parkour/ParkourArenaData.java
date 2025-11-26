@@ -44,7 +44,8 @@ public class ParkourArenaData extends ArenaData {
      * @return <p>The deserialized parkour arena data</p>
      */
     @SuppressWarnings({"unused", "unchecked"})
-    public static @NotNull ParkourArenaData deserialize(@NotNull Map<String, Object> data) {
+    @NotNull
+    public static ParkourArenaData deserialize(@NotNull Map<String, Object> data) {
         SerializableUUID serializableUUID = (SerializableUUID) data.get("arenaId");
         Map<ArenaGameMode, ArenaRecordsRegistry> recordsRegistry =
                 (Map<ArenaGameMode, ArenaRecordsRegistry>) data.get("recordsRegistry");

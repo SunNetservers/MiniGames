@@ -5,6 +5,7 @@ import net.knarcraft.minigames.arena.ArenaHandler;
 import net.knarcraft.minigames.arena.ArenaPlayerRegistry;
 import net.knarcraft.minigames.config.MiniGameMessage;
 import net.knarcraft.minigames.util.ParkourArenaStorageHelper;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -24,7 +25,7 @@ public class ParkourArenaHandler extends ArenaHandler<ParkourArena, ParkourArena
      *
      * @param playerRegistry <p>The registry keeping track of player sessions</p>
      */
-    public ParkourArenaHandler(ArenaPlayerRegistry<ParkourArena> playerRegistry) {
+    public ParkourArenaHandler(@NotNull ArenaPlayerRegistry<ParkourArena> playerRegistry) {
         super(playerRegistry);
     }
 

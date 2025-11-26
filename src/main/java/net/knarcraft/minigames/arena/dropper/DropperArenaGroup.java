@@ -43,7 +43,8 @@ public class DropperArenaGroup extends ArenaGroup<DropperArena, DropperArenaGrou
      * @return <p>The deserialized arena group</p>
      */
     @SuppressWarnings({"unused", "unchecked"})
-    public static @NotNull DropperArenaGroup deserialize(@NotNull Map<String, Object> data) {
+    @NotNull
+    public static DropperArenaGroup deserialize(@NotNull Map<String, Object> data) {
         UUID id = ((SerializableUUID) data.get("groupId")).getRawValue();
         String name = (String) data.get("groupName");
         List<SerializableUUID> serializableArenas = (List<SerializableUUID>) data.get("arenas");

@@ -20,6 +20,7 @@ public class DropperPlayerEntryState extends AbstractPlayerEntryState {
 
     private final float originalFlySpeed;
     private final float horizontalVelocity;
+    @NotNull
     private final DropperArenaGameMode arenaGameMode;
 
     /**
@@ -118,7 +119,8 @@ public class DropperPlayerEntryState extends AbstractPlayerEntryState {
      * @return <p>The data to deserialize</p>
      */
     @SuppressWarnings({"unused", "unchecked"})
-    public static DropperPlayerEntryState deserialize(Map<String, Object> data) {
+    @NotNull
+    public static DropperPlayerEntryState deserialize(@NotNull Map<String, Object> data) {
         UUID playerId = ((SerializableUUID) data.get("playerId")).getRawValue();
         Location entryLocation = (Location) data.get("entryLocation");
         boolean originalIsFlying = getBoolean(data, "originalIsFlying");

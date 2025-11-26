@@ -50,7 +50,8 @@ public class DropperArenaRecordsRegistry extends ArenaRecordsRegistry {
      * @return <p>The deserialized records registry</p>
      */
     @SuppressWarnings({"unused", "unchecked"})
-    public static DropperArenaRecordsRegistry deserialize(Map<String, Object> data) {
+    @NotNull
+    public static DropperArenaRecordsRegistry deserialize(@NotNull Map<String, Object> data) {
         UUID arenaId = ((SerializableUUID) data.get("arenaId")).getRawValue();
         Set<IntegerRecord> leastDeaths =
                 (Set<IntegerRecord>) data.getOrDefault("leastDeaths", new HashMap<>());

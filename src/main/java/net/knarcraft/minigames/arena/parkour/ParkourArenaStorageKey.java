@@ -91,7 +91,8 @@ public enum ParkourArenaStorageKey implements StorageKey {
     }
 
     @Override
-    public @NotNull String getKey() {
+    @NotNull
+    public String getKey() {
         return this.key;
     }
 

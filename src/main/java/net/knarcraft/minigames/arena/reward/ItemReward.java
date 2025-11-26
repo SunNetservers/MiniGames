@@ -43,7 +43,8 @@ public class ItemReward implements Reward {
     }
 
     @Override
-    public @NotNull FormatBuilder getGrantMessage() {
+    @NotNull
+    public FormatBuilder getGrantMessage() {
         NamespacedKey key = item.getType().getKeyOrNull();
         String name = key == null ? "Unnamed item" : key.getKey().replace("_", " ");
         return new FormatBuilder(MiniGameMessage.SUCCESS_ITEM_REWARDED).
@@ -65,7 +66,8 @@ public class ItemReward implements Reward {
      * @return <p>The deserialized data</p>
      */
     @SuppressWarnings("unused")
-    public static ItemReward deserialize(Map<String, Object> data) {
+    @NotNull
+    public static ItemReward deserialize(@NotNull Map<String, Object> data) {
         return new ItemReward((ItemStack) data.get("item"));
     }
 
@@ -75,7 +77,7 @@ public class ItemReward implements Reward {
      * @param inventory <p>The inventory to check</p>
      * @return <p>True if the inventory can fit the item</p>
      */
-    private boolean canFitItem(Inventory inventory) {
+    private boolean canFitItem(@NotNull Inventory inventory) {
         // If a slot is available, there is no problem
         if (inventory.firstEmpty() != -1) {
             return true;

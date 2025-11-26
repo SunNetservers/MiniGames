@@ -31,7 +31,8 @@ public class CommandReward implements Reward {
     }
 
     @Override
-    public @NotNull FormatBuilder getGrantMessage() {
+    @NotNull
+    public FormatBuilder getGrantMessage() {
         return new FormatBuilder(MiniGameMessage.SUCCESS_COMMAND_REWARDED).replace("{command}", command);
     }
 
@@ -50,6 +51,7 @@ public class CommandReward implements Reward {
      * @param input  <p>The input containing a name placeholder</p>
      * @return <p>The input with the placeholder replaced</p>
      */
+    @NotNull
     private String replaceNamePlaceholder(@NotNull Player player, @NotNull String input) {
         return input.replaceAll("[<%(\\[{]player[_\\-]?(name)?[>%)\\]}]", player.getName());
     }
@@ -61,7 +63,8 @@ public class CommandReward implements Reward {
      * @return <p>The deserialized data</p>
      */
     @SuppressWarnings("unused")
-    public static CommandReward deserialize(Map<String, Object> data) {
+    @NotNull
+    public static CommandReward deserialize(@NotNull Map<String, Object> data) {
         return new CommandReward((String) data.get("command"));
     }
 

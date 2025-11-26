@@ -29,7 +29,8 @@ public enum ParkourArenaGameMode implements ConfigurationSerializable, ArenaGame
      * @param gameMode <p>The game-mode string to match</p>
      * @return <p>The specified arena game-mode</p>
      */
-    public static @NotNull ParkourArenaGameMode matchGameMode(@NotNull String gameMode) {
+    @NotNull
+    public static ParkourArenaGameMode matchGameMode(@NotNull String gameMode) {
         try {
             return ParkourArenaGameMode.valueOf(gameMode.toUpperCase());
         } catch (IllegalArgumentException exception) {
@@ -52,12 +53,14 @@ public enum ParkourArenaGameMode implements ConfigurationSerializable, ArenaGame
      * @return <p>The deserialized arena game-mode</p>
      */
     @SuppressWarnings("unused")
-    public static ParkourArenaGameMode deserialize(Map<String, Object> data) {
+    @NotNull
+    public static ParkourArenaGameMode deserialize(@NotNull Map<String, Object> data) {
         return ParkourArenaGameMode.valueOf((String) data.get("name"));
     }
 
     @Override
-    public @NotNull ParkourArenaGameMode[] getValues() {
+    @NotNull
+    public ParkourArenaGameMode[] getValues() {
         return ParkourArenaGameMode.values();
     }
 

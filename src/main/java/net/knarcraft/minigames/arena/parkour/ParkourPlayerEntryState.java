@@ -42,10 +42,10 @@ public class ParkourPlayerEntryState extends AbstractPlayerEntryState {
      * @param originalHealth        <p>The health of the player when joining the arena</p>
      * @param originalSaturation    <p>The saturation of the player when joining the arena</p>
      */
-    public ParkourPlayerEntryState(@NotNull UUID playerId, Location entryLocation,
-                                   boolean originalIsFlying, GameMode originalGameMode, boolean originalAllowFlight,
+    public ParkourPlayerEntryState(@NotNull UUID playerId, @NotNull Location entryLocation,
+                                   boolean originalIsFlying, @NotNull GameMode originalGameMode, boolean originalAllowFlight,
                                    boolean originalInvulnerable, boolean originalIsSwimming,
-                                   boolean originalCollideAble, Collection<PotionEffect> originalPotionEffects,
+                                   boolean originalCollideAble, @NotNull Collection<PotionEffect> originalPotionEffects,
                                    double originalHealth, float originalSaturation) {
         super(playerId, entryLocation, originalIsFlying, originalGameMode, originalAllowFlight,
                 originalInvulnerable, originalIsSwimming, originalCollideAble, originalPotionEffects, originalHealth,
@@ -70,7 +70,8 @@ public class ParkourPlayerEntryState extends AbstractPlayerEntryState {
      * @return <p>The data to deserialize</p>
      */
     @SuppressWarnings({"unused", "unchecked"})
-    public static ParkourPlayerEntryState deserialize(Map<String, Object> data) {
+    @NotNull
+    public static ParkourPlayerEntryState deserialize(@NotNull Map<String, Object> data) {
         UUID playerId = ((SerializableUUID) data.get("playerId")).getRawValue();
         Location entryLocation = (Location) data.get("entryLocation");
         boolean originalIsFlying = getBoolean(data, "originalIsFlying");

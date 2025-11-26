@@ -33,11 +33,16 @@ import java.util.logging.Level;
  */
 public class ParkourArenaSession extends AbstractArenaSession {
 
-    private static final @NotNull Map<Arena, Set<Block>> changedLevers = new HashMap<>();
-    private final @NotNull ParkourArena arena;
-    private final @NotNull Player player;
-    private final @NotNull ParkourArenaGameMode gameMode;
-    private @Nullable Location reachedCheckpoint = null;
+    @NotNull
+    private static final Map<Arena, Set<Block>> changedLevers = new HashMap<>();
+    @NotNull
+    private final ParkourArena arena;
+    @NotNull
+    private final Player player;
+    @NotNull
+    private final ParkourArenaGameMode gameMode;
+    @Nullable
+    private Location reachedCheckpoint = null;
 
     /**
      * Instantiates a new parkour arena session
@@ -62,7 +67,8 @@ public class ParkourArenaSession extends AbstractArenaSession {
      *
      * @return <p>The game-mode for this session</p>
      */
-    public @NotNull ParkourArenaGameMode getGameMode() {
+    @NotNull
+    public ParkourArenaGameMode getGameMode() {
         return this.gameMode;
     }
 
@@ -90,12 +96,14 @@ public class ParkourArenaSession extends AbstractArenaSession {
      *
      * @return <p>The registered checkpoint, or null if not set</p>
      */
-    public @Nullable Location getRegisteredCheckpoint() {
+    @Nullable
+    public Location getRegisteredCheckpoint() {
         return this.reachedCheckpoint;
     }
 
     @Override
-    public @NotNull PlayerEntryState getEntryState() {
+    @NotNull
+    public PlayerEntryState getEntryState() {
         return this.entryState;
     }
 
@@ -139,12 +147,14 @@ public class ParkourArenaSession extends AbstractArenaSession {
     }
 
     @Override
-    public @NotNull ParkourArena getArena() {
+    @NotNull
+    public ParkourArena getArena() {
         return this.arena;
     }
 
     @Override
-    public @NotNull ArenaGUI getGUI() {
+    @NotNull
+    public ArenaGUI getGUI() {
         if (GeyserHelper.isGeyserPlayer(this.player)) {
             return new ParkourGUIBedrock(this.player);
         } else {
@@ -173,6 +183,7 @@ public class ParkourArenaSession extends AbstractArenaSession {
     }
 
     @Override
+    @NotNull
     protected String getGameModeString() {
         return switch (this.gameMode) {
             case DEFAULT -> "default";

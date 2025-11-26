@@ -23,9 +23,12 @@ import java.util.logging.Level;
  */
 public class DropperArenaSession extends AbstractArenaSession {
 
-    private final @NotNull DropperArena arena;
-    private final @NotNull Player player;
-    private final @NotNull DropperArenaGameMode gameMode;
+    @NotNull
+    private final DropperArena arena;
+    @NotNull
+    private final Player player;
+    @NotNull
+    private final DropperArenaGameMode gameMode;
     private boolean startedMoving = false;
 
     /**
@@ -67,7 +70,8 @@ public class DropperArenaSession extends AbstractArenaSession {
      *
      * @return <p>This session's player</p>
      */
-    public @NotNull Player getPlayer() {
+    @NotNull
+    public Player getPlayer() {
         return this.player;
     }
 
@@ -76,12 +80,14 @@ public class DropperArenaSession extends AbstractArenaSession {
      *
      * @return <p>The game-mode for this session</p>
      */
-    public @NotNull DropperArenaGameMode getGameMode() {
+    @NotNull
+    public DropperArenaGameMode getGameMode() {
         return this.gameMode;
     }
 
     @Override
-    public @NotNull PlayerEntryState getEntryState() {
+    @NotNull
+    public PlayerEntryState getEntryState() {
         return this.entryState;
     }
 
@@ -120,12 +126,14 @@ public class DropperArenaSession extends AbstractArenaSession {
     }
 
     @Override
-    public @NotNull DropperArena getArena() {
+    @NotNull
+    public DropperArena getArena() {
         return this.arena;
     }
 
     @Override
-    public @NotNull ArenaGUI getGUI() {
+    @NotNull
+    public ArenaGUI getGUI() {
         if (GeyserHelper.isGeyserPlayer(this.player)) {
             return new DropperGUIBedrock(this.player);
         } else {
@@ -151,6 +159,7 @@ public class DropperArenaSession extends AbstractArenaSession {
     }
 
     @Override
+    @NotNull
     protected String getGameModeString() {
         return switch (this.gameMode) {
             case DEFAULT -> "default";

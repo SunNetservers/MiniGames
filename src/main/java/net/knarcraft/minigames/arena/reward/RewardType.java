@@ -1,6 +1,7 @@
 package net.knarcraft.minigames.arena.reward;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * The type of a specific reward
@@ -34,6 +35,7 @@ public enum RewardType {
      * @param condition <p>The string specifying a reward type</p>
      * @return <p>The matching reward type, or null if not found</p>
      */
+    @Nullable
     public static RewardType getFromString(@NotNull String condition) {
         for (RewardType rewardType : RewardType.values()) {
             if (rewardType.name().equalsIgnoreCase(condition.replace("-", "_"))) {

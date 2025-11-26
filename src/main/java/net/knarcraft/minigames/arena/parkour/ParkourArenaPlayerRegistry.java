@@ -1,6 +1,7 @@
 package net.knarcraft.minigames.arena.parkour;
 
 import net.knarcraft.minigames.arena.AbstractArenaPlayerRegistry;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A registry to keep track of which players are playing in which arenas
@@ -8,6 +9,7 @@ import net.knarcraft.minigames.arena.AbstractArenaPlayerRegistry;
 public class ParkourArenaPlayerRegistry extends AbstractArenaPlayerRegistry<ParkourArena> {
 
     @Override
+    @NotNull
     protected String getEntryStateStorageKey() {
         return "parkour";
     }

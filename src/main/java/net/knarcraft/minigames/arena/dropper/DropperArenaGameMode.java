@@ -34,7 +34,8 @@ public enum DropperArenaGameMode implements ConfigurationSerializable, ArenaGame
      * @param gameMode <p>The game-mode string to match</p>
      * @return <p>The specified arena game-mode</p>
      */
-    public static @NotNull DropperArenaGameMode matchGameMode(@NotNull String gameMode) {
+    @NotNull
+    public static DropperArenaGameMode matchGameMode(@NotNull String gameMode) {
         String sanitized = gameMode.trim().toLowerCase();
         if (sanitized.matches("(invert(ed)?|inverse)")) {
             return DropperArenaGameMode.INVERTED;
@@ -60,12 +61,14 @@ public enum DropperArenaGameMode implements ConfigurationSerializable, ArenaGame
      * @return <p>The deserialized arena game-mode</p>
      */
     @SuppressWarnings("unused")
-    public static DropperArenaGameMode deserialize(Map<String, Object> data) {
+    @NotNull
+    public static DropperArenaGameMode deserialize(@NotNull Map<String, Object> data) {
         return DropperArenaGameMode.valueOf((String) data.get("name"));
     }
 
     @Override
-    public @NotNull DropperArenaGameMode[] getValues() {
+    @NotNull
+    public DropperArenaGameMode[] getValues() {
         return DropperArenaGameMode.values();
     }
 

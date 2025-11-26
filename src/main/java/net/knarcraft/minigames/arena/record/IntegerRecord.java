@@ -2,6 +2,7 @@ package net.knarcraft.minigames.arena.record;
 
 import net.knarcraft.minigames.container.SerializableUUID;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 import java.util.UUID;
@@ -12,25 +13,29 @@ import java.util.UUID;
 public class IntegerRecord extends SummableArenaRecord<Integer> {
 
     /**
+     * Instantiates a new integer record
+     *
      * @param userId <p>The id of the player that achieved the record</p>
      * @param record <p>The record achieved</p>
      */
-    public IntegerRecord(UUID userId, Integer record) {
+    public IntegerRecord(@NotNull UUID userId, @NotNull Integer record) {
         super(userId, record);
     }
 
     @Override
+    @NotNull
     public String getAsString() {
         return String.valueOf(this.getRecord());
     }
 
     @Override
-    public SummableArenaRecord<Integer> sum(Integer value) {
+    @NotNull
+    public SummableArenaRecord<Integer> sum(@NotNull Integer value) {
         return new IntegerRecord(this.getUserId(), this.getRecord() + value);
     }
 
     @Override
-    public boolean equals(Object other) {
+    public boolean equals(@Nullable Object other) {
         return other instanceof IntegerRecord && this.getUserId().equals(((IntegerRecord) other).getUserId());
     }
 
@@ -41,6 +46,7 @@ public class IntegerRecord extends SummableArenaRecord<Integer> {
      * @return <p>The deserialized data</p>
      */
     @SuppressWarnings("unused")
+    @NotNull
     public static IntegerRecord deserialize(@NotNull Map<String, Object> data) {
         return new IntegerRecord(((SerializableUUID) data.get("userId")).getRawValue(), (Integer) data.get("record"));
     }

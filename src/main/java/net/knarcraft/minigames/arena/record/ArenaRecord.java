@@ -3,6 +3,7 @@ package net.knarcraft.minigames.arena.record;
 import net.knarcraft.minigames.container.SerializableUUID;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,16 +13,16 @@ import java.util.UUID;
 /**
  * A record stored for an arena
  */
-public abstract class ArenaRecord<K extends Comparable<K>> implements Comparable<ArenaRecord<K>>, ConfigurationSerializable {
+public abstract class ArenaRecord<RecordType extends Comparable<RecordType>> implements Comparable<ArenaRecord<RecordType>>, ConfigurationSerializable {
 
     private final UUID userId;
-    private final K record;
+    private final RecordType record;
 
     /**
      * @param userId <p>The id of the player that achieved the record</p>
      * @param record <p>The record achieved</p>
      */
-    public ArenaRecord(UUID userId, K record) {
+    public ArenaRecord(@NotNull UUID userId, @NotNull RecordType record) {
         this.userId = userId;
         this.record = record;
     }
@@ -31,6 +32,7 @@ public abstract class ArenaRecord<K extends Comparable<K>> implements Comparable
      *
      * @return <p>The record's achiever</p>
      */
+    @NotNull
     public UUID getUserId() {
         return userId;
     }
@@ -40,7 +42,8 @@ public abstract class ArenaRecord<K extends Comparable<K>> implements Comparable
      *
      * @return <p>The record value</p>
      */
-    public K getRecord() {
+    @NotNull
+    public RecordType getRecord() {
         return record;
     }
 
@@ -52,12 +55,12 @@ public abstract class ArenaRecord<K extends Comparable<K>> implements Comparable
     public abstract String getAsString();
 
     @Override
-    public boolean equals(Object other) {
+    public boolean equals(@Nullable Object other) {
         return other instanceof ArenaRecord<?> && userId.equals(((ArenaRecord<?>) other).userId);
     }
 
     @Override
-    public int compareTo(@NotNull ArenaRecord<K> other) {
+    public int compareTo(@NotNull ArenaRecord<RecordType> other) {
         return record.compareTo(other.record);
     }
 

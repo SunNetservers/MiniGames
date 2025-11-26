@@ -44,7 +44,8 @@ public class DropperArenaData extends ArenaData {
      * @return <p>The deserialized dropper arena data</p>
      */
     @SuppressWarnings({"unused", "unchecked"})
-    public static @NotNull DropperArenaData deserialize(@NotNull Map<String, Object> data) {
+    @NotNull
+    public static DropperArenaData deserialize(@NotNull Map<String, Object> data) {
         SerializableUUID serializableUUID = (SerializableUUID) data.get("arenaId");
         Map<ArenaGameMode, ArenaRecordsRegistry> recordsRegistry =
                 (Map<ArenaGameMode, ArenaRecordsRegistry>) data.get("recordsRegistry");

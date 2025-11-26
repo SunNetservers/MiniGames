@@ -48,7 +48,8 @@ public class PermissionReward implements Reward {
     }
 
     @Override
-    public @NotNull FormatBuilder getGrantMessage() {
+    @NotNull
+    public FormatBuilder getGrantMessage() {
         if (world == null) {
             return new FormatBuilder(MiniGameMessage.SUCCESS_PERMISSION_REWARDED).replace("{permission}",
                     permission);
@@ -76,7 +77,8 @@ public class PermissionReward implements Reward {
      * @return <p>The deserialized data</p>
      */
     @SuppressWarnings("unused")
-    public static PermissionReward deserialize(Map<String, Object> data) {
+    @NotNull
+    public static PermissionReward deserialize(@NotNull Map<String, Object> data) {
         World world = (World) data.getOrDefault("world", null);
         String permission = (String) data.get("permission");
         return new PermissionReward(world, permission);
