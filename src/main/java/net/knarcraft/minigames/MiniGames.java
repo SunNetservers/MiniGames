@@ -1,6 +1,7 @@
 package net.knarcraft.minigames;
 
 import net.knarcraft.knargui.GUIListener;
+import net.knarcraft.knarlib.formatting.FormatBuilder;
 import net.knarcraft.knarlib.formatting.StringFormatter;
 import net.knarcraft.knarlib.formatting.Translator;
 import net.knarcraft.knarlib.property.ColorConversion;
@@ -108,7 +109,6 @@ public final class MiniGames extends JavaPlugin {
     private ArenaPlayerRegistry<ParkourArena> parkourArenaPlayerRegistry;
     private PlayerVisibilityManager playerVisibilityManager;
     private Translator translator;
-    private StringFormatter stringFormatter;
 
     /**
      * Gets an instance of this plugin
@@ -200,15 +200,6 @@ public final class MiniGames extends JavaPlugin {
      */
     public Translator getTranslator() {
         return this.translator;
-    }
-
-    /**
-     * Gets the string formatter to get formatted messages from
-     *
-     * @return <p>The string formatter</p>
-     */
-    public StringFormatter getStringFormatter() {
-        return this.stringFormatter;
     }
 
     /**
@@ -437,12 +428,13 @@ public final class MiniGames extends JavaPlugin {
         translator.registerMessageCategory(MiniGameMessage.ERROR_PLAYER_ONLY);
         translator.loadLanguages(this.getDataFolder(), "en",
                 getConfig().getString("language", "en"));
-        stringFormatter = new StringFormatter(this.getDescription().getName(), translator);
+        StringFormatter stringFormatter = new StringFormatter(this.getDescription().getName(), translator);
         stringFormatter.setColorConversion(ColorConversion.RGB);
         stringFormatter.setNamePrefix("#546EED[&r&l");
         stringFormatter.setNameSuffix("#546EED]");
         stringFormatter.setErrorColor(ChatColor.RED);
         stringFormatter.setSuccessColor(ChatColor.GREEN);
+        FormatBuilder.setStringFormatter(stringFormatter);
     }
 
     /**

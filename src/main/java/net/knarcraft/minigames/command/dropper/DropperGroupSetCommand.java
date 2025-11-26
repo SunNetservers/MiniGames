@@ -1,5 +1,6 @@
 package net.knarcraft.minigames.command.dropper;
 
+import net.knarcraft.knarlib.formatting.FormatBuilder;
 import net.knarcraft.minigames.MiniGames;
 import net.knarcraft.minigames.arena.dropper.DropperArena;
 import net.knarcraft.minigames.arena.dropper.DropperArenaGroup;
@@ -35,8 +36,7 @@ public class DropperGroupSetCommand implements TabExecutor {
 
         DropperArena specifiedArena = arenaHandler.getArena(arguments[0]);
         if (specifiedArena == null) {
-            MiniGames.getInstance().getStringFormatter().displayErrorMessage(commandSender,
-                    MiniGameMessage.ERROR_ARENA_NOT_FOUND);
+            new FormatBuilder(MiniGameMessage.ERROR_ARENA_NOT_FOUND).error(commandSender);
             return false;
         }
 
@@ -58,8 +58,7 @@ public class DropperGroupSetCommand implements TabExecutor {
 
         arenaHandler.setGroup(specifiedArena.getArenaId(), arenaGroup);
 
-        MiniGames.getInstance().getStringFormatter().displaySuccessMessage(commandSender,
-                MiniGameMessage.SUCCESS_ARENA_GROUP_UPDATED);
+        new FormatBuilder(MiniGameMessage.SUCCESS_ARENA_GROUP_UPDATED).success(commandSender);
         return true;
     }
 

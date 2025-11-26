@@ -17,10 +17,10 @@ import java.util.logging.Level;
 /**
  * A group containing a list of arenas
  *
- * @param <K> <p>The type of arena stored</p>
- * @param <S> <p>The type of arena group stored in the given arena handler</p>
+ * @param <ArenaType> <p>The type of arena stored</p>
+ * @param <GroupType> <p>The type of arena group stored in the given arena handler</p>
  */
-public abstract class ArenaGroup<K extends Arena, S extends ArenaGroup<K, S>> implements ConfigurationSerializable {
+public abstract class ArenaGroup<ArenaType extends Arena, GroupType extends ArenaGroup<ArenaType, GroupType>> implements ConfigurationSerializable {
 
     /**
      * The unique id for this group of arenas
@@ -35,7 +35,7 @@ public abstract class ArenaGroup<K extends Arena, S extends ArenaGroup<K, S>> im
     /**
      * The arena handler used to convert uuids to arenas
      */
-    private final ArenaHandler<K, S> arenaHandler;
+    private final ArenaHandler<ArenaType, GroupType> arenaHandler;
 
     /**
      * The arenas in this group, ordered from stage 1 to stage n
@@ -48,7 +48,7 @@ public abstract class ArenaGroup<K extends Arena, S extends ArenaGroup<K, S>> im
      * @param groupName    <p>The name of this group</p>
      * @param arenaHandler <p>The arena handler used to convert uuids to arenas</p>
      */
-    protected ArenaGroup(@NotNull String groupName, @NotNull ArenaHandler<K, S> arenaHandler) {
+    protected ArenaGroup(@NotNull String groupName, @NotNull ArenaHandler<ArenaType, GroupType> arenaHandler) {
         this.groupId = UUID.randomUUID();
         this.groupName = groupName;
         this.arenas = new ArrayList<>();
@@ -64,7 +64,7 @@ public abstract class ArenaGroup<K extends Arena, S extends ArenaGroup<K, S>> im
      * @param arenaHandler <p>The arena handler used to convert uuids to arenas</p>
      */
     protected ArenaGroup(@NotNull UUID groupId, @NotNull String groupName, @NotNull List<UUID> arenas,
-                         @NotNull ArenaHandler<K, S> arenaHandler) {
+                         @NotNull ArenaHandler<ArenaType, GroupType> arenaHandler) {
         this.groupId = groupId;
         this.groupName = groupName;
         this.arenas = new ArrayList<>(arenas);
@@ -76,7 +76,8 @@ public abstract class ArenaGroup<K extends Arena, S extends ArenaGroup<K, S>> im
      *
      * @return <p>The id of this group</p>
      */
-    public @NotNull UUID getGroupId() {
+    @NotNull
+    public UUID getGroupId() {
         return this.groupId;
     }
 
@@ -85,7 +86,8 @@ public abstract class ArenaGroup<K extends Arena, S extends ArenaGroup<K, S>> im
      *
      * @return <p>The name of this group</p>
      */
-    public @NotNull String getGroupName() {
+    @NotNull
+    public String getGroupName() {
         return this.groupName;
     }
 
@@ -94,7 +96,8 @@ public abstract class ArenaGroup<K extends Arena, S extends ArenaGroup<K, S>> im
      *
      * @return <p>The ids of the arenas in this group</p>
      */
-    public @NotNull List<UUID> getArenas() {
+    @NotNull
+    public List<UUID> getArenas() {
         return new ArrayList<>(arenas);
     }
 
@@ -103,7 +106,7 @@ public abstract class ArenaGroup<K extends Arena, S extends ArenaGroup<K, S>> im
      *
      * @param arenaId <p>The id of the arena to remove</p>
      */
-    public void removeArena(UUID arenaId) {
+    public void removeArena(@NotNull UUID arenaId) {
         this.arenas.remove(arenaId);
     }
 
@@ -112,7 +115,7 @@ public abstract class ArenaGroup<K extends Arena, S extends ArenaGroup<K, S>> im
      *
      * @param arenaId <p>The arena to add to this group</p>
      */
-    public void addArena(UUID arenaId) {
+    public void addArena(@NotNull UUID arenaId) {
         addArena(arenaId, this.arenas.size());
     }
 
@@ -122,7 +125,7 @@ public abstract class ArenaGroup<K extends Arena, S extends ArenaGroup<K, S>> im
      * @param arenaId <p>The arena to add to this group</p>
      * @param index   <p>The index to put the arena in</p>
      */
-    public void addArena(UUID arenaId, int index) {
+    public void addArena(@NotNull UUID arenaId, int index) {
         // Make sure we don't have duplicates
         if (!this.arenas.contains(arenaId)) {
             this.arenas.add(index, arenaId);
@@ -134,7 +137,8 @@ public abstract class ArenaGroup<K extends Arena, S extends ArenaGroup<K, S>> im
      *
      * @return <p>The sanitized group name</p>
      */
-    public @NotNull String getGroupNameSanitized() {
+    @NotNull
+    public String getGroupNameSanitized() {
         return StringSanitizer.sanitizeArenaName(this.getGroupName());
     }
 
@@ -145,9 +149,9 @@ public abstract class ArenaGroup<K extends Arena, S extends ArenaGroup<K, S>> im
      * @param player   <p>The player to check</p>
      * @return <p>True if the player has beaten all arenas, false otherwise</p>
      */
-    public boolean hasBeatenAll(ArenaGameMode gameMode, Player player) {
+    public boolean hasBeatenAll(@NotNull ArenaGameMode gameMode, @NotNull Player player) {
         for (UUID anArenaId : this.getArenas()) {
-            K arena = this.arenaHandler.getArena(anArenaId);
+            ArenaType arena = this.arenaHandler.getArena(anArenaId);
             if (arena == null) {
                 // The arena would only be null if the arena has been deleted, but not removed from this group
                 MiniGames.log(Level.WARNING, "The dropper group " + this.getGroupName() +
@@ -171,7 +175,8 @@ public abstract class ArenaGroup<K extends Arena, S extends ArenaGroup<K, S>> im
      * @return <p>True if the player is allowed to play the arena</p>
      * @throws IllegalArgumentException <p>If checking an arena not in this group</p>
      */
-    public boolean cannotPlay(ArenaGameMode gameMode, Player player, UUID arenaId) throws IllegalArgumentException {
+    public boolean cannotPlay(@NotNull ArenaGameMode gameMode, @NotNull Player player,
+                              @NotNull UUID arenaId) throws IllegalArgumentException {
         if (!this.arenas.contains(arenaId)) {
             throw new IllegalArgumentException("Cannot check for playability for arena not in this group!");
         }
@@ -182,7 +187,7 @@ public abstract class ArenaGroup<K extends Arena, S extends ArenaGroup<K, S>> im
                 return false;
             }
 
-            K arena = this.arenaHandler.getArena(anArenaId);
+            ArenaType arena = this.arenaHandler.getArena(anArenaId);
             if (arena == null) {
                 // The arena would only be null if the arena has been deleted, but not removed from this group
                 MiniGames.log(Level.WARNING, String.format("The dropper group %s contains the" +

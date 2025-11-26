@@ -1,6 +1,6 @@
 package net.knarcraft.minigames.command.parkour;
 
-import net.knarcraft.knarlib.formatting.StringFormatter;
+import net.knarcraft.knarlib.formatting.FormatBuilder;
 import net.knarcraft.minigames.MiniGames;
 import net.knarcraft.minigames.arena.parkour.ParkourArena;
 import net.knarcraft.minigames.arena.parkour.ParkourArenaHandler;
@@ -20,9 +20,8 @@ public class CreateParkourArenaCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s,
                              @NotNull String[] arguments) {
-        StringFormatter stringFormatter = MiniGames.getInstance().getStringFormatter();
         if (!(commandSender instanceof Player player)) {
-            stringFormatter.displayErrorMessage(commandSender, MiniGameMessage.ERROR_PLAYER_ONLY);
+            new FormatBuilder(MiniGameMessage.ERROR_PLAYER_ONLY).error(commandSender);
             return false;
         }
 
@@ -42,13 +41,13 @@ public class CreateParkourArenaCommand implements CommandExecutor {
         ParkourArenaHandler arenaHandler = MiniGames.getInstance().getParkourArenaHandler();
         ParkourArena existingArena = arenaHandler.getArena(arenaName);
         if (existingArena != null) {
-            stringFormatter.displayErrorMessage(commandSender, MiniGameMessage.ERROR_ARENA_NAME_COLLISION);
+            new FormatBuilder(MiniGameMessage.ERROR_ARENA_NAME_COLLISION).error(commandSender);
             return false;
         }
 
         ParkourArena arena = new ParkourArena(arenaName, player.getLocation(), arenaHandler);
         arenaHandler.addArena(arena);
-        stringFormatter.displaySuccessMessage(commandSender, MiniGameMessage.SUCCESS_ARENA_CREATED);
+        new FormatBuilder(MiniGameMessage.SUCCESS_ARENA_CREATED).success(commandSender);
         return true;
     }
 

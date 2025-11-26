@@ -1,5 +1,6 @@
 package net.knarcraft.minigames.listener;
 
+import net.knarcraft.knarlib.formatting.FormatBuilder;
 import net.knarcraft.minigames.MiniGames;
 import net.knarcraft.minigames.arena.Arena;
 import net.knarcraft.minigames.arena.ArenaSession;
@@ -130,8 +131,7 @@ public class MoveListener implements Listener {
 
             // Register the checkpoint
             arenaSession.registerCheckpoint(checkpoint.clone());
-            MiniGames.getInstance().getStringFormatter().displaySuccessMessage(player,
-                    MiniGameMessage.SUCCESS_CHECKPOINT_REACHED);
+            new FormatBuilder(MiniGameMessage.SUCCESS_CHECKPOINT_REACHED).success(player);
             return;
         }
     }

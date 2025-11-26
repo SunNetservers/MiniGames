@@ -1,5 +1,6 @@
 package net.knarcraft.minigames.arena.reward;
 
+import net.knarcraft.knarlib.formatting.FormatBuilder;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -23,6 +24,6 @@ public interface Reward extends ConfigurationSerializable {
      * @return <p>The message to display when this reward is granted</p>
      */
     @NotNull
-    String getGrantMessage();
+    FormatBuilder getGrantMessage();
 
 }

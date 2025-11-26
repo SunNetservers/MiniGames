@@ -1,5 +1,6 @@
 package net.knarcraft.minigames.arena.reward;
 
+import net.knarcraft.knarlib.formatting.FormatBuilder;
 import net.knarcraft.minigames.MiniGames;
 import net.knarcraft.minigames.config.MiniGameMessage;
 import net.knarcraft.minigames.manager.PermissionManager;
@@ -47,14 +48,13 @@ public class PermissionReward implements Reward {
     }
 
     @Override
-    public @NotNull String getGrantMessage() {
+    public @NotNull FormatBuilder getGrantMessage() {
         if (world == null) {
-            return MiniGames.getInstance().getStringFormatter().replacePlaceholder(
-                    MiniGameMessage.SUCCESS_PERMISSION_REWARDED, "{permission}", permission);
+            return new FormatBuilder(MiniGameMessage.SUCCESS_PERMISSION_REWARDED).replace("{permission}",
+                    permission);
         } else {
-            return MiniGames.getInstance().getStringFormatter().replacePlaceholders(
-                    MiniGameMessage.SUCCESS_PERMISSION_REWARDED_WORLD, new String[]{"{permission}", "{world}"},
-                    new String[]{permission, world.getName()});
+            return new FormatBuilder(MiniGameMessage.SUCCESS_PERMISSION_REWARDED_WORLD).
+                    replace("{permission}", permission).replace("{world}", world.getName());
         }
     }
 

@@ -1,6 +1,6 @@
 package net.knarcraft.minigames.util;
 
-import net.knarcraft.knarlib.formatting.StringFormatter;
+import net.knarcraft.knarlib.formatting.FormatBuilder;
 import net.knarcraft.knarlib.util.MaterialHelper;
 import net.knarcraft.minigames.MiniGames;
 import net.knarcraft.minigames.arena.reward.CommandReward;
@@ -37,11 +37,10 @@ public final class RewardHelper {
      * @param rewards <p>The rewards to give</p>
      */
     public static void grantRewards(@NotNull Player player, @NotNull Collection<Reward> rewards) {
-        StringFormatter stringFormatter = MiniGames.getInstance().getStringFormatter();
         for (Reward reward : rewards) {
             boolean granted = reward.grant(player);
             if (granted) {
-                stringFormatter.displaySuccessMessage(player, reward.getGrantMessage());
+                reward.getGrantMessage().success(player);
             }
         }
     }
@@ -63,8 +62,7 @@ public final class RewardHelper {
                                                     @NotNull String[] allArguments) {
         RewardType rewardType = RewardType.getFromString(typeString);
         if (rewardType == null) {
-            MiniGames.getInstance().getStringFormatter().displayErrorMessage(player,
-                    MiniGameMessage.ERROR_REWARD_TYPE_INVALID);
+            new FormatBuilder(MiniGameMessage.ERROR_REWARD_TYPE_INVALID).error(player);
             return null;
         }
 
@@ -80,7 +78,7 @@ public final class RewardHelper {
                 case ITEM -> new ItemReward(getItem(player, firstArgument, secondArgument));
             };
         } catch (IllegalArgumentException exception) {
-            MiniGames.getInstance().getStringFormatter().displayErrorMessage(player, exception.getMessage());
+            new FormatBuilder(exception.getMessage()).error(player);
             return null;
         }
     }

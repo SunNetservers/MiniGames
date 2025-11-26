@@ -1,6 +1,6 @@
 package net.knarcraft.minigames.arena;
 
-import net.knarcraft.knarlib.formatting.StringFormatter;
+import net.knarcraft.knarlib.formatting.FormatBuilder;
 import net.knarcraft.minigames.MiniGames;
 import net.knarcraft.minigames.arena.reward.RewardCondition;
 import net.knarcraft.minigames.config.MiniGameMessage;
@@ -47,7 +47,7 @@ public abstract class AbstractArenaSession implements ArenaSession {
         // Make the player visible to everyone
         MiniGames.getInstance().getPlayerVisibilityManager().showPlayersFor(player);
 
-        MiniGames.getInstance().getStringFormatter().displaySuccessMessage(player, MiniGameMessage.SUCCESS_ARENA_QUIT);
+        new FormatBuilder(MiniGameMessage.SUCCESS_ARENA_QUIT).success(player);
     }
 
     @Override
@@ -77,13 +77,12 @@ public abstract class AbstractArenaSession implements ArenaSession {
             case PERSONAL_BEST -> MiniGameMessage.RECORD_ACHIEVED_PERSONAL;
             default -> throw new IllegalStateException("Unexpected value: " + recordResult);
         };
-        StringFormatter stringFormatter = MiniGames.getInstance().getStringFormatter();
-        String recordInfo = stringFormatter.replacePlaceholder(recordInfoMiniGameMessage, "{recordType}",
-                recordType.name().toLowerCase().replace("_", " "));
 
-        stringFormatter.displaySuccessMessage(player, stringFormatter.replacePlaceholders(
-                MiniGameMessage.SUCCESS_RECORD_ACHIEVED, new String[]{"{gameMode}", "{recordInfo}"},
-                new String[]{gameModeString, recordInfo}));
+        new FormatBuilder(MiniGameMessage.SUCCESS_RECORD_ACHIEVED).
+                replace("{gameMode}", gameModeString).
+                replace("{recordInfo}", recordInfoMiniGameMessage).
+                replace("{recordType}", recordType.name().toLowerCase().replace("_", " ")).
+                success(player);
 
         // Reward the player
         rewardRecord(recordResult, recordType);

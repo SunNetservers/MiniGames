@@ -1,6 +1,6 @@
 package net.knarcraft.minigames.command.parkour;
 
-import net.knarcraft.knarlib.formatting.StringFormatter;
+import net.knarcraft.knarlib.formatting.FormatBuilder;
 import net.knarcraft.minigames.MiniGames;
 import net.knarcraft.minigames.arena.ArenaPlayerRegistry;
 import net.knarcraft.minigames.arena.parkour.ParkourArena;
@@ -25,9 +25,8 @@ public class JoinParkourArenaCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s,
                              @NotNull String[] arguments) {
-        StringFormatter stringFormatter = MiniGames.getInstance().getStringFormatter();
         if (!(commandSender instanceof Player player)) {
-            stringFormatter.displayErrorMessage(commandSender, MiniGameMessage.ERROR_PLAYER_ONLY);
+            new FormatBuilder(MiniGameMessage.ERROR_PLAYER_ONLY).error(commandSender);
             return false;
         }
 
@@ -37,27 +36,27 @@ public class JoinParkourArenaCommand implements CommandExecutor {
 
         // Disallow joining if the player is already in a mini-game arena
         if (MiniGames.getInstance().getSession(player.getUniqueId()) != null) {
-            stringFormatter.displayErrorMessage(commandSender, MiniGameMessage.ERROR_ALREADY_PLAYING);
+            new FormatBuilder(MiniGameMessage.ERROR_ALREADY_PLAYING).error(commandSender);
             return true;
         }
 
         // Make sure the arena exists
         ParkourArena specifiedArena = MiniGames.getInstance().getParkourArenaHandler().getArena(arguments[0]);
         if (specifiedArena == null) {
-            stringFormatter.displayErrorMessage(commandSender, MiniGameMessage.ERROR_ARENA_NOT_FOUND);
+            new FormatBuilder(MiniGameMessage.ERROR_ARENA_NOT_FOUND).error(commandSender);
             return false;
         }
 
         // Deny vehicles as allowing this is tricky, and will cause problems in some cases
         if (player.isInsideVehicle() || !player.getPassengers().isEmpty()) {
-            stringFormatter.displayErrorMessage(commandSender, MiniGameMessage.ERROR_JOIN_IN_VEHICLE_OR_PASSENGER);
+            new FormatBuilder(MiniGameMessage.ERROR_JOIN_IN_VEHICLE_OR_PASSENGER).error(commandSender);
             return true;
         }
 
         // Deny joining full arenas
         int playingNow = MiniGames.getInstance().getParkourArenaPlayerRegistry().getPlayingPlayers(specifiedArena).size();
         if (specifiedArena.getMaxPlayers() > 0 && playingNow >= specifiedArena.getMaxPlayers()) {
-            stringFormatter.displayErrorMessage(commandSender, MiniGameMessage.ERROR_JOIN_ARENA_FULL);
+            new FormatBuilder(MiniGameMessage.ERROR_JOIN_ARENA_FULL).error(commandSender);
             return true;
         }
 
@@ -83,8 +82,7 @@ public class JoinParkourArenaCommand implements CommandExecutor {
 
         // Don't allow joining the hardcore game-mode if there are no checkpoints to skip
         if (specifiedArena.hasNoCheckpoints() && gameMode == ParkourArenaGameMode.HARDCORE) {
-            MiniGames.getInstance().getStringFormatter().displayErrorMessage(player,
-                    MiniGameMessage.ERROR_HARDCORE_NO_CHECKPOINTS);
+            new FormatBuilder(MiniGameMessage.ERROR_HARDCORE_NO_CHECKPOINTS).error(player);
             return;
         }
 
@@ -105,16 +103,14 @@ public class JoinParkourArenaCommand implements CommandExecutor {
         // Try to teleport the player to the arena
         boolean teleported = PlayerTeleporter.teleportPlayer(player, specifiedArena.getSpawnLocation(), false, false);
         if (!teleported) {
-            MiniGames.getInstance().getStringFormatter().displayErrorMessage(player,
-                    MiniGameMessage.ERROR_ARENA_TELEPORT_FAILED);
+            new FormatBuilder(MiniGameMessage.ERROR_ARENA_TELEPORT_FAILED).error(player);
             newSession.triggerQuit(false, true);
         } else {
             // Update the player's state to follow the arena's rules
             newSession.getEntryState().setArenaState();
 
             player.getInventory().addItem(GUIHelper.getGUIOpenItem(player));
-            MiniGames.getInstance().getStringFormatter().displaySuccessMessage(player,
-                    MiniGameMessage.SUCCESS_ARENA_JOINED);
+            new FormatBuilder(MiniGameMessage.SUCCESS_ARENA_JOINED).success(player);
         }
     }
 
@@ -134,8 +130,7 @@ public class JoinParkourArenaCommand implements CommandExecutor {
         // Require that the player has beaten the previous arena on the same game-mode before trying this one
         if (configuration.mustDoGroupedInSequence() &&
                 arenaGroup.cannotPlay(arenaGameMode, player, parkourArena.getArenaId())) {
-            MiniGames.getInstance().getStringFormatter().displayErrorMessage(player,
-                    MiniGameMessage.ERROR_PREVIOUS_ARENA_REQUIRED);
+            new FormatBuilder(MiniGameMessage.ERROR_PREVIOUS_ARENA_REQUIRED).error(player);
             return false;
         }
 

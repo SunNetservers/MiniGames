@@ -1,7 +1,6 @@
 package net.knarcraft.minigames.command;
 
-import net.knarcraft.knarlib.formatting.StringFormatter;
-import net.knarcraft.minigames.MiniGames;
+import net.knarcraft.knarlib.formatting.FormatBuilder;
 import net.knarcraft.minigames.arena.Arena;
 import net.knarcraft.minigames.arena.ArenaGroup;
 import net.knarcraft.minigames.arena.ArenaHandler;
@@ -39,12 +38,10 @@ public abstract class GroupListCommand<
      * @param sender       <p>The command sender to display the groups to</p>
      */
     protected void displayExistingGroups(@NotNull K arenaHandler, @NotNull CommandSender sender) {
-        StringFormatter stringFormatter = MiniGames.getInstance().getStringFormatter();
-        StringBuilder builder = new StringBuilder(stringFormatter.getUnFormattedMessage(
-                MiniGameMessage.SUCCESS_GROUPS)).append("\n");
+        FormatBuilder builder = new FormatBuilder(MiniGameMessage.SUCCESS_GROUPS).append("\n");
         arenaHandler.getAllGroups().stream().sorted().forEachOrdered((group) ->
                 builder.append("- ").append(group.getGroupName()).append("\n"));
-        stringFormatter.displaySuccessMessage(sender, builder.toString());
+        builder.success(sender);
     }
 
     /**
@@ -57,16 +54,14 @@ public abstract class GroupListCommand<
      */
     protected boolean displayOrderedArenaNames(@NotNull K arenaHandler, @NotNull CommandSender sender,
                                                @NotNull String groupName) {
-        StringFormatter stringFormatter = MiniGames.getInstance().getStringFormatter();
         M arenaGroup = arenaHandler.getGroup(groupName);
         if (arenaGroup == null) {
-            stringFormatter.displayErrorMessage(sender, MiniGameMessage.ERROR_GROUP_NOT_FOUND);
+            new FormatBuilder(MiniGameMessage.ERROR_GROUP_NOT_FOUND).error(sender);
             return false;
         }
 
         // Send a list of all stages (arenas in the group)
-        StringBuilder builder = new StringBuilder(stringFormatter.replacePlaceholder(
-                MiniGameMessage.SUCCESS_GROUP_STAGES, "{group}", groupName));
+        FormatBuilder builder = new FormatBuilder(MiniGameMessage.SUCCESS_GROUP_STAGES).replace("{group}", groupName);
         int counter = 1;
         for (UUID arenaId : arenaGroup.getArenas()) {
             L arena = arenaHandler.getArena(arenaId);
@@ -74,7 +69,7 @@ public abstract class GroupListCommand<
                 builder.append("\n").append(counter++).append(". ").append(arena.getArenaName());
             }
         }
-        stringFormatter.displaySuccessMessage(sender, builder.toString());
+        builder.success(sender);
         return true;
     }
 

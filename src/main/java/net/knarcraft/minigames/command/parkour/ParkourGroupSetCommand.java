@@ -1,6 +1,6 @@
 package net.knarcraft.minigames.command.parkour;
 
-import net.knarcraft.knarlib.formatting.StringFormatter;
+import net.knarcraft.knarlib.formatting.FormatBuilder;
 import net.knarcraft.minigames.MiniGames;
 import net.knarcraft.minigames.arena.parkour.ParkourArena;
 import net.knarcraft.minigames.arena.parkour.ParkourArenaGroup;
@@ -32,12 +32,11 @@ public class ParkourGroupSetCommand implements TabExecutor {
             return false;
         }
 
-        StringFormatter stringFormatter = MiniGames.getInstance().getStringFormatter();
         ParkourArenaHandler arenaHandler = MiniGames.getInstance().getParkourArenaHandler();
 
         ParkourArena specifiedArena = arenaHandler.getArena(arguments[0]);
         if (specifiedArena == null) {
-            stringFormatter.displayErrorMessage(commandSender, MiniGameMessage.ERROR_ARENA_NOT_FOUND);
+            new FormatBuilder(MiniGameMessage.ERROR_ARENA_NOT_FOUND).error(commandSender);
             return false;
         }
 
@@ -59,7 +58,7 @@ public class ParkourGroupSetCommand implements TabExecutor {
 
         arenaHandler.setGroup(specifiedArena.getArenaId(), arenaGroup);
 
-        stringFormatter.displaySuccessMessage(commandSender, MiniGameMessage.SUCCESS_ARENA_GROUP_UPDATED);
+        new FormatBuilder(MiniGameMessage.SUCCESS_ARENA_GROUP_UPDATED).success(commandSender);
         return true;
     }
 

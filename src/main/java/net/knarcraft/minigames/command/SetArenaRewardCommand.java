@@ -1,5 +1,6 @@
 package net.knarcraft.minigames.command;
 
+import net.knarcraft.knarlib.formatting.FormatBuilder;
 import net.knarcraft.minigames.MiniGames;
 import net.knarcraft.minigames.arena.Arena;
 import net.knarcraft.minigames.arena.reward.Reward;
@@ -24,23 +25,13 @@ public class SetArenaRewardCommand implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s,
                              @NotNull String[] arguments) {
         if (!(commandSender instanceof Player player)) {
-            MiniGames.getInstance().getStringFormatter().displayErrorMessage(commandSender,
-                    MiniGameMessage.ERROR_PLAYER_ONLY);
+            new FormatBuilder(MiniGameMessage.ERROR_PLAYER_ONLY).error(commandSender);
             return false;
         }
 
         if (arguments.length < 4) {
             return false;
         }
-        
-        /*
-        
-        /MiniGamesReward add dropper <name> <condition> <type> [data]
-        /MiniGamesReward add parkour <name> <condition> <type> [data]
-        /MiniGamesReward clear dropper <name> <condition>
-        /MiniGamesReward clear parkour <name> <condition>
-        
-         */
 
         Arena arena = null;
         if (arguments[1].equalsIgnoreCase("dropper")) {
@@ -49,22 +40,19 @@ public class SetArenaRewardCommand implements CommandExecutor {
             arena = MiniGames.getInstance().getParkourArenaHandler().getArena(arguments[2]);
         }
         if (arena == null) {
-            MiniGames.getInstance().getStringFormatter().displayErrorMessage(commandSender,
-                    MiniGameMessage.ERROR_ARENA_NOT_FOUND);
+            new FormatBuilder(MiniGameMessage.ERROR_ARENA_NOT_FOUND).error(commandSender);
             return false;
         }
 
         RewardCondition condition = RewardCondition.getFromString(arguments[3]);
         if (condition == null) {
-            MiniGames.getInstance().getStringFormatter().displayErrorMessage(player,
-                    MiniGameMessage.ERROR_REWARD_CONDITION_INVALID);
+            new FormatBuilder(MiniGameMessage.ERROR_REWARD_CONDITION_INVALID).error(player);
             return false;
         }
 
         if (InputValidationHelper.isEmptyValue(arguments[0])) {
             arena.clearRewards(condition);
-            MiniGames.getInstance().getStringFormatter().displaySuccessMessage(player,
-                    MiniGameMessage.SUCCESS_REWARDS_CLEARED);
+            new FormatBuilder(MiniGameMessage.SUCCESS_REWARDS_CLEARED).success(player);
             return true;
         }
 
@@ -80,8 +68,7 @@ public class SetArenaRewardCommand implements CommandExecutor {
 
         if (reward != null) {
             arena.addReward(condition, reward);
-            MiniGames.getInstance().getStringFormatter().displaySuccessMessage(player,
-                    MiniGameMessage.SUCCESS_REWARD_ADDED);
+            new FormatBuilder(MiniGameMessage.SUCCESS_REWARD_ADDED).success(player);
             return true;
         } else {
             return false;

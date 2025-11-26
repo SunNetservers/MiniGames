@@ -1,6 +1,6 @@
 package net.knarcraft.minigames.command.dropper;
 
-import net.knarcraft.knarlib.formatting.StringFormatter;
+import net.knarcraft.knarlib.formatting.FormatBuilder;
 import net.knarcraft.minigames.MiniGames;
 import net.knarcraft.minigames.arena.dropper.DropperArena;
 import net.knarcraft.minigames.config.MiniGameMessage;
@@ -22,18 +22,16 @@ public class RemoveDropperArenaCommand implements CommandExecutor {
             return false;
         }
 
-        StringFormatter stringFormatter = MiniGames.getInstance().getStringFormatter();
-
         // Get the specified arena
         DropperArena targetArena = MiniGames.getInstance().getDropperArenaHandler().getArena(arguments[0]);
         if (targetArena == null) {
-            stringFormatter.displayErrorMessage(commandSender, MiniGameMessage.ERROR_ARENA_NOT_FOUND);
+            new FormatBuilder(MiniGameMessage.ERROR_ARENA_NOT_FOUND).error(commandSender);
             return false;
         }
 
         // Remove the arena
         MiniGames.getInstance().getDropperArenaHandler().removeArena(targetArena);
-        stringFormatter.displaySuccessMessage(commandSender, MiniGameMessage.SUCCESS_ARENA_REMOVED);
+        new FormatBuilder(MiniGameMessage.SUCCESS_ARENA_REMOVED).success(commandSender);
         return true;
     }
 

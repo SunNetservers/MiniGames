@@ -1,6 +1,6 @@
 package net.knarcraft.minigames.arena.parkour;
 
-import net.knarcraft.knarlib.formatting.StringFormatter;
+import net.knarcraft.knarlib.formatting.FormatBuilder;
 import net.knarcraft.minigames.MiniGames;
 import net.knarcraft.minigames.arena.AbstractArenaSession;
 import net.knarcraft.minigames.arena.Arena;
@@ -112,14 +112,12 @@ public class ParkourArenaSession extends AbstractArenaSession {
             registerRecord();
         }
 
-        StringFormatter stringFormatter = MiniGames.getInstance().getStringFormatter();
-
         // Mark the arena as cleared
         if (this.arena.getData().setCompleted(this.gameMode, this.player)) {
-            stringFormatter.displaySuccessMessage(this.player, MiniGameMessage.SUCCESS_ARENA_FIRST_CLEAR);
+            new FormatBuilder(MiniGameMessage.SUCCESS_ARENA_FIRST_CLEAR).success(this.player);
             RewardHelper.grantRewards(this.player, this.arena.getRewards(RewardCondition.FIRST_WIN));
         }
-        stringFormatter.displaySuccessMessage(this.player, MiniGameMessage.SUCCESS_ARENA_WIN);
+        new FormatBuilder(MiniGameMessage.SUCCESS_ARENA_WIN).success(this.player);
         RewardHelper.grantRewards(this.player, this.arena.getRewards(RewardCondition.WIN));
 
         // Teleport the player out of the arena

@@ -1,6 +1,6 @@
 package net.knarcraft.minigames.command.parkour;
 
-import net.knarcraft.knarlib.formatting.StringFormatter;
+import net.knarcraft.knarlib.formatting.FormatBuilder;
 import net.knarcraft.minigames.MiniGames;
 import net.knarcraft.minigames.arena.parkour.ParkourArena;
 import net.knarcraft.minigames.arena.parkour.ParkourArenaEditableProperty;
@@ -27,9 +27,8 @@ public class EditParkourArenaCommand extends EditArenaCommand {
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s,
                              @NotNull String[] arguments) {
-        StringFormatter stringFormatter = MiniGames.getInstance().getStringFormatter();
         if (!(commandSender instanceof Player player)) {
-            stringFormatter.displayErrorMessage(commandSender, MiniGameMessage.ERROR_PLAYER_ONLY);
+            new FormatBuilder(MiniGameMessage.ERROR_PLAYER_ONLY).error(commandSender);
             return false;
         }
 
@@ -39,22 +38,22 @@ public class EditParkourArenaCommand extends EditArenaCommand {
 
         ParkourArena specifiedArena = MiniGames.getInstance().getParkourArenaHandler().getArena(arguments[0]);
         if (specifiedArena == null) {
-            stringFormatter.displayErrorMessage(commandSender, MiniGameMessage.ERROR_ARENA_NOT_FOUND);
+            new FormatBuilder(MiniGameMessage.ERROR_ARENA_NOT_FOUND).error(commandSender);
             return false;
         }
 
         ParkourArenaEditableProperty editableProperty = ParkourArenaEditableProperty.getFromArgumentString(arguments[1]);
         if (editableProperty == null) {
-            stringFormatter.displayErrorMessage(commandSender, MiniGameMessage.ERROR_UNKNOWN_PROPERTY);
+            new FormatBuilder(MiniGameMessage.ERROR_UNKNOWN_PROPERTY).error(commandSender);
             return false;
         }
 
         if (arguments.length < 3) {
             // Print the current value of the property
             String value = editableProperty.getCurrentValueAsString(specifiedArena);
-            stringFormatter.displaySuccessMessage(commandSender, stringFormatter.replacePlaceholders(
-                    MiniGameMessage.SUCCESS_CURRENT_VALUE, new String[]{"{property}", "{value}"},
-                    new String[]{editableProperty.getArgumentString(), value}));
+            new FormatBuilder(MiniGameMessage.SUCCESS_CURRENT_VALUE).
+                    replace("{property}", editableProperty.getArgumentString()).
+                    replace("{value}", value).success(commandSender);
             return true;
         } else {
             boolean successful;
@@ -64,11 +63,10 @@ public class EditParkourArenaCommand extends EditArenaCommand {
                 successful = false;
             }
             if (successful) {
-                stringFormatter.displaySuccessMessage(player, stringFormatter.replacePlaceholder(
-                        MiniGameMessage.SUCCESS_PROPERTY_CHANGED, "{property}",
-                        editableProperty.getArgumentString()));
+                new FormatBuilder(MiniGameMessage.SUCCESS_PROPERTY_CHANGED).replace("{property}",
+                        editableProperty.getArgumentString()).success(player);
             } else {
-                stringFormatter.displayErrorMessage(player, MiniGameMessage.ERROR_PROPERTY_INPUT_INVALID);
+                new FormatBuilder(MiniGameMessage.ERROR_PROPERTY_INPUT_INVALID).error(player);
             }
             return successful;
         }

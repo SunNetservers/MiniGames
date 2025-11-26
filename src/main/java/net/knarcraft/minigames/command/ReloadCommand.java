@@ -1,5 +1,6 @@
 package net.knarcraft.minigames.command;
 
+import net.knarcraft.knarlib.formatting.FormatBuilder;
 import net.knarcraft.minigames.MiniGames;
 import net.knarcraft.minigames.config.MiniGameMessage;
 import org.bukkit.command.Command;
@@ -20,8 +21,7 @@ public class ReloadCommand implements TabExecutor {
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s,
                              @NotNull String[] arguments) {
         MiniGames.getInstance().reload();
-        MiniGames.getInstance().getStringFormatter().displaySuccessMessage(commandSender,
-                MiniGameMessage.SUCCESS_PLUGIN_RELOADED);
+        new FormatBuilder(MiniGameMessage.SUCCESS_PLUGIN_RELOADED).success(commandSender);
         return true;
     }
 

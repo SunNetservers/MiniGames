@@ -1,5 +1,6 @@
 package net.knarcraft.minigames.arena.reward;
 
+import net.knarcraft.knarlib.formatting.FormatBuilder;
 import net.knarcraft.minigames.MiniGames;
 import net.knarcraft.minigames.config.MiniGameMessage;
 import net.knarcraft.minigames.manager.EconomyManager;
@@ -38,9 +39,9 @@ public class EconomyReward implements Reward {
     }
 
     @Override
-    public @NotNull String getGrantMessage() {
-        return MiniGames.getInstance().getStringFormatter().replacePlaceholder(MiniGameMessage.SUCCESS_ECONOMY_REWARDED,
-                "{currency}", EconomyManager.format(amount));
+    public @NotNull FormatBuilder getGrantMessage() {
+        return new FormatBuilder(MiniGameMessage.SUCCESS_ECONOMY_REWARDED).replace("{currency}",
+                EconomyManager.format(amount));
     }
 
     @NotNull

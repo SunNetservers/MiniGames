@@ -1,5 +1,6 @@
 package net.knarcraft.minigames.listener;
 
+import net.knarcraft.knarlib.formatting.FormatBuilder;
 import net.knarcraft.minigames.MiniGames;
 import net.knarcraft.minigames.arena.ArenaSession;
 import net.knarcraft.minigames.config.MiniGameMessage;
@@ -43,7 +44,7 @@ public class CommandListener implements Listener {
             }
         }
 
-        MiniGames.getInstance().getStringFormatter().displayErrorMessage(player, MiniGameMessage.ERROR_ILLEGAL_COMMAND);
+        new FormatBuilder(MiniGameMessage.ERROR_ILLEGAL_COMMAND).error(player);
         event.setCancelled(true);
     }
 

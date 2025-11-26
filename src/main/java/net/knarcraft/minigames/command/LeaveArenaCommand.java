@@ -1,5 +1,6 @@
 package net.knarcraft.minigames.command;
 
+import net.knarcraft.knarlib.formatting.FormatBuilder;
 import net.knarcraft.minigames.MiniGames;
 import net.knarcraft.minigames.arena.ArenaSession;
 import net.knarcraft.minigames.config.MiniGameMessage;
@@ -22,15 +23,13 @@ public class LeaveArenaCommand implements TabExecutor {
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s,
                              @NotNull String[] strings) {
         if (!(commandSender instanceof Player player)) {
-            MiniGames.getInstance().getStringFormatter().displayErrorMessage(commandSender,
-                    MiniGameMessage.ERROR_PLAYER_ONLY);
+            new FormatBuilder(MiniGameMessage.ERROR_PLAYER_ONLY).error(commandSender);
             return false;
         }
 
         ArenaSession existingSession = MiniGames.getInstance().getSession(player.getUniqueId());
         if (existingSession == null) {
-            MiniGames.getInstance().getStringFormatter().displayErrorMessage(commandSender,
-                    MiniGameMessage.ERROR_NOT_IN_ARENA);
+            new FormatBuilder(MiniGameMessage.ERROR_NOT_IN_ARENA).error(commandSender);
             return false;
         }
 
