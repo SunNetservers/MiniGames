@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.jetbrains.annotations.NotNull;
 import org.spigotmc.event.player.PlayerSpawnLocationEvent;
 
 import java.util.logging.Level;
@@ -21,7 +22,7 @@ import java.util.logging.Level;
 public class PlayerStateChangeListener implements Listener {
 
     @EventHandler
-    public void onPlayerSpawn(PlayerSpawnLocationEvent event) {
+    public void onPlayerSpawn(@NotNull PlayerSpawnLocationEvent event) {
         Player player = event.getPlayer();
 
         // Restore any lingering arena states

@@ -10,6 +10,7 @@ import net.knarcraft.minigames.placeholder.parsing.RecordPlaceholderParser;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 /**
  * A placeholderAPI expansion for Parkour-related placeholders
@@ -39,17 +40,17 @@ public class ParkourExpansion extends PlaceholderExpansion {
     }
 
     @Override
-    public String getIdentifier() {
+    public @NonNull String getIdentifier() {
         return "parkour";
     }
 
     @Override
-    public String getAuthor() {
+    public @NonNull String getAuthor() {
         return "EpicKnarvik97";
     }
 
     @Override
-    public String getVersion() {
+    public @NonNull String getVersion() {
         return "1.0.0";
     }
 
@@ -60,7 +61,7 @@ public class ParkourExpansion extends PlaceholderExpansion {
 
     @Override
     @Nullable
-    public String onRequest(OfflinePlayer player, String parameters) {
+    public String onRequest(@Nullable OfflinePlayer player, @NonNull String parameters) {
         String[] parts = parameters.split("_");
         // Record is used as the prefix for all record placeholders in case more placeholder types are added
         if (parts[0].equalsIgnoreCase("record") && parts.length >= 7) {
