@@ -25,7 +25,15 @@ parkour:
   obstacleBlocks:
     - END_ROD
     - LIGHTNING_ROD
-    - CHAIN
+    - IRON_CHAIN
+    - COPPER_CHAIN
+    - EXPOSED_COPPER_CHAIN
+    - WEATHERED_COPPER_CHAIN
+    - OXIDIZED_COPPER_CHAIN
+    - WAXED_COPPER_CHAIN
+    - WAXED_EXPOSED_COPPER_CHAIN
+    - WAXED_WEATHERED_COPPER_CHAIN
+    - WAXED_OXIDIZED_COPPER_CHAIN
 dropper:
   # Whether to block using the shift key to drop faster than the intended drop speed
   blockSneaking: true

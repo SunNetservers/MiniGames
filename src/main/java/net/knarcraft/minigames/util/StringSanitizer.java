@@ -31,7 +31,7 @@ public final class StringSanitizer {
      * @return <p>The sanitized arena name</p>
      */
     public static @NotNull String sanitizeArenaName(@NotNull String arenaName) {
-        return arenaName.toLowerCase().trim().replaceAll(" ", "_");
+        return arenaName.toLowerCase().trim().replace(" ", "_");
     }
 
 }
